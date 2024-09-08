@@ -1,0 +1,75 @@
+# Node modules
+/node_modules/
+
+# Compiled output
+/dist
+/tmp
+/out-tsc
+/bazel-out
+
+# IDEs and editors
+/.idea/
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# Visual Studio Code
+/.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/
+
+# Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# Logs
+*.log
+
+# Dependency directories
+bower_components/
+jspm_packages/
+
+# Coverage directory used by tools like istanbul
+/coverage/
+
+# Environment variables
+.env
+.env.*.local
+
+# Build artifacts
+*.tgz
+*.zip
+*.tar.gz
+*.tar.bz2
+
+# Database files
+*.sqlite
+*.sqlite3
+
+# Yarn
+yarn-debug.log*
+yarn-error.log*
+
+# NPM
+npm-debug.log*
+
+# Others
+*.pid
+*.seed
+*.pid.lock
