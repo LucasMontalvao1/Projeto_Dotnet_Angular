@@ -15,9 +15,9 @@ namespace ApiWeb.Services
             _tokenRepository = tokenRepository;
         }
 
-        public User ValidarUsuario(User user)
+        public User ValidarUsuario(string username, string password)
         {
-            return _authRepository.ValidarUsuario(user);
+            return _authRepository.ValidarUsuario(username, password);
         }
 
         public string GenerateToken(User user)

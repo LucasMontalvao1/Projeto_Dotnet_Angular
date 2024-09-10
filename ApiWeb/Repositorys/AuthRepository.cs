@@ -15,7 +15,7 @@ namespace ApiWeb.Repositorys
             _mySqlConnectionDB = mySqlConnectionDB;
         }
 
-        public User ValidarUsuario(User user)
+        public User ValidarUsuario(string username, string password)
         {
             User validatedUser = null;
 
@@ -27,8 +27,8 @@ namespace ApiWeb.Repositorys
 
                     using (MySqlCommand command = new MySqlCommand(query, connection))
                     {
-                        command.Parameters.AddWithValue("@Username", user.Username);
-                        command.Parameters.AddWithValue("@Password", user.Password); 
+                        command.Parameters.AddWithValue("@Username", username);
+                        command.Parameters.AddWithValue("@Password", password);
 
                         connection.Open();
 

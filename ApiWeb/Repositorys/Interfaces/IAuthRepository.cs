@@ -4,6 +4,6 @@ namespace ApiWeb.Repositorys.Interfaces
 {
     public interface IAuthRepository
     {
-        User ValidarUsuario(User user);
+        User ValidarUsuario(string username, string password);
     }
 }

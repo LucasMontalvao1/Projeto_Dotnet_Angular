@@ -16,9 +16,9 @@ namespace ApiWeb.Controllers
         }
 
         [HttpPost("login")]
-        public IActionResult Login([FromBody] User user)
+        public IActionResult Login([FromBody] UserDto userDto)
         {
-            var usuario = _authService.ValidarUsuario(user);
+            var usuario = _authService.ValidarUsuario(userDto.Username, userDto.Password);
             if (usuario != null)
             {
                 var token = _authService.GenerateToken(usuario);
@@ -27,11 +27,11 @@ namespace ApiWeb.Controllers
                     Token = token,
                     User = new
                     {
-                        user.UsuarioID,
-                        user.Username,
-                        user.Name,
-                        user.Foto,
-                        user.Email
+                        usuario.UsuarioID,
+                        usuario.Username,
+                        usuario.Name,
+                        usuario.Foto,
+                        usuario.Email
                     }
                 });
             }
@@ -39,4 +39,3 @@ namespace ApiWeb.Controllers
         }
     }
 }
-

@@ -4,10 +4,10 @@ namespace ApiWeb.Services.Interfaces
 {
     public interface IAuthService
     {
-        User ValidarUsuario(User user); 
+        User ValidarUsuario(string username, string password);
 
         string GenerateToken(User user);
 
-        bool ValidateToken(string token); 
+        bool ValidateToken(string token);
     }
 }

@@ -8,8 +8,8 @@
     "Order": 0,
     "Parameters": [
       {
-        "Name": "user",
-        "Type": "ApiWeb.Models.User",
+        "Name": "userDto",
+        "Type": "ApiWeb.Models.UserDto",
         "IsRequired": true
       }
     ],
