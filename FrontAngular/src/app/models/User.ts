@@ -1,10 +1,8 @@
 export interface User {
-  usuarioID: number;  
+  usuarioID: number;
   username: string;
-  password: string;
-  name: string;     
+  name: string;
   foto: string;
   email: string;
-  cargo: string;
-  matricula: string;
+  token: string;
 }

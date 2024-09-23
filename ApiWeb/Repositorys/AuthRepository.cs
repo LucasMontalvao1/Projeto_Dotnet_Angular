@@ -23,7 +23,7 @@ namespace ApiWeb.Repositorys
             {
                 using (MySqlConnection connection = _mySqlConnectionDB.CreateConnection())
                 {
-                    string query = "SELECT UsuarioID, Username, Name, Foto, Email, Cargo FROM usuarios WHERE Username = @Username AND Password = @Password";
+                    string query = "SELECT UsuarioID, Username, Name, Foto, Email FROM usuarios WHERE Username = @Username AND Password = @Password";
 
                     using (MySqlCommand command = new MySqlCommand(query, connection))
                     {
@@ -42,8 +42,7 @@ namespace ApiWeb.Repositorys
                                     Username = reader.GetString("Username"),
                                     Name = reader.GetString("Name"),
                                     Foto = reader.GetString("Foto"),
-                                    Email = reader.GetString("Email"),
-                                    Cargo = reader.GetString("Cargo")
+                                    Email = reader.GetString("Email")
                                 };
                             }
                         }
@@ -52,11 +51,10 @@ namespace ApiWeb.Repositorys
             }
             catch (Exception ex)
             {
-                // Log the exception or handle it according to your error handling strategy
                 Console.WriteLine($"An error occurred: {ex.Message}");
             }
 
-            return validatedUser; // Return null if the user was not found
+            return validatedUser;
         }
     }
 }

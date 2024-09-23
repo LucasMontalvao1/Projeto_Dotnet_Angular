@@ -1,9 +1,9 @@
-const apiUrl = 'https://localhost:7041';
+const apiUrl = 'https://localhost:7103';
 
 export const environment = {
-
   production: false,
   apiUrl: apiUrl,
-  loginEndpoint: `${apiUrl}/Api/login`
-
+  endpoints: {
+    login: `${apiUrl}/Api/v1/login`
+  },
 };

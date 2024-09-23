@@ -24,12 +24,12 @@ namespace ApiWeb.Repositorys
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim(ClaimTypes.Name, user.Username),
                     new Claim(ClaimTypes.NameIdentifier, user.UsuarioID.ToString()),
+                    new Claim(ClaimTypes.Name, user.Name),
+                    new Claim(ClaimTypes.GivenName, user.Username),
                     new Claim(ClaimTypes.Email, user.Email),
                     new Claim("Foto", user.Foto),
-                    new Claim(ClaimTypes.Role, user.Cargo),
-                    new Claim(ClaimTypes.Actor, "Lucas")
+                    new Claim(ClaimTypes.Actor, "Lucas Montalvao")                    
                 }),
                 Expires = DateTime.UtcNow.AddHours(6),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)

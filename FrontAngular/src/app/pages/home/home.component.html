@@ -1,1 +1,64 @@
-<p>home works!</p>
+<div class="home-container">
+  <!-- Cartão de perfil do usuário -->
+  <mat-card class="profile-card">
+    <mat-card-header>
+      <div mat-card-avatar class="header-avatar">
+        <img [src]="user?.foto" alt="Foto do usuário" class="user-avatar">
+      </div>
+      <div class="header-details">
+        <mat-card-title>Bem-vindo, {{ user?.name }}</mat-card-title>
+        <mat-card-subtitle>{{ user?.email }}</mat-card-subtitle>
+        <p>Username: {{ user?.username }}</p>
+      </div>
+    </mat-card-header>
+  </mat-card>
+
+  <!-- Layout com o calendário e lembretes -->
+  <div class="calendar-reminders">
+    <!-- Cartão do calendário -->
+    <mat-card class="calendar-card">
+      <mat-card-title>Calendário</mat-card-title>
+      <mat-card-content>
+        <mat-calendar [selected]="selectedDate" (selectedChange)="onDateSelected($event)"></mat-calendar>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Cartão de lembretes -->
+    <mat-card class="reminders-card">
+      <mat-card-title>Lembretes</mat-card-title>
+      <mat-card-content>
+        <div class="header-reminder">
+          <mat-card-subtitle class="selected-date">{{ selectedDate | date: 'longDate' }}</mat-card-subtitle>
+          <button mat-raised-button color="primary" (click)="createReminder()" class="create-button">Criar
+            Lembrete</button>
+        </div>
+
+        <!-- Exibição de lembretes -->
+        <ul *ngIf="displayedReminders.length > 0; else noReminders">
+          <li *ngFor="let reminder of displayedReminders">
+            {{ reminder.date | date: 'longDate' }} - {{ reminder.text }}
+            <div class="reminder-actions">
+              <button mat-icon-button color="primary" (click)="editReminder(reminder)">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button color="accent" (click)="viewDetails(reminder)">
+                <mat-icon>visibility</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" (click)="deleteReminder(reminder)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </li>
+        </ul>
+
+        <ng-template #noReminders>
+          <p>Não há lembretes para esta data.</p>
+        </ng-template>
+
+        <mat-paginator [length]="filteredReminders.length" [pageSize]="pageSize" [pageSizeOptions]="[5, 10, 20]"
+          (page)="onPageChange($event)">
+        </mat-paginator>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

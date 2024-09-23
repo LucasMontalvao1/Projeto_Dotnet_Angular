@@ -1,0 +1,104 @@
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+.home-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  width: 100%;
+  height: 100vh;
+  box-sizing: border-box;
+}
+
+.profile-card {
+  width: 100%;
+  max-width: 1000px;
+  margin-bottom: 1rem;
+}
+
+.header-avatar {
+  display: flex;
+  align-items: center;
+  margin-right: 16px;
+}
+
+.user-avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.header-details {
+  flex-grow: 1;
+}
+
+.header-reminder {
+  display: flex;
+  justify-content: space-between;
+  align-items: center; /* Alinha verticalmente os itens ao centro */
+  margin-bottom: 16px; /* Espaçamento abaixo do cabeçalho */
+}
+
+.selected-date {
+  font-size: 1rem; /* Ajuste o tamanho da fonte conforme necessário */
+  color: #555; /* Cor do texto da data */
+}
+
+.calendar-reminders {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1200px;
+  flex-grow: 1;
+}
+
+.calendar-card {
+  flex: 0.5; /* Diminui o espaço ocupado pelo calendário */
+  margin-right: 1rem;
+  max-height: 375px;
+}
+
+.reminders-card {
+  flex: 1.5; /* Aumenta o espaço ocupado pelos lembretes */
+  margin-left: 1rem;
+  max-height: 650px;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+mat-card-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.reminder-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+button mat-icon {
+  font-size: 15px;
+}
+
+mat-card-title {
+  width: 100%;
+  text-align: center;
+  font-size: 2rem;
+  margin: 0.5rem 0;
+}

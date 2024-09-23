@@ -1,7 +1,7 @@
 {
   "version": 1,
   "projects": {
-    "front-angular": {
+    "frontangular": {
       "projectType": "application",
       "root": "",
       "sourceRoot": "src",
@@ -10,7 +10,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/front-angular",
+            "outputPath": "dist/frontangular",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -47,18 +47,18 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "front-angular:build"
+            "buildTarget": "frontangular:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "front-angular:build:production"
+              "buildTarget": "frontangular:build:production"
             }
           }
         }
       }
     }
   },
-  "defaultProject": "front-angular",
+  "defaultProject": "frontangular",
   "cli": {
     "analytics": "enabled"
   }
