@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Serilog;
 using System;
 using System.Security.Claims;
 
@@ -14,11 +15,13 @@ namespace ApiWeb.Controllers
     {
         private readonly ILembreteService _lembreteService;
         private readonly ILogger<LembreteController> _logger;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public LembreteController(ILembreteService lembreteService, ILogger<LembreteController> logger)
+        public LembreteController(ILembreteService lembreteService, ILogger<LembreteController> logger, IHttpContextAccessor httpContextAccessor)
         {
             _lembreteService = lembreteService;
             _logger = logger;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         // Método para obter todos os lembretes
@@ -27,6 +30,11 @@ namespace ApiWeb.Controllers
         {
             try
             {
+                var usuarioId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var name = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
+                Log.Information("Usuário com ID {UsuarioId} fez uma requisição para obter todos os lembretes.", usuarioId);
+                Log.Information("Usuário com nome {Name} fez uma requisição para obter todos os lembretes.", name);
+
                 var lembretes = _lembreteService.GetAllLembretes(); // Método que deve ser implementado no serviço
 
                 if (lembretes == null || lembretes.Count == 0)

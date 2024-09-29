@@ -28,15 +28,15 @@
       <mat-card-title>Lembretes</mat-card-title>
       <mat-card-content>
         <div class="header-reminder">
-          <mat-card-subtitle class="selected-date">{{ selectedDate | date: 'longDate' }}</mat-card-subtitle>
+          <mat-card-subtitle class="selected-date">{{ selectedDate | date: 'dd MMMM yyyy' }}</mat-card-subtitle>
           <button mat-raised-button color="primary" (click)="createReminder()" class="create-button">Criar
             Lembrete</button>
         </div>
 
         <!-- Exibição de lembretes -->
-        <ul *ngIf="displayedReminders.length > 0; else noReminders">
-          <li *ngFor="let reminder of displayedReminders">
-            {{ reminder.date | date: 'longDate' }} - {{ reminder.text }}
+        <ul *ngIf="displayedLembretes.length > 0; else noReminders">
+          <li *ngFor="let reminder of displayedLembretes">
+            {{ reminder.dataLembrete | date: 'dd/MM/yyyy' }} - {{ reminder.titulo }} - {{ reminder.descricao }}
             <div class="reminder-actions">
               <button mat-icon-button color="primary" (click)="editReminder(reminder)">
                 <mat-icon>edit</mat-icon>
@@ -55,7 +55,7 @@
           <p>Não há lembretes para esta data.</p>
         </ng-template>
 
-        <mat-paginator [length]="filteredReminders.length" [pageSize]="pageSize" [pageSizeOptions]="[5, 10, 20]"
+        <mat-paginator [length]="filteredLembretes.length" [pageSize]="pageSize" [pageSizeOptions]="[5, 10, 20]"
           (page)="onPageChange($event)">
         </mat-paginator>
       </mat-card-content>

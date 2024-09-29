@@ -4,6 +4,7 @@ export const environment = {
   production: false,
   apiUrl: apiUrl,
   endpoints: {
-    login: `${apiUrl}/Api/v1/login`
+    login: `${apiUrl}/api/v1/login`,
+    lembretes: `${apiUrl}/api/v1/login`
   },
 };

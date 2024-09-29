@@ -1,14 +1,12 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
+import { LembreteService } from '../../services/lembrete.service';
 import { User } from '../../models/User';
 import { Router } from '@angular/router';
 import { MatPaginator } from '@angular/material/paginator';
 import { PageEvent } from '@angular/material/paginator';
-
-interface Reminder {
-  date: Date; // A data do lembrete
-  text: string; // O texto do lembrete
-}
+import { Lembrete } from '@/app/models/lembrete.model';
+import { MatSnackBar } from '@angular/material/snack-bar'; // Importando MatSnackBar
 
 @Component({
   selector: 'app-home',
@@ -20,17 +18,27 @@ export class HomeComponent implements OnInit {
 
   user: User | null = null;
   selectedDate: Date = new Date();
-  reminders: Reminder[] = [];
-  filteredReminders: Reminder[] = [];
-  displayedReminders: Reminder[] = [];
+  lembretes: Lembrete[] = [];
+  filteredLembretes: Lembrete[] = [];
+  displayedLembretes: Lembrete[] = [];
   pageSize: number = 5;
   pageIndex: number = 0;
 
-  constructor(private authService: AuthService, private router: Router) { }
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private lembreteService: LembreteService,
+    private snackBar: MatSnackBar // Adicionando MatSnackBar ao construtor
+  ) { }
 
   ngOnInit(): void {
+    this.checkAuthentication();
+  }
+
+  checkAuthentication(): void {
     const decodedToken = this.authService.getDecodedToken();
     const token = this.authService.getToken();
+
     if (decodedToken && token) {
       this.user = {
         usuarioID: decodedToken.nameid,
@@ -40,57 +48,56 @@ export class HomeComponent implements OnInit {
         foto: decodedToken.Foto,
         token: token
       };
-      this.loadReminders();
-      this.filterReminders(); // Filtra os lembretes para mostrar apenas os de hoje
+      this.carregaLembretes();
     } else {
       this.router.navigate(['/login']);
     }
   }
 
-  loadReminders(): void {
-    this.reminders = [
-      { date: new Date('2024-09-21'), text: 'Lembrete 1: Reunião às 10h' },
-      { date: new Date('2024-09-21'), text: 'Lembrete 2: Entrega de projeto' },
-      { date: new Date('2024-09-21'), text: 'Lembrete 3: Entrega de projeto' },
-      { date: new Date('2024-09-22'), text: 'Lembrete 4: Entrega de projeto' },
-      { date: new Date('2024-09-22'), text: 'Lembrete 5: Entrega de projeto' },
-      { date: new Date('2024-09-22'), text: 'Lembrete 6: Entrega de projeto' },
-      { date: new Date('2024-09-22'), text: 'Lembrete 7: Entrega de projeto' },
-      { date: new Date('2024-09-22'), text: 'Lembrete 8: Entrega de projeto' },
-      { date: new Date('2024-09-22'), text: 'Lembrete 9: Almoço com o time' },
-      { date: new Date('2024-09-22'), text: 'Lembrete 10: Revisão de código' },
-    ];
-    this.filterReminders(); // Atualiza a lista filtrada inicial
+  carregaLembretes(): void {
+    this.lembreteService.getLembretes().subscribe(
+      (data: Lembrete[]) => {
+        this.lembretes = data.map(lembrete => ({
+          ...lembrete,
+          dataLembrete: new Date(lembrete.dataLembrete)
+        }));
+        this.filtraLembretes();
+      },
+      (error) => {
+        this.openSnackBar('Erro ao buscar lembretes', 'Fechar'); // Exibindo erro ao usuário
+      }
+    );
+  }
+
+  filtraLembretes(): void {
+    const selectedTime = this.selectedDate.setHours(0, 0, 0, 0);
+
+    this.filteredLembretes = this.lembretes.filter(lembrete => {
+      const lembreteTime = new Date(lembrete.dataLembrete).setHours(0, 0, 0, 0);
+      return lembreteTime === selectedTime;
+    });
+
+    if (this.paginator) {
+      this.paginator.length = this.filteredLembretes.length;
+    }
+    this.pageIndex = 0;
+    this.updateDisplayedLembretes();
+  }
+
+  updateDisplayedLembretes(): void {
+    const startIndex = this.pageIndex * this.pageSize;
+    this.displayedLembretes = this.filteredLembretes.slice(startIndex, startIndex + this.pageSize);
   }
 
   onDateSelected(date: Date): void {
-    console.log('Data selecionada:', date);
     this.selectedDate = date;
-    this.filterReminders(); // Filtra lembretes com base na data selecionada
-  }
-
-  filterReminders(): void {
-    this.filteredReminders = this.reminders.filter(reminder => {
-      const reminderDateNormalized = new Date(reminder.date.getFullYear(), reminder.date.getMonth(), reminder.date.getDate());
-      const selectedDateNormalized = new Date(this.selectedDate.getFullYear(), this.selectedDate.getMonth(), this.selectedDate.getDate());
-
-      return reminderDateNormalized.getTime() === selectedDateNormalized.getTime();
-    });
-
-    this.paginator!.length = this.filteredReminders.length; // Atualiza o comprimento do paginator
-    this.pageIndex = 0; // Reseta o índice da página ao filtrar
-    this.updateFilteredReminders(); // Atualiza a lista filtrada após o filtro
-  }
-
-  updateFilteredReminders(): void {
-    const startIndex = this.pageIndex * this.pageSize;
-    this.displayedReminders = this.filteredReminders.slice(startIndex, startIndex + this.pageSize); // Atualiza os lembretes exibidos
+    this.filtraLembretes();
   }
 
   onPageChange(event: PageEvent): void {
     this.pageIndex = event.pageIndex;
     this.pageSize = event.pageSize;
-    this.updateFilteredReminders(); // Atualiza os lembretes filtrados quando a página muda
+    this.updateDisplayedLembretes();
   }
 
   logout(): void {
@@ -98,19 +105,26 @@ export class HomeComponent implements OnInit {
     this.router.navigate(['/login']);
   }
 
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 3000,
+    });
+  }
+
+  // Funções de lembretes (a serem implementadas conforme necessidade)
   createReminder(): void {
     // Abrir um diálogo para criar um novo lembrete
   }
 
-  editReminder(reminder: Reminder): void {
+  editReminder(reminder: Lembrete): void {
     // Abrir um diálogo para editar o lembrete existente
   }
 
-  viewDetails(reminder: Reminder): void {
+  viewDetails(reminder: Lembrete): void {
     // Abrir um diálogo para visualizar os detalhes do lembrete
   }
 
-  deleteReminder(reminder: Reminder): void {
+  deleteReminder(reminder: Lembrete): void {
     // Excluir o lembrete selecionado
   }
 }

@@ -57,6 +57,8 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+builder.Services.AddHttpContextAccessor();
+
 // Configuração do banco de dados e repositórios
 builder.Services.AddSingleton<MySqlConnectionDB>();
 builder.Services.AddScoped<IAuthService, AuthService>();
