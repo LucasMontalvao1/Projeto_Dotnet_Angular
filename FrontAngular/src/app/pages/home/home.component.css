@@ -1,5 +1,6 @@
 html, body {
   height: 100%;
+  width: 100%;
   margin: 0;
 }
 
@@ -38,6 +39,7 @@ html, body {
 }
 
 .header-reminder {
+  margin-top: 5px;
   display: flex;
   justify-content: space-between;
   align-items: center; 
@@ -66,7 +68,7 @@ html, body {
 .reminders-card {
   flex: 1.5; 
   margin-left: 1rem;
-  max-height: 650px;
+  max-height: 450px;
 }
 
 ul {
