@@ -12,7 +12,7 @@ import { User } from '../models/User';
 })
 export class AuthService {
   private apiUrl = environment.endpoints.login;
-  private jwtHelper = new JwtHelperService(); // Instância do JwtHelper para decodificar o token
+  private jwtHelper = new JwtHelperService();
 
   constructor(private http: HttpClient) { }
 
@@ -36,7 +36,7 @@ export class AuthService {
     return token;
   }
 
-  // Verifica se o token ainda é válido (não expirado)
+  // Verifica se o token ainda é válido 
   isAuthenticated(): boolean {
     const token = this.getToken();
     return token ? !this.jwtHelper.isTokenExpired(token) : false;
@@ -59,13 +59,20 @@ export class AuthService {
   // Método para tratar erros da API
   private handleError(error: any): Observable<never> {
     let errorMessage = 'Ocorreu um erro desconhecido!';
-    if (error.error instanceof ErrorEvent) {
-      // Erro no lado do cliente
-      errorMessage = `Erro: ${error.error.message}`;
-    } else {
-      // Erro no lado do servidor
-      errorMessage = `Código do Erro: ${error.status}\nMensagem: ${error.message}`;
+    switch (error.status) {
+      case 401:
+        errorMessage = 'Não autorizado! Verifique suas credenciais.';
+        break;
+      default:
+        if (error.error instanceof ErrorEvent) {
+          // Erro no lado do cliente
+          errorMessage = `Erro: ${error.error.message}`;
+        } else {
+          // Erro no lado do servidor
+          errorMessage = `Código do Erro: ${error.status}\nMensagem: ${error.message}`;
+        }
     }
+    console.error('Erro capturado:', errorMessage); // Log do erro
     return throwError(errorMessage);
   }
 }

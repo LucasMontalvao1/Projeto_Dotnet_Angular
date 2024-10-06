@@ -1,19 +1,21 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { LembreteService } from '../../services/lembrete.service';
+import { LembreteWebSocketService } from '../../services/lembrete-websocket.service';
 import { User } from '../../models/User';
 import { Router } from '@angular/router';
 import { MatPaginator } from '@angular/material/paginator';
 import { PageEvent } from '@angular/material/paginator';
-import { Lembrete } from '@/app/models/lembrete.model';
-import { MatSnackBar } from '@angular/material/snack-bar'; // Importando MatSnackBar
+import { Lembrete } from '../../models/lembrete.model';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, OnDestroy {
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
 
   user: User | null = null;
@@ -23,16 +25,26 @@ export class HomeComponent implements OnInit {
   displayedLembretes: Lembrete[] = [];
   pageSize: number = 5;
   pageIndex: number = 0;
+  private lembreteSubscription: Subscription | undefined;
 
   constructor(
     private authService: AuthService,
     private router: Router,
     private lembreteService: LembreteService,
-    private snackBar: MatSnackBar // Adicionando MatSnackBar ao construtor
+    private lembreteWebSocketService: LembreteWebSocketService,
+    private snackBar: MatSnackBar
   ) { }
 
   ngOnInit(): void {
     this.checkAuthentication();
+    this.subscribeToLembretes();
+  }
+
+  ngOnDestroy(): void {
+    this.lembreteWebSocketService.disconnect();
+    if (this.lembreteSubscription) {
+      this.lembreteSubscription.unsubscribe();
+    }
   }
 
   checkAuthentication(): void {
@@ -55,6 +67,7 @@ export class HomeComponent implements OnInit {
   }
 
   carregaLembretes(): void {
+    this.openSnackBar('Carregando lembretes...', 'Fechar');
     this.lembreteService.getLembretes().subscribe(
       (data: Lembrete[]) => {
         this.lembretes = data.map(lembrete => ({
@@ -62,21 +75,24 @@ export class HomeComponent implements OnInit {
           dataLembrete: new Date(lembrete.dataLembrete)
         }));
         this.filtraLembretes();
+        this.openSnackBar('Lembretes carregados com sucesso!', 'Fechar');
       },
       (error) => {
-        this.openSnackBar('Erro ao buscar lembretes', 'Fechar'); // Exibindo erro ao usuário
+        console.error('Erro ao buscar lembretes:', error);
+        this.openSnackBar('Erro ao buscar lembretes', 'Fechar');
       }
     );
   }
 
   filtraLembretes(): void {
+    console.log('Filtrando lembretes para a data:', this.selectedDate);
     const selectedTime = this.selectedDate.setHours(0, 0, 0, 0);
-
     this.filteredLembretes = this.lembretes.filter(lembrete => {
       const lembreteTime = new Date(lembrete.dataLembrete).setHours(0, 0, 0, 0);
       return lembreteTime === selectedTime;
     });
 
+    console.log('Lembretes filtrados:', this.filteredLembretes);
     if (this.paginator) {
       this.paginator.length = this.filteredLembretes.length;
     }
@@ -87,9 +103,11 @@ export class HomeComponent implements OnInit {
   updateDisplayedLembretes(): void {
     const startIndex = this.pageIndex * this.pageSize;
     this.displayedLembretes = this.filteredLembretes.slice(startIndex, startIndex + this.pageSize);
+    console.log('Lembretes exibidos:', this.displayedLembretes);
   }
 
   onDateSelected(date: Date): void {
+    console.log('Data selecionada:', date);
     this.selectedDate = date;
     this.filtraLembretes();
   }
@@ -111,20 +129,35 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  // Funções de lembretes (a serem implementadas conforme necessidade)
+  subscribeToLembretes(): void {
+    this.lembreteSubscription = this.lembreteWebSocketService.getLembretes().subscribe(
+      (lembrete: Lembrete) => {
+        console.log('Novo lembrete recebido via WebSocket:', lembrete);
+        this.lembretes.push(lembrete);
+        this.filtraLembretes();
+        this.carregaLembretes();
+        this.openSnackBar('Novo lembrete recebido!', 'Fechar');
+      },
+      (error: any) => {
+        console.error('Erro ao receber lembretes via WebSocket:', error);
+        this.openSnackBar('Erro ao receber lembretes', 'Fechar');
+      }
+    );
+  }
+
   createReminder(): void {
-    // Abrir um diálogo para criar um novo lembrete
+    // Lógica para criar um novo lembrete
+  }
+
+  viewDetailsReminder(reminder: Lembrete): void {
+    // Lógica para visualizar um novo lembrete
   }
 
   editReminder(reminder: Lembrete): void {
-    // Abrir um diálogo para editar o lembrete existente
-  }
-
-  viewDetails(reminder: Lembrete): void {
-    // Abrir um diálogo para visualizar os detalhes do lembrete
+    // Lógica para editar um novo lembrete
   }
 
   deleteReminder(reminder: Lembrete): void {
-    // Excluir o lembrete selecionado
+    // Lógica para excluir um novo lembrete
   }
 }

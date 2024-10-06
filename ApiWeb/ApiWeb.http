@@ -1,6 +1,55 @@
+# Configuração da API
 @ApiWeb_HostAddress = http://localhost:5212
 
-GET {{ApiWeb_HostAddress}}/weatherforecast/
+# Endpoint para obter todos os lembretes
+GET {{ApiWeb_HostAddress}}/api/v1/lembretes/todos
 Accept: application/json
+
+###
+
+# Endpoint para obter os lembretes do usuário autenticado
+GET {{ApiWeb_HostAddress}}/api/v1/lembretes
+Accept: application/json
+
+###
+
+# Endpoint para adicionar um novo lembrete
+POST {{ApiWeb_HostAddress}}/api/v1/lembretes
+Content-Type: application/json
+Accept: application/json
+
+{
+    "Descricao": "Descrição do lembrete"
+}
+
+###
+
+# Endpoint para atualizar um lembrete existente
+PUT {{ApiWeb_HostAddress}}/api/v1/lembretes/{id}
+Content-Type: application/json
+Accept: application/json
+
+{
+    "LembreteID": {id},
+    "Descricao": "Descrição atualizada do lembrete"
+}
+
+###
+
+# Endpoint para deletar um lembrete
+DELETE {{ApiWeb_HostAddress}}/api/v1/lembretes/{id}
+Accept: application/json
+
+###
+
+# Endpoint para login
+POST {{ApiWeb_HostAddress}}/api/v1/login
+Content-Type: application/json
+Accept: application/json
+
+{
+    "Username": "seu_nome_de_usuario",
+    "Password": "sua_senha"
+}
 
 ###

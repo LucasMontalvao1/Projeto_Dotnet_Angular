@@ -40,13 +40,13 @@ html, body {
 .header-reminder {
   display: flex;
   justify-content: space-between;
-  align-items: center; /* Alinha verticalmente os itens ao centro */
-  margin-bottom: 16px; /* Espaçamento abaixo do cabeçalho */
+  align-items: center; 
+  margin-bottom: 16px; 
 }
 
 .selected-date {
-  font-size: 1rem; /* Ajuste o tamanho da fonte conforme necessário */
-  color: #555; /* Cor do texto da data */
+  font-size: 1rem; 
+  color: #555; 
 }
 
 .calendar-reminders {
@@ -58,13 +58,13 @@ html, body {
 }
 
 .calendar-card {
-  flex: 0.5; /* Diminui o espaço ocupado pelo calendário */
+  flex: 0.5; 
   margin-right: 1rem;
   max-height: 375px;
 }
 
 .reminders-card {
-  flex: 1.5; /* Aumenta o espaço ocupado pelos lembretes */
+  flex: 1.5; 
   margin-left: 1rem;
   max-height: 650px;
 }

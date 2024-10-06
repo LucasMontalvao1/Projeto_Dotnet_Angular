@@ -1,4 +1,5 @@
 using ApiLucas.Infra.Data;
+using ApiWeb.Hubs;
 using ApiWeb.Repositorys;
 using ApiWeb.Repositorys.Interfaces;
 using ApiWeb.Services;
@@ -17,11 +18,14 @@ Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information()
     .WriteTo.Console()
     .WriteTo.File("Logs/myapp-.log", rollingInterval: RollingInterval.Day)
-    .Enrich.FromLogContext() 
+    .Enrich.FromLogContext()
     .CreateLogger();
 
 // Adicionar controladores
 builder.Services.AddControllers();
+
+// Adicionar serviços do SignalR
+builder.Services.AddSignalR();
 
 // Configurar o Swagger para documentar a API
 builder.Services.AddEndpointsApiExplorer();
@@ -37,7 +41,7 @@ builder.Services.AddSwaggerGen(c =>
         Scheme = "bearer",
         BearerFormat = "JWT",
         In = ParameterLocation.Header,
-        Description = "Please enter your JWT token in the format: Bearer {token}"
+        Description = "Por favor, insira o token: Bearer {token}"
     });
 
     // Definir a necessidade de incluir o token para todas as requisições
@@ -61,6 +65,7 @@ builder.Services.AddHttpContextAccessor();
 
 // Configuração do banco de dados e repositórios
 builder.Services.AddSingleton<MySqlConnectionDB>();
+builder.Services.AddScoped<IRabbitMqService, RabbitMqService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<ITokenService, TokenService>();
@@ -97,18 +102,20 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = new SymmetricSecurityKey(key),
         ValidateIssuer = false,
         ValidateAudience = false,
-        ValidateLifetime = true // Valida o tempo de expiração do token
+        ValidateLifetime = true 
     };
 });
 
-builder.Logging.ClearProviders(); 
-builder.Host.UseSerilog(); 
 builder.Logging.ClearProviders();
-builder.Logging.AddConsole(); 
-builder.Logging.AddDebug(); 
+builder.Host.UseSerilog();
+builder.Logging.AddConsole();
+builder.Logging.AddDebug();
 
 // Construir a aplicação
 var app = builder.Build();
+
+// Mapeie o Hub
+app.MapHub<LembreteHub>("/lembreteHub");
 
 // Configuração para o ambiente de desenvolvimento
 if (app.Environment.IsDevelopment())
@@ -118,7 +125,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "API Lucas v1");
-        c.RoutePrefix = string.Empty; 
+        c.RoutePrefix = string.Empty;
     });
 }
 else

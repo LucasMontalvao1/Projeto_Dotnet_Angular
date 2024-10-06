@@ -13,7 +13,18 @@ namespace ApiLucas.Infra.Data
 
         public MySqlConnection CreateConnection()
         {
-            return new MySqlConnection(_connectionString);
+            try
+            {
+                return new MySqlConnection(_connectionString);
+            }
+            catch (MySqlException ex)
+            {
+                throw new Exception("Erro ao criar conexão com o banco de dados.", ex);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Um erro inesperado ocorreu ao criar a conexão.", ex);
+            }
         }
     }
 }

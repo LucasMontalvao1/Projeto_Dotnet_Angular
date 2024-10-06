@@ -35,16 +35,17 @@
 
         <!-- Exibição de lembretes -->
         <ul *ngIf="displayedLembretes.length > 0; else noReminders">
-          <li *ngFor="let reminder of displayedLembretes">
+          <li *ngFor="let reminder of displayedLembretes" [attr.aria-label]="'Lembrete: ' + reminder.titulo">
             {{ reminder.dataLembrete | date: 'dd/MM/yyyy' }} - {{ reminder.titulo }} - {{ reminder.descricao }}
             <div class="reminder-actions">
-              <button mat-icon-button color="primary" (click)="editReminder(reminder)">
+              <button mat-icon-button color="primary" (click)="editReminder(reminder)" aria-label="Editar lembrete">
                 <mat-icon>edit</mat-icon>
               </button>
-              <button mat-icon-button color="accent" (click)="viewDetails(reminder)">
+              <button mat-icon-button color="accent" (click)="viewDetails(reminder)"
+                aria-label="Visualizar detalhes do lembrete">
                 <mat-icon>visibility</mat-icon>
               </button>
-              <button mat-icon-button color="warn" (click)="deleteReminder(reminder)">
+              <button mat-icon-button color="warn" (click)="deleteReminder(reminder)" aria-label="Excluir lembrete">
                 <mat-icon>delete</mat-icon>
               </button>
             </div>

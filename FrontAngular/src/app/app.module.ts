@@ -46,7 +46,7 @@ import { AppRoutingModule } from './app-routing.module';
     MatIconModule,
     MatPaginatorModule
   ],
-  providers: [], // Serviços podem ser adicionados aqui
-  bootstrap: [AppComponent] // Componente inicial
+  providers: [],
+  bootstrap: [AppComponent]
 })
 export class AppModule { }

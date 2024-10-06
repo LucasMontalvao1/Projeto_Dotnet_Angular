@@ -9,17 +9,14 @@ namespace ApiWeb.Services
     public class LembreteService : ILembreteService
     {
         private readonly ILembreteRepository _lembreteRepository;
+        private readonly IRabbitMqService _rabbitMqService;
 
-        public LembreteService(ILembreteRepository lembreteRepository)
+        public LembreteService(ILembreteRepository lembreteRepository, IRabbitMqService rabbitMqService)
         {
             _lembreteRepository = lembreteRepository;
+            _rabbitMqService = rabbitMqService;
         }
 
-        /// <summary>
-        /// Obtém os lembretes de um usuário específico pelo seu ID.
-        /// </summary>
-        /// <param name="usuarioId">ID do usuário.</param>
-        /// <returns>Lista de lembretes do usuário.</returns>
         public List<Lembrete> GetLembretesByUsuarioId(int usuarioId)
         {
             try
@@ -28,25 +25,62 @@ namespace ApiWeb.Services
             }
             catch (Exception ex)
             {
-                // Aqui você pode adicionar um log ou tratamento adicional
                 throw new Exception($"Erro ao obter lembretes para o usuário {usuarioId}: {ex.Message}");
             }
         }
 
-        /// <summary>
-        /// Obtém todos os lembretes sem filtrar por usuário.
-        /// </summary>
-        /// <returns>Lista de todos os lembretes.</returns>
         public List<Lembrete> GetAllLembretes()
         {
             try
             {
-                return _lembreteRepository.GetAllLembretes(); // Método que deve ser implementado no repositório
+                return _lembreteRepository.GetAllLembretes();
             }
             catch (Exception ex)
             {
-                // Aqui você pode adicionar um log ou tratamento adicional
                 throw new Exception($"Erro ao obter todos os lembretes: {ex.Message}");
+            }
+        }
+
+        public Lembrete AddLembrete(Lembrete lembrete, string mensagem)
+        {
+            try
+            {
+                var novoLembrete = _lembreteRepository.AddLembrete(lembrete);
+                _rabbitMqService.PublishReminderAdded(mensagem); 
+                return novoLembrete;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Erro ao adicionar lembrete: {ex.Message}");
+            }
+        }
+
+        public void IniciarConsumoDeLembretes()
+        {
+            _rabbitMqService.SubscribeToReminderQueue();
+        }
+
+        public Lembrete UpdateLembrete(Lembrete lembrete)
+        {
+            try
+            {
+                return _lembreteRepository.UpdateLembrete(lembrete);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Erro ao atualizar lembrete: {ex.Message}");
+            }
+        }
+
+        public bool DeleteLembrete(int lembreteId)
+        {
+            try
+            {
+                return _lembreteRepository.DeleteLembrete(lembreteId);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Erro ao deletar lembrete: {ex.Message}");
             }
         }
     }

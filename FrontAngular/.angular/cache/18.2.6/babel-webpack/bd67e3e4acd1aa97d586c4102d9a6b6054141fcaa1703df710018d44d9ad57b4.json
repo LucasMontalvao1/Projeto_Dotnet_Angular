@@ -1,0 +1,1 @@
+{"ast":null,"code":"const apiUrl = 'https://localhost:7103';\nexport const environment = {\n  production: false,\n  apiUrl: apiUrl,\n  endpoints: {\n    login: `${apiUrl}/api/v1/login`,\n    lembretes: `${apiUrl}/api/v1/lembretes`\n  }\n};","map":null,"metadata":{},"sourceType":"module","externalDependencies":[]}

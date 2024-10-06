@@ -67,3 +67,6 @@ C:\dev\Projeto_Lucas\ApiWeb\bin\Debug\net8.0\Serilog.Settings.Configuration.dll
 C:\dev\Projeto_Lucas\ApiWeb\bin\Debug\net8.0\Serilog.Sinks.Console.dll
 C:\dev\Projeto_Lucas\ApiWeb\bin\Debug\net8.0\Serilog.Sinks.Debug.dll
 C:\dev\Projeto_Lucas\ApiWeb\bin\Debug\net8.0\Serilog.Sinks.File.dll
+C:\dev\Projeto_Lucas\ApiWeb\bin\Debug\net8.0\RabbitMQ.Client.dll
+C:\dev\Projeto_Lucas\ApiWeb\bin\Debug\net8.0\Newtonsoft.Json.dll
+C:\dev\Projeto_Lucas\ApiWeb\bin\Debug\net8.0\System.Net.WebSockets.WebSocketProtocol.dll

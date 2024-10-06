@@ -11,7 +11,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 })
 export class LoginComponent {
   loginForm: FormGroup;
-  isLoading = false; // Controla o estado do botão
+  isLoading = false;
+  errorMessage: string | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -27,18 +28,30 @@ export class LoginComponent {
 
   onSubmit(): void {
     if (this.loginForm.valid) {
-      this.isLoading = true; // Inicia o estado de carregamento
-      this.authService.login(this.loginForm.value).subscribe({
+      this.isLoading = true;
+      this.errorMessage = null;
+      const loginRequest = this.loginForm.value;
+      console.log('Requisição de login:', loginRequest); // Log da requisição
+
+      this.authService.login(loginRequest).subscribe({
         next: (user) => {
-          this.authService.storeToken(user.token);
-          this.router.navigate(['/home']);
-          this.snackBar.open('Login realizado com sucesso!', '', { duration: 3000 });
+          console.log('Resposta do login:', user);
+          if (user && user.token) {
+            this.authService.storeToken(user.token);
+            this.router.navigate(['/home']);
+            this.snackBar.open('Login realizado com sucesso!', '', { duration: 3000 });
+          } else {
+            this.errorMessage = 'Token não recebido. Login falhou.';
+            this.snackBar.open(this.errorMessage, '', { duration: 3000 });
+          }
         },
         error: (error) => {
-          this.snackBar.open('Erro ao fazer login: ' + error, '', { duration: 3000 });
+          this.errorMessage = 'Erro ao fazer login: ' + error; // Armazena mensagem de erro
+          this.snackBar.open(this.errorMessage, '', { duration: 3000 });
+          this.isLoading = false;
         },
         complete: () => {
-          this.isLoading = false; // Finaliza o estado de carregamento
+          this.isLoading = false;
         }
       });
     }

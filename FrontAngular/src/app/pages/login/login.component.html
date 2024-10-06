@@ -24,6 +24,11 @@
           </mat-error>
         </mat-form-field>
 
+        <!-- Mensagem de Erro -->
+        <div *ngIf="errorMessage" class="error-message">
+          {{ errorMessage }}
+        </div>
+
         <!-- Botão de Login -->
         <button mat-raised-button color="primary" type="submit" [disabled]="loginForm.invalid || isLoading">
           {{ isLoading ? 'Entrando...' : 'Entrar' }}
