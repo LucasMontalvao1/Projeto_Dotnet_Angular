@@ -1,4 +1,5 @@
-﻿using MySql.Data.MySqlClient;
+﻿
+using MySqlConnector;
 
 namespace ApiLucas.Infra.Data
 {

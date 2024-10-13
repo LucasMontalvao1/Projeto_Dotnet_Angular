@@ -12,6 +12,8 @@
 
         public DateTime DataLembrete { get; set; }
 
+        public int IntervaloEmDias { get; set; }
+
         public DateTime CriadoEm { get; set; }
     }
 }

@@ -11,6 +11,59 @@
   },
   {
     "ContainingType": "ApiWeb.Controllers.LembreteController",
+    "Method": "AddLembrete",
+    "RelativePath": "api/v1/lembretes",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "lembrete",
+        "Type": "ApiWeb.Models.Lembrete",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ApiWeb.Controllers.LembreteController",
+    "Method": "UpdateLembrete",
+    "RelativePath": "api/v1/lembretes/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "lembrete",
+        "Type": "ApiWeb.Models.Lembrete",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ApiWeb.Controllers.LembreteController",
+    "Method": "DeleteLembrete",
+    "RelativePath": "api/v1/lembretes/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ApiWeb.Controllers.LembreteController",
     "Method": "GetAllLembretes",
     "RelativePath": "api/v1/lembretes/todos",
     "HttpMethod": "GET",

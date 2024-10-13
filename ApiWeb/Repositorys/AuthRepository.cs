@@ -1,7 +1,7 @@
 ﻿using ApiLucas.Infra.Data;
 using ApiWeb.Models;
 using ApiWeb.Repositorys.Interfaces;
-using MySql.Data.MySqlClient;
+using MySqlConnector;
 using System;
 
 namespace ApiWeb.Repositorys

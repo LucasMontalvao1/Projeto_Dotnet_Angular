@@ -1,7 +1,7 @@
 ﻿using ApiLucas.Infra.Data;
 using ApiWeb.Models;
 using ApiWeb.Repositorys.Interfaces;
-using MySql.Data.MySqlClient;
+using MySqlConnector;
 using System;
 using System.Collections.Generic;
 
@@ -29,7 +29,7 @@ namespace ApiWeb.Repositorys
                         _connection.Open();
                     }
 
-                    string query = @"SELECT LembreteID, UsuarioID, Titulo, Descricao, DataLembrete, CriadoEm 
+                    string query = @"SELECT LembreteID, UsuarioID, Titulo, Descricao, DataLembrete, IntervaloEmDias, CriadoEm 
                                      FROM lembretes 
                                      WHERE UsuarioID = @UsuarioID";
 
@@ -48,6 +48,7 @@ namespace ApiWeb.Repositorys
                                     Titulo = reader.GetString("Titulo"),
                                     Descricao = reader.GetString("Descricao"),
                                     DataLembrete = reader.GetDateTime("DataLembrete"),
+                                    IntervaloEmDias = reader.GetInt32("IntervaloEmDias"),
                                     CriadoEm = reader.GetDateTime("CriadoEm")
                                 };
 
@@ -78,7 +79,7 @@ namespace ApiWeb.Repositorys
                         _connection.Open();
                     }
 
-                    string query = @"SELECT LembreteID, UsuarioID, Titulo, Descricao, DataLembrete, CriadoEm 
+                    string query = @"SELECT LembreteID, UsuarioID, Titulo, Descricao, DataLembrete, IntervaloEmDias, CriadoEm 
                                      FROM lembretes";
 
                     using (MySqlCommand command = new MySqlCommand(query, _connection))
@@ -94,6 +95,7 @@ namespace ApiWeb.Repositorys
                                     Titulo = reader.GetString("Titulo"),
                                     Descricao = reader.GetString("Descricao"),
                                     DataLembrete = reader.GetDateTime("DataLembrete"),
+                                    IntervaloEmDias = reader.GetInt32("IntervaloEmDias"),
                                     CriadoEm = reader.GetDateTime("CriadoEm")
                                 };
 
@@ -122,8 +124,8 @@ namespace ApiWeb.Repositorys
                         _connection.Open();
                     }
 
-                    string query = @"INSERT INTO lembretes (UsuarioID, Titulo, Descricao, DataLembrete, CriadoEm) 
-                                     VALUES (@UsuarioID, @Titulo, @Descricao, @DataLembrete, @CriadoEm)";
+                    string query = @"INSERT INTO lembretes (UsuarioID, Titulo, Descricao, DataLembrete, IntervaloEmDias, CriadoEm) 
+                                     VALUES (@UsuarioID, @Titulo, @Descricao, @DataLembrete, @IntervaloEmDias, @CriadoEm)";
 
                     using (MySqlCommand command = new MySqlCommand(query, _connection))
                     {
@@ -131,6 +133,7 @@ namespace ApiWeb.Repositorys
                         command.Parameters.AddWithValue("@Titulo", lembrete.Titulo);
                         command.Parameters.AddWithValue("@Descricao", lembrete.Descricao);
                         command.Parameters.AddWithValue("@DataLembrete", lembrete.DataLembrete);
+                        command.Parameters.AddWithValue("IntervaloEmDias", lembrete.IntervaloEmDias);
                         command.Parameters.AddWithValue("@CriadoEm", lembrete.CriadoEm);
 
                         command.ExecuteNonQuery();
@@ -157,14 +160,15 @@ namespace ApiWeb.Repositorys
                     }
 
                     string query = @"UPDATE lembretes 
-                                     SET Titulo = @Titulo, Descricao = @Descricao, DataLembrete = @DataLembrete 
-                                     WHERE LembreteID = @LembreteID";
+                             SET Titulo = @Titulo, Descricao = @Descricao, DataLembrete = @DataLembrete, IntervaloEmDias = @IntervaloEmDias 
+                             WHERE LembreteID = @LembreteID";
 
                     using (MySqlCommand command = new MySqlCommand(query, _connection))
                     {
                         command.Parameters.AddWithValue("@Titulo", lembrete.Titulo);
                         command.Parameters.AddWithValue("@Descricao", lembrete.Descricao);
                         command.Parameters.AddWithValue("@DataLembrete", lembrete.DataLembrete);
+                        command.Parameters.AddWithValue("@IntervaloEmDias", lembrete.IntervaloEmDias); 
                         command.Parameters.AddWithValue("@LembreteID", lembrete.LembreteID);
 
                         command.ExecuteNonQuery();
@@ -177,6 +181,7 @@ namespace ApiWeb.Repositorys
             }
             return lembrete;
         }
+
 
         public bool DeleteLembrete(int lembreteId)
         {

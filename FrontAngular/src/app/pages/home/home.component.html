@@ -58,7 +58,7 @@
           <p>Não há lembretes para esta data.</p>
         </ng-template>
 
-        <mat-paginator [length]="filteredLembretes.length" [pageSize]="pageSize" [pageSizeOptions]="[5, 10, 20]"
+        <mat-paginator [length]="filteredLembretes.length" [pageSize]="pageSize" [pageSizeOptions]="[5]"
           (page)="onPageChange($event)">
         </mat-paginator>
       </mat-card-content>

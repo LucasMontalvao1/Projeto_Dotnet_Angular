@@ -8,6 +8,7 @@ import { environment } from '@/environments/environment';
 @Injectable({
   providedIn: 'root'
 })
+
 export class LembreteService {
   private apiUrl = environment.endpoints.lembretes;
 

@@ -1,5 +1,6 @@
 using ApiLucas.Infra.Data;
 using ApiWeb.Hubs;
+using ApiWeb.Services.Hangfire;
 using ApiWeb.Repositorys;
 using ApiWeb.Repositorys.Interfaces;
 using ApiWeb.Services;
@@ -9,17 +10,26 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using System.Text;
+using Hangfire;
+using Hangfire.MySql;
+using System.Transactions;
+using Serilog.Filters;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Configuração do Serilog
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Debug()
+    .MinimumLevel.Override("Hangfire", Serilog.Events.LogEventLevel.Warning) // Aumentar o nível de log do Hangfire
     .MinimumLevel.Information()
+    .Filter.ByExcluding(Matching.FromSource("Microsoft.AspNetCore.Hosting.Diagnostics")) // Filtrar logs do ASP.NET
+    .Filter.ByExcluding(logEvent => logEvent.Properties.ContainsKey("RequestPath") && logEvent.Properties["RequestPath"].ToString().Contains("/hangfire/stats")) // Filtrar requisições do Hangfire
     .WriteTo.Console()
     .WriteTo.File("Logs/myapp-.log", rollingInterval: RollingInterval.Day)
     .Enrich.FromLogContext()
     .CreateLogger();
+;
 
 // Adicionar controladores
 builder.Services.AddControllers();
@@ -32,8 +42,6 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "API Lucas", Version = "v1" });
-
-    // Configuração de segurança do Swagger para aceitar JWT tokens
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
@@ -43,8 +51,6 @@ builder.Services.AddSwaggerGen(c =>
         In = ParameterLocation.Header,
         Description = "Por favor, insira o token: Bearer {token}"
     });
-
-    // Definir a necessidade de incluir o token para todas as requisições
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
@@ -66,6 +72,7 @@ builder.Services.AddHttpContextAccessor();
 // Configuração do banco de dados e repositórios
 builder.Services.AddSingleton<MySqlConnectionDB>();
 builder.Services.AddScoped<IRabbitMqService, RabbitMqService>();
+builder.Services.AddScoped<IHangfireService, HangfireService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<ITokenService, TokenService>();
@@ -82,6 +89,27 @@ builder.Services.AddCors(options =>
             .AllowAnyMethod()
             .AllowAnyHeader());
 });
+
+// Configuração do Hangfire
+var connectionString = "server=localhost;userid=root;password=asd123; Allow User Variables=True;database=projeto_producao ";
+
+builder.Services.AddHangfire(configuration =>
+{
+    var options = new MySqlStorageOptions
+    {
+        QueuePollInterval = TimeSpan.FromSeconds(10), // Checa a fila a cada 10 segundos
+        TransactionIsolationLevel = IsolationLevel.ReadCommitted,
+        
+    };
+
+    configuration.UseStorage(new MySqlStorage(connectionString, options));
+});
+
+builder.Services.AddHangfireServer(options =>
+{
+    options.ServerCheckInterval = TimeSpan.FromMinutes(10); // Checa novos jobs a cada 10 minutos
+});
+
 
 // Configuração da chave JWT a partir do appsettings.json ou Configuration
 var key = Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]);
@@ -102,7 +130,7 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = new SymmetricSecurityKey(key),
         ValidateIssuer = false,
         ValidateAudience = false,
-        ValidateLifetime = true 
+        ValidateLifetime = true
     };
 });
 
@@ -110,9 +138,21 @@ builder.Logging.ClearProviders();
 builder.Host.UseSerilog();
 builder.Logging.AddConsole();
 builder.Logging.AddDebug();
+builder.Logging.AddFilter("Microsoft.AspNetCore.Routing.HttpRoutingMiddleware", LogLevel.Error); // Ignorar logs do Hangfire
+
 
 // Construir a aplicação
 var app = builder.Build();
+
+app.UseHangfireDashboard();
+app.MapHangfireDashboard();
+
+var recurringJobs = app.Services.GetRequiredService<IRecurringJobManager>();
+recurringJobs.AddOrUpdate<HangfireService>(
+    "VerificarLembretesRepetidos",   // Nome do job
+    x => x.ExecuteJob(),              // Método a ser chamado
+    Cron.Hourly                        // Executa de hora em hora
+);
 
 // Mapeie o Hub
 app.MapHub<LembreteHub>("/lembreteHub");

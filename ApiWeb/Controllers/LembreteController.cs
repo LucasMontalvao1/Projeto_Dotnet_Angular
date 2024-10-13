@@ -112,7 +112,7 @@ namespace ApiWeb.Controllers
                 var mensagem = $"Lembrete criado para o usuário {usuarioId} com descrição: {lembrete.Descricao}";
 
                 // Chamada ao serviço com lembrete e mensagem
-                var novoLembrete = _lembreteService.AddLembrete(lembrete, mensagem);
+                var novoLembrete = _lembreteService.AddLembrete(lembrete, $"Lembrete criado com intervalo de {lembrete.IntervaloEmDias} dias.");
 
                 _logger.LogInformation($"Novo lembrete criado com ID {novoLembrete.LembreteID} pelo usuário com ID {usuarioId}.");
 
