@@ -9,6 +9,8 @@ namespace ApiWeb.Repositorys.Interfaces
 
         List<Lembrete> GetAllLembretes();
 
+        Lembrete GetLembreteById(int lembreteId);
+
         Lembrete AddLembrete(Lembrete lembrete);
 
         Lembrete UpdateLembrete(Lembrete lembrete);

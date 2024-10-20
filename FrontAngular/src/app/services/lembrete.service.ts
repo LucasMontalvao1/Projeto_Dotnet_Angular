@@ -24,13 +24,17 @@ export class LembreteService {
       .pipe(catchError(this.handleError));
   }
 
+  getLembreteById(id: number): Observable<Lembrete> {
+    return this.http.get<Lembrete>(`${this.apiUrl}/${id}`);
+  }
+  
   createLembrete(lembrete: Lembrete): Observable<Lembrete> {
     return this.http.post<Lembrete>(this.apiUrl, lembrete, { headers: this.getHeaders() })
       .pipe(catchError(this.handleError));
   }
 
   editLembrete(lembrete: Lembrete): Observable<Lembrete> {
-    return this.http.put<Lembrete>(`${this.apiUrl}/${lembrete.id}`, lembrete, { headers: this.getHeaders() })
+    return this.http.put<Lembrete>(`${this.apiUrl}/${lembrete.lembreteID}`, lembrete, { headers: this.getHeaders() })
       .pipe(catchError(this.handleError));
   }
 

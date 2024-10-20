@@ -98,6 +98,25 @@ namespace ApiWeb.Controllers
             }
         }
 
+        // GET: api/v1/lembretes/{id}
+        [HttpGet("{id}")]
+        public IActionResult GetLembreteById(int id)
+        {
+            try
+            {
+                var lembrete = _lembreteService.GetLembreteById(id);
+                if (lembrete == null)
+                {
+                    return NotFound($"Lembrete com ID {id} não encontrado.");
+                }
+                return Ok(lembrete);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erro ao obter lembrete: {ex.Message}");
+            }
+        }
+
 
         // POST: api/v1/lembretes
         [HttpPost]
@@ -115,6 +134,7 @@ namespace ApiWeb.Controllers
                 var novoLembrete = _lembreteService.AddLembrete(lembrete, $"Lembrete criado com intervalo de {lembrete.IntervaloEmDias} dias.");
 
                 _logger.LogInformation($"Novo lembrete criado com ID {novoLembrete.LembreteID} pelo usuário com ID {usuarioId}.");
+                _logger.LogInformation($"Adicionando lembrete: UsuarioID={lembrete.UsuarioID}, Titulo={lembrete.Titulo}, Descricao={lembrete.Descricao}, DataLembrete={lembrete.DataLembrete}, IntervaloEmDias={lembrete.IntervaloEmDias}, CriadoEm={lembrete.CriadoEm}");
 
                 return CreatedAtAction(nameof(GetLembretes), new { id = novoLembrete.LembreteID }, novoLembrete);
             }

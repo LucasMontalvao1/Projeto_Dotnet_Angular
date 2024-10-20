@@ -4,12 +4,22 @@
   <!-- Cartão de perfil do usuário -->
   <mat-card class="profile-card">
     <mat-card-header>
-      <div mat-card-avatar class="header-avatar">
-        <img [src]="user?.foto" alt="Foto do usuário" class="user-avatar">
+      <div class="header-avatar">
+        <img *ngIf="user?.foto; else defaultImage" 
+             [src]="user.foto" 
+             alt="Foto do usuário" 
+             class="user-avatar">
+  
+        <ng-template #defaultImage>
+          <img src="https://static.vecteezy.com/ti/vetor-gratis/p1/2454057-perfil-sem-rosto-gratis-vetor.jpg" 
+               alt="Foto padrão" 
+               class="user-avatar">
+        </ng-template>
       </div>
       <div class="header-details">
-        <mat-card-title>Bem-vindo, {{ user?.name }}</mat-card-title>
-        <mat-card-subtitle>{{ user?.email }}</mat-card-subtitle>
+        <mat-card-title>Bem-vindo</mat-card-title>
+        <div>Nome: {{ user?.name }}</div>
+        <div>Email: {{ user?.email }}</div>
         <p>Username: {{ user?.username }}</p>
       </div>
     </mat-card-header>

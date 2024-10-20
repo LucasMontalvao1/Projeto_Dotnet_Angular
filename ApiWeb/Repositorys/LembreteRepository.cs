@@ -113,6 +113,49 @@ namespace ApiWeb.Repositorys
             return lembretes;
         }
 
+        public Lembrete GetLembreteById(int lembreteId)
+        {
+            Lembrete lembrete = null;
+            try
+            {
+                using (_connection)
+                {
+                    if (_connection.State == System.Data.ConnectionState.Closed)
+                    {
+                        _connection.Open();
+                    }
+
+                    string query = @"SELECT * FROM lembretes WHERE LembreteID = @LembreteID";
+
+                    using (MySqlCommand command = new MySqlCommand(query, _connection))
+                    {
+                        command.Parameters.AddWithValue("@LembreteID", lembreteId);
+                        using (MySqlDataReader reader = command.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                lembrete = new Lembrete
+                                {
+                                    LembreteID = reader.GetInt32("LembreteID"),
+                                    UsuarioID = reader.GetInt32("UsuarioID"),
+                                    Titulo = reader.GetString("Titulo"),
+                                    Descricao = reader.GetString("Descricao"),
+                                    DataLembrete = reader.GetDateTime("DataLembrete"),
+                                    IntervaloEmDias = reader.GetInt32("IntervaloEmDias"),
+                                    CriadoEm = reader.GetDateTime("CriadoEm")
+                                };
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Erro ao obter lembrete com ID {lembreteId}: {ex.Message}");
+            }
+            return lembrete;
+        }
+
         public Lembrete AddLembrete(Lembrete lembrete)
         {
             try

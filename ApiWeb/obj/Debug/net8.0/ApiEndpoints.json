@@ -1,5 +1,15 @@
 [
   {
+    "ContainingType": "ApiWeb.Controllers.HangfireController",
+    "Method": "DispararJob",
+    "RelativePath": "api/Hangfire/disparar-job",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "ApiWeb.Controllers.LembreteController",
     "Method": "GetLembretes",
     "RelativePath": "api/v1/lembretes",
@@ -20,6 +30,22 @@
       {
         "Name": "lembrete",
         "Type": "ApiWeb.Models.Lembrete",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ApiWeb.Controllers.LembreteController",
+    "Method": "GetLembreteById",
+    "RelativePath": "api/v1/lembretes/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
         "IsRequired": true
       }
     ],

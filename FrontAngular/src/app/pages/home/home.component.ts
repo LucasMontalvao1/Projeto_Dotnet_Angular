@@ -9,6 +9,10 @@ import { PageEvent } from '@angular/material/paginator';
 import { Lembrete } from '../../models/lembrete.model';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subscription } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
+import { LembretesComponent } from '../lembretes/lembretes.component';
+import { LembretesExcluirComponent } from '../lembretes/lembretes-excluir/lembretes-excluir.component';
+import { LembretesDetalhesComponent } from '../lembretes/lembretes-detalhes/lembretes-detalhes.component';
 
 @Component({
   selector: 'app-home',
@@ -32,12 +36,14 @@ export class HomeComponent implements OnInit, OnDestroy {
     private router: Router,
     private lembreteService: LembreteService,
     private lembreteWebSocketService: LembreteWebSocketService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    public dialog: MatDialog
   ) { }
 
   ngOnInit(): void {
     this.checkAuthentication();
     this.subscribeToLembretes();
+    this.carregaLembretes();
   }
 
   ngOnDestroy(): void {
@@ -64,6 +70,21 @@ export class HomeComponent implements OnInit, OnDestroy {
     } else {
       this.router.navigate(['/login']);
     }
+  }
+
+  carregaDeleteLembretes(): void {
+    this.lembreteService.getLembretes().subscribe(
+      (data: Lembrete[]) => {
+        this.lembretes = data.map(lembrete => ({
+          ...lembrete,
+          dataLembrete: new Date(lembrete.dataLembrete)
+        }));
+        this.filtraLembretes();
+      },
+      (error) => {
+        console.error('Erro ao buscar lembretes:', error);
+      }
+    );
   }
 
   carregaLembretes(): void {
@@ -146,18 +167,45 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   createReminder(): void {
-    // Lógica para criar um novo lembrete
-  }
-
-  viewDetailsReminder(reminder: Lembrete): void {
-    // Lógica para visualizar um novo lembrete
+    const dialogRef = this.dialog.open(LembretesComponent);
+  
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        console.log('Dados para criar lembrete:', result);
+        this.carregaLembretes(); 
+      }
+    });
   }
 
   editReminder(reminder: Lembrete): void {
-    // Lógica para editar um novo lembrete
+    console.log('Lembrete a ser editado:', reminder); 
+
+    const dialogRef = this.dialog.open(LembretesComponent, { data: reminder });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        console.log('Dados para editar lembrete:', result);
+        this.carregaLembretes(); 
+      }
+    });
   }
 
+
   deleteReminder(reminder: Lembrete): void {
-    // Lógica para excluir um novo lembrete
+    const dialogRef = this.dialog.open(LembretesExcluirComponent, {
+      data: reminder,
+      width: 'max-content', // Define a largura máxima do diálogo
+    });
+  
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.carregaDeleteLembretes(); 
+      }
+    });
+  }
+
+  viewDetails(reminder: Lembrete): void {
+    this.dialog.open(LembretesDetalhesComponent, { data: reminder });
   }
 }
+

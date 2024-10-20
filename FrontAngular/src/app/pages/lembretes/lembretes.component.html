@@ -1,0 +1,41 @@
+<h2 mat-dialog-title class="dialog-title">{{ lembrete.lembreteID ? 'Editar Lembrete - ID: ' + lembrete.lembreteID : 'Criar Lembrete' }}</h2>
+
+<mat-dialog-content>
+  <form #form="ngForm">
+
+    <mat-form-field appearance="fill">
+      <mat-label>Título</mat-label>
+      <input matInput [(ngModel)]="lembrete.titulo" name="titulo" required aria-label="Título do lembrete">
+      <mat-error *ngIf="!lembrete.titulo">Título é obrigatório!</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Descrição</mat-label>
+      <textarea matInput [(ngModel)]="lembrete.descricao" name="descricao" required aria-label="Descrição do lembrete"></textarea>
+      <mat-error *ngIf="!lembrete.descricao">Descrição é obrigatória!</mat-error>
+    </mat-form-field>
+
+    <div style="display: flex; align-items: center; justify-content: space-between;">
+      <mat-form-field appearance="fill" style="flex: 1; margin-right: 16px;">
+        <mat-label>Data do Lembrete</mat-label>
+        <input matInput [(ngModel)]="lembrete.dataLembrete" name="dataLembrete" [matDatepicker]="picker" required aria-label="Data do lembrete">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+        <mat-error *ngIf="!lembrete.dataLembrete">Data é obrigatória!</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" style="width: 120px;">
+        <mat-label>Intervalo em Dias</mat-label>
+        <input matInput type="number" [(ngModel)]="lembrete.intervaloEmDias" name="intervaloEmDias" min="0" required aria-label="Intervalo em dias">
+        <mat-error *ngIf="lembrete.intervaloEmDias < 0">Intervalo deve ser maior ou igual a zero!</mat-error>
+      </mat-form-field>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button mat-button (click)="onCancel()">Cancelar</button>
+  <button mat-raised-button color="primary" (click)="onSave()" [disabled]="!form.valid">
+    {{ lembrete.lembreteID ? 'Salvar' : 'Criar' }}
+  </button>
+</mat-dialog-actions>

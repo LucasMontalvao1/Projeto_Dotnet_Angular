@@ -41,12 +41,25 @@ namespace ApiWeb.Services
             }
         }
 
+        public Lembrete GetLembreteById(int lembreteId)  
+        {
+            try
+            {
+                return _lembreteRepository.GetLembreteById(lembreteId);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Erro ao obter o lembrete com ID {lembreteId}: {ex.Message}");
+            }
+        }
+
+
         public Lembrete AddLembrete(Lembrete lembrete, string mensagem)
         {
             try
             {
                 var novoLembrete = _lembreteRepository.AddLembrete(lembrete);
-                _rabbitMqService.PublishReminderAdded(mensagem); 
+                _rabbitMqService.PublishReminderAdded(mensagem);
                 return novoLembrete;
             }
             catch (Exception ex)
@@ -54,6 +67,7 @@ namespace ApiWeb.Services
                 throw new Exception($"Erro ao adicionar lembrete: {ex.Message}");
             }
         }
+
 
         public void IniciarConsumoDeLembretes()
         {

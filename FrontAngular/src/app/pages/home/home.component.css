@@ -19,23 +19,30 @@ html, body {
   width: 100%;
   max-width: 1000px;
   margin-bottom: 1rem;
+  overflow: hidden; 
 }
 
 .header-avatar {
   display: flex;
   align-items: center;
+  justify-content: center; 
   margin-right: 16px;
+  flex-shrink: 0; 
 }
 
 .user-avatar {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  object-fit: cover;
+  width: 80px; 
+  height: 80px; 
+  border-radius: 50%; 
+  object-fit: cover; 
 }
 
 .header-details {
-  flex-grow: 1;
+  flex-grow: 1; 
+  display: flex; 
+  flex-direction: column; 
+  justify-content: center; 
+  overflow: hidden; 
 }
 
 .header-reminder {

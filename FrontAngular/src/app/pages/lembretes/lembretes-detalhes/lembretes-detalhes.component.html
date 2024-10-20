@@ -1,0 +1,12 @@
+<h2 mat-dialog-title>Detalhes do Lembrete</h2>
+
+<mat-dialog-content>
+  <p><strong>Título:</strong> {{ data.titulo }}</p>
+  <p><strong>Descrição:</strong> {{ data.descricao }}</p>
+  <p><strong>Data do Lembrete:</strong> {{ data.dataLembrete | date: 'dd/MM/yyyy HH:mm' }}</p>
+  <p><strong>Intervalo em Dias:</strong> {{ data.intervaloEmDias }}</p>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button mat-button (click)="onClose()">Fechar</button>
+</mat-dialog-actions>

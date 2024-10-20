@@ -183,6 +183,9 @@ app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Permite o acesso a arquivos estáticos
+app.UseStaticFiles();
+
 // Mapear os controladores
 app.MapControllers();
 

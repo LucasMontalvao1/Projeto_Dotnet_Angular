@@ -9,6 +9,8 @@ namespace ApiWeb.Services.Interfaces
 
         List<Lembrete> GetAllLembretes();
 
+        Lembrete GetLembreteById(int lembreteId);
+
         Lembrete AddLembrete(Lembrete lembrete, string mensagem);
 
         Lembrete UpdateLembrete(Lembrete lembrete);

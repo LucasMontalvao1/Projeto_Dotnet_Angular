@@ -50,6 +50,12 @@ export class AuthService {
     return decodedToken;
   }
 
+  // Novo método para obter o ID do usuário do token
+  getCurrentUserId(): number {
+    const decodedToken = this.getDecodedToken();
+    return decodedToken ? decodedToken.usuarioID : 0; 
+  }
+
   // Limpa o token do sessionStorage, efetua logout
   logout(): void {
     sessionStorage.removeItem('token');

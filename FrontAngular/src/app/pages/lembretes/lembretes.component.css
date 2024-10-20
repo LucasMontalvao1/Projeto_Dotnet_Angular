@@ -1,0 +1,40 @@
+h2 {
+  margin-bottom: 20px;
+  font-size: 28px; /* Aumenta o tamanho da fonte do título */
+  font-weight: bold;
+  color: #3f51b5; /* Cor do título */
+  text-align: center; /* Centraliza o título */
+}
+
+mat-form-field {
+  width: 100%;
+  margin-bottom: 16px; /* Espaçamento entre os campos */
+}
+
+mat-dialog-content {
+  display: flex;
+  flex-direction: column;
+}
+
+mat-dialog-actions {
+  justify-content: flex-end; /* Alinha os botões à direita */
+}
+
+mat-error {
+  font-size: 12px;
+  color: red;
+}
+
+/* Estilizando o calendário do mat-datepicker */
+.mat-datepicker-content {
+  background-color: white; /* Cor de fundo do calendário */
+}
+
+.mat-datepicker-toggle {
+  color: #3f51b5; /* Cor do botão de calendário */
+}
+
+/* Adicionando espaçamento ao lado do calendário e campo de intervalo */
+mat-form-field {
+  margin-right: 16px; /* Espaço entre os campos */
+}
