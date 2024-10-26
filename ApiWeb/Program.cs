@@ -31,6 +31,8 @@ Log.Logger = new LoggerConfiguration()
     .CreateLogger();
 ;
 
+builder.Host.UseSerilog();
+
 // Adicionar controladores
 builder.Services.AddControllers();
 
@@ -79,6 +81,11 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<ITokenRepository, TokenRepository>();
 builder.Services.AddScoped<ILembreteRepository, LembreteRepository>();
 builder.Services.AddScoped<ILembreteService, LembreteService>();
+builder.Services.AddScoped<ICategoriaRepository, CategoriaRepository>();
+builder.Services.AddScoped<ICategoriaService, CategoriaService>();
+builder.Services.AddScoped<ITransacaoRepository, TransacaoRepository>();
+builder.Services.AddScoped<ITransacaoService, TransacaoService>();
+
 
 // Configuração de política de CORS para permitir todas as origens
 builder.Services.AddCors(options =>
@@ -165,7 +172,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "API Lucas v1");
-        c.RoutePrefix = string.Empty;
+        c.RoutePrefix = "swagger";
     });
 }
 else

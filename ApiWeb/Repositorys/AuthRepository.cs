@@ -56,5 +56,31 @@ namespace ApiWeb.Repositorys
 
             return validatedUser;
         }
+
+        public async Task<bool> UsuarioExiste(int usuarioId)
+        {
+            try
+            {
+                using (MySqlConnection connection = _mySqlConnectionDB.CreateConnection())
+                {
+                    string query = "SELECT COUNT(1) FROM usuarios WHERE UsuarioID = @UsuarioID";
+
+                    using (MySqlCommand command = new MySqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@UsuarioID", usuarioId);
+                        await connection.OpenAsync();
+
+                        var exists = await command.ExecuteScalarAsync();
+                        return Convert.ToInt32(exists) > 0;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred while checking user existence: {ex.Message}");
+                return false;
+            }
+
+        }
     }
 }

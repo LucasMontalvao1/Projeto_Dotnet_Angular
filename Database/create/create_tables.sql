@@ -45,3 +45,27 @@ CREATE TABLE IF NOT EXISTS lembreteslog (
     DataLog DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (LembreteID) REFERENCES lembretes(LembreteID)
 );
+
+---------------------------------------------------------------
+
+-- Tabela: Categorias
+CREATE TABLE Categorias (
+    CategoriaID INT AUTO_INCREMENT PRIMARY KEY,
+    Nome VARCHAR(100) NOT NULL,
+    Descricao VARCHAR(255)
+);
+
+-- Tabela: Transacoes
+CREATE TABLE Transacoes (
+    TransacaoID INT AUTO_INCREMENT PRIMARY KEY,
+    UsuarioID INT,
+    CategoriaID INT,  -- Categoria associada diretamente à transação
+    Tipo ENUM('Entrada', 'Saída') NOT NULL,
+    Valor DECIMAL(10, 2) NOT NULL,
+    Descricao VARCHAR(255),
+    Data DATETIME DEFAULT CURRENT_TIMESTAMP,
+    CriadoEm DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (UsuarioID) REFERENCES Usuarios(UsuarioID) ON DELETE CASCADE,
+    FOREIGN KEY (CategoriaID) REFERENCES Categorias(CategoriaID) ON DELETE CASCADE
+);
+

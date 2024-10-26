@@ -90,3 +90,11 @@ C:\dev\Projeto_Lucas\ApiWeb\obj\Debug\net8.0\refint\ApiWeb.dll
 C:\dev\Projeto_Lucas\ApiWeb\obj\Debug\net8.0\ApiWeb.pdb
 C:\dev\Projeto_Lucas\ApiWeb\obj\Debug\net8.0\ApiWeb.genruntimeconfig.cache
 C:\dev\Projeto_Lucas\ApiWeb\obj\Debug\net8.0\ref\ApiWeb.dll
+C:\dev\Projeto_Lucas\ApiWeb\bin\Debug\net8.0\Microsoft.AspNetCore.JsonPatch.dll
+C:\dev\Projeto_Lucas\ApiWeb\bin\Debug\net8.0\Microsoft.AspNetCore.Mvc.NewtonsoftJson.dll
+C:\dev\Projeto_Lucas\ApiWeb\bin\Debug\net8.0\Newtonsoft.Json.Bson.dll
+C:\dev\Projeto_Lucas\ApiWeb\bin\Debug\net8.0\Serilog.Enrichers.Environment.dll
+C:\dev\Projeto_Lucas\ApiWeb\bin\Debug\net8.0\Serilog.Enrichers.Process.dll
+C:\dev\Projeto_Lucas\ApiWeb\bin\Debug\net8.0\Serilog.Enrichers.Thread.dll
+C:\dev\Projeto_Lucas\ApiWeb\bin\Debug\net8.0\Serilog.Expressions.dll
+C:\dev\Projeto_Lucas\ApiWeb\bin\Debug\net8.0\Serilog.Extensions.dll
