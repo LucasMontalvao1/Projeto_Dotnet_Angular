@@ -25,7 +25,29 @@ namespace ApiWeb.Tests.Mocks
                     new Lembrete { LembreteID = usuarioId, Titulo = $"Lembrete Usuario {usuarioId}" }
                 });
 
-            // Adicione mais setups conforme necessário
+            // Configuração para GetLembreteById
+            mockService.Setup(service => service.GetLembreteById(It.IsAny<int>()))
+                .Returns((int id) =>
+                {
+                    if (id == 1)
+                        return new Lembrete { LembreteID = 1, Titulo = "Lembrete Teste" };
+                    return null; // Simula lembrete inexistente
+                });
+
+            // Configuração para AddLembrete
+            mockService.Setup(service => service.AddLembrete(It.IsAny<Lembrete>(), It.IsAny<string>()))
+                .Returns((Lembrete lembrete, string userId) =>
+                {
+                    if (lembrete.Titulo == "Lembrete Teste 1") // Simula que já existe
+                        throw new Exception("Lembrete já existe");
+                    lembrete.LembreteID = 3; // Simula ID gerado
+                    return lembrete;
+                });
+
+            // Configuração para DeleteLembrete
+            mockService.Setup(service => service.DeleteLembrete(It.IsAny<int>()))
+                .Returns((int id) => id == 1); // Suponha que apenas o ID 1 pode ser excluído
+
             return mockService;
         }
     }

@@ -122,19 +122,19 @@ namespace ApiWeb.Controllers
         [HttpPost]
         public IActionResult AddLembrete([FromBody] Lembrete lembrete)
         {
+            if (lembrete == null || string.IsNullOrWhiteSpace(lembrete.Titulo))
+            {
+                return BadRequest("Lembrete inválido");
+            }
+
             try
             {
                 var usuarioId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 _logger.LogInformation($"Usuário com ID {usuarioId} está adicionando um novo lembrete.");
 
-                // Definindo uma mensagem ao adicionar o lembrete
-                var mensagem = $"Lembrete criado para o usuário {usuarioId} com descrição: {lembrete.Descricao}";
-
-                // Chamada ao serviço com lembrete e mensagem
                 var novoLembrete = _lembreteService.AddLembrete(lembrete, $"Lembrete criado com intervalo de {lembrete.IntervaloEmDias} dias.");
 
                 _logger.LogInformation($"Novo lembrete criado com ID {novoLembrete.LembreteID} pelo usuário com ID {usuarioId}.");
-                _logger.LogInformation($"Adicionando lembrete: UsuarioID={lembrete.UsuarioID}, Titulo={lembrete.Titulo}, Descricao={lembrete.Descricao}, DataLembrete={lembrete.DataLembrete}, IntervaloEmDias={lembrete.IntervaloEmDias}, CriadoEm={lembrete.CriadoEm}");
 
                 return CreatedAtAction(nameof(GetLembretes), new { id = novoLembrete.LembreteID }, novoLembrete);
             }

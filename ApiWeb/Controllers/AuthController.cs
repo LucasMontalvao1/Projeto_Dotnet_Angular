@@ -21,6 +21,18 @@ namespace ApiWeb.Controllers
         [HttpPost("login")]
         public IActionResult Login([FromBody] UserDto userDto)
         {
+            // Verifica se userDto é nulo
+            if (userDto == null)
+            {
+                return BadRequest("Usuário não pode ser nulo");
+            }
+
+            // Verifica se Username ou Password estão vazios
+            if (string.IsNullOrEmpty(userDto.Username) || string.IsNullOrEmpty(userDto.Password))
+            {
+                return BadRequest("Nome de usuário e senha não podem estar vazios");
+            }
+
             _logger.LogInformation("Tentativa de login para o usuário: {Username}", userDto.Username);
 
             try
@@ -35,7 +47,7 @@ namespace ApiWeb.Controllers
                     return Ok(new LoginResponse
                     {
                         Token = token,
-                        User = new UserResponseDto 
+                        User = new UserResponseDto
                         {
                             UsuarioID = usuario.UsuarioID,
                             Username = usuario.Username,
