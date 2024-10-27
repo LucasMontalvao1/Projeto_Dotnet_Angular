@@ -1,7 +1,7 @@
 ﻿
 using MySqlConnector;
 
-namespace ApiLucas.Infra.Data
+namespace ApiWeb.Infra.Data
 {
     public class MySqlConnectionDB
     {

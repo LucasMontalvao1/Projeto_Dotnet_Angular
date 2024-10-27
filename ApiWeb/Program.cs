@@ -1,4 +1,4 @@
-using ApiLucas.Infra.Data;
+using ApiWeb.Infra.Data;
 using ApiWeb.Hubs;
 using ApiWeb.Services.Hangfire;
 using ApiWeb.Repositorys;

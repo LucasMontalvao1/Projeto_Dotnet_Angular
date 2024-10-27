@@ -1,4 +1,4 @@
-﻿using ApiLucas.Infra.Data;
+﻿using ApiWeb.Infra.Data;
 using ApiWeb.Models;
 using ApiWeb.Models.DTOs;
 using ApiWeb.Repositorys.Interfaces;
