@@ -1,79 +1,87 @@
-<app-menu></app-menu>
+<!-- home.component.html -->
+<div class="page-container">
+  <app-menu></app-menu>
 
-<div class="home-container">
-  <!-- Cartão de perfil do usuário -->
-  <mat-card class="profile-card">
-    <mat-card-header>
-      <div class="header-avatar">
-        <img *ngIf="user?.foto; else defaultImage" 
-             [src]="user.foto" 
-             alt="Foto do usuário" 
-             class="user-avatar">
-  
-        <ng-template #defaultImage>
-          <img src="https://static.vecteezy.com/ti/vetor-gratis/p1/2454057-perfil-sem-rosto-gratis-vetor.jpg" 
-               alt="Foto padrão" 
+  <div class="home-container">
+    <!-- Cartão de perfil do usuário -->
+    <mat-card class="profile-card">
+      <mat-card-header>
+        <div class="header-avatar">
+          <img *ngIf="user?.foto; else defaultImage" 
+               [src]="user.foto" 
+               alt="Foto do usuário" 
                class="user-avatar">
-        </ng-template>
-      </div>
-      <div class="header-details">
-        <mat-card-title>Bem-vindo</mat-card-title>
-        <div>Nome: {{ user?.name }}</div>
-        <div>Email: {{ user?.email }}</div>
-        <p>Username: {{ user?.username }}</p>
-      </div>
-    </mat-card-header>
-  </mat-card>
-
-  <!-- Layout com o calendário e lembretes -->
-  <div class="calendar-reminders">
-    <!-- Cartão do calendário -->
-    <mat-card class="calendar-card">
-      <mat-card-title>Calendário</mat-card-title>
-      <mat-card-content>
-        <mat-calendar [selected]="selectedDate" (selectedChange)="onDateSelected($event)"></mat-calendar>
-      </mat-card-content>
-    </mat-card>
-
-    <!-- Cartão de lembretes -->
-    <mat-card class="reminders-card">
-      <mat-card-title>Lembretes</mat-card-title>
-      <mat-card-content>
-        <div class="header-reminder">
-          <mat-card-subtitle class="selected-date">{{ selectedDate | date: 'dd MMMM yyyy' }}</mat-card-subtitle>
-          <button mat-raised-button color="primary" (click)="createReminder()" class="create-button">Criar
-            Lembrete</button>
+    
+          <ng-template #defaultImage>
+            <img src="https://static.vecteezy.com/ti/vetor-gratis/p1/2454057-perfil-sem-rosto-gratis-vetor.jpg" 
+                 alt="Foto padrão" 
+                 class="user-avatar">
+          </ng-template>
         </div>
-
-        <!-- Exibição de lembretes -->
-        <ul *ngIf="displayedLembretes.length > 0; else noReminders">
-          <li *ngFor="let reminder of displayedLembretes" [attr.aria-label]="'Lembrete: ' + reminder.titulo">
-            {{ reminder.dataLembrete | date: 'dd/MM/yyyy' }} - {{ reminder.titulo }} - {{ reminder.descricao }}
-            <div class="reminder-actions">
-              <button mat-icon-button color="primary" (click)="editReminder(reminder)" aria-label="Editar lembrete">
-                <mat-icon>edit</mat-icon>
-              </button>
-              <button mat-icon-button color="accent" (click)="viewDetails(reminder)"
-                aria-label="Visualizar detalhes do lembrete">
-                <mat-icon>visibility</mat-icon>
-              </button>
-              <button mat-icon-button color="warn" (click)="deleteReminder(reminder)" aria-label="Excluir lembrete">
-                <mat-icon>delete</mat-icon>
-              </button>
-            </div>
-          </li>
-        </ul>
-
-        <ng-template #noReminders>
-          <p>Não há lembretes para esta data.</p>
-        </ng-template>
-
-        <mat-paginator [length]="filteredLembretes.length" [pageSize]="pageSize" [pageSizeOptions]="[5]"
-          (page)="onPageChange($event)">
-        </mat-paginator>
-      </mat-card-content>
+        <div class="header-details">
+          <mat-card-title>Bem-vindo</mat-card-title>
+          <div>Nome: {{ user?.name }}</div>
+          <div>Email: {{ user?.email }}</div>
+          <p>Username: {{ user?.username }}</p>
+        </div>
+      </mat-card-header>
     </mat-card>
-  </div>
-</div>
 
-<app-footer></app-footer>
+    <!-- Layout com o calendário e lembretes -->
+    <div class="calendar-reminders">
+      <!-- Cartão do calendário -->
+      <mat-card class="calendar-card">
+        <mat-card-title>Calendário</mat-card-title>
+        <mat-card-content>
+          <mat-calendar [selected]="selectedDate" (selectedChange)="onDateSelected($event)"></mat-calendar>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Cartão de lembretes -->
+      <mat-card class="reminders-card">
+        <mat-card-title>Lembretes</mat-card-title>
+        <mat-card-content>
+          <div class="header-reminder">
+            <mat-card-subtitle class="selected-date">{{ selectedDate | date: 'dd MMMM yyyy' }}</mat-card-subtitle>
+            <button mat-raised-button color="primary" (click)="createReminder()" class="create-button">
+              Criar Lembrete
+            </button>
+          </div>
+
+          <div class="reminders-list">
+            <ul *ngIf="displayedLembretes.length > 0; else noReminders">
+              <li *ngFor="let reminder of displayedLembretes" [attr.aria-label]="'Lembrete: ' + reminder.titulo">
+                {{ reminder.dataLembrete | date: 'dd/MM/yyyy' }} - {{ reminder.titulo }} - {{ reminder.descricao }}
+                <div class="reminder-actions">
+                  <button mat-icon-button color="primary" (click)="editReminder(reminder)">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                  <button mat-icon-button color="accent" (click)="viewDetails(reminder)">
+                    <mat-icon>visibility</mat-icon>
+                  </button>
+                  <button mat-icon-button color="warn" (click)="deleteReminder(reminder)">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
+              </li>
+            </ul>
+
+            <ng-template #noReminders>
+              <p class="no-reminders">Não há lembretes para esta data.</p>
+            </ng-template>
+          </div>
+
+          <mat-paginator 
+            [length]="filteredLembretes.length" 
+            [pageSize]="5" 
+            [pageSizeOptions]="[5]" 
+            (page)="onPageChange($event)"
+            [hidePageSize]="true">
+          </mat-paginator>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+
+  <app-footer></app-footer>
+</div>

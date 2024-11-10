@@ -6122,29 +6122,33 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\lucas.montalvao\\.nuget\\packages\\": {}
+    "C:\\Users\\lucas.montalvao\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\dev\\Projeto_Lucas\\ApiWeb\\ApiWeb.csproj",
+      "projectUniqueName": "C:\\dev\\Projeto_Dotnet_Angular\\ApiWeb\\ApiWeb.csproj",
       "projectName": "ApiWeb",
-      "projectPath": "C:\\dev\\Projeto_Lucas\\ApiWeb\\ApiWeb.csproj",
+      "projectPath": "C:\\dev\\Projeto_Dotnet_Angular\\ApiWeb\\ApiWeb.csproj",
       "packagesPath": "C:\\Users\\lucas.montalvao\\.nuget\\packages\\",
-      "outputPath": "C:\\dev\\Projeto_Lucas\\ApiWeb\\obj\\",
+      "outputPath": "C:\\dev\\Projeto_Dotnet_Angular\\ApiWeb\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
       "configFilePaths": [
         "C:\\Users\\lucas.montalvao\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "C:\\Program Files\\dotnet\\library-packs": {},
-        "http://nexus.maximasistemas.com.br/repository/nuget-hosted/": {},
-        "https://api.nuget.org/v3/index.json": {}
+        "https://api.nuget.org/v3/index.json": {},
+        "https://nexus.maximasistemas.com.br/repository/nuget-hosted/": {}
       },
       "frameworks": {
         "net8.0": {
@@ -6258,13 +6262,5 @@
         "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.403/PortableRuntimeIdentifierGraph.json"
       }
     }
-  },
-  "logs": [
-    {
-      "code": "NU1803",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Você está executando a operação 'restore' com uma fonte 'HTTP', 'http://nexus.maximasistemas.com.br/repository/nuget-hosted/'. O acesso não HTTPS será removido em uma versão futura. Considere migrar para uma fonte 'HTTPS'."
-    }
-  ]
+  }
 }

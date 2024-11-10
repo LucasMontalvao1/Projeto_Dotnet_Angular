@@ -15,12 +15,18 @@ namespace ApiWeb.Controllers
     public class LembreteController : ControllerBase
     {
         private readonly ILembreteService _lembreteService;
+        private readonly IRabbitMqService _rabbitMqService;
         private readonly ILogger<LembreteController> _logger;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public LembreteController(ILembreteService lembreteService, ILogger<LembreteController> logger, IHttpContextAccessor httpContextAccessor)
+        public LembreteController(
+            ILembreteService lembreteService,
+            IRabbitMqService rabbitMqService,
+            ILogger<LembreteController> logger,
+            IHttpContextAccessor httpContextAccessor)
         {
             _lembreteService = lembreteService;
+            _rabbitMqService = rabbitMqService;
             _logger = logger;
             _httpContextAccessor = httpContextAccessor;
         }
@@ -129,19 +135,41 @@ namespace ApiWeb.Controllers
 
             try
             {
-                var usuarioId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                _logger.LogInformation($"Usuário com ID {usuarioId} está adicionando um novo lembrete.");
+                var usuarioId = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (string.IsNullOrEmpty(usuarioId))
+                {
+                    return Unauthorized("Usuário não autenticado");
+                }
 
-                var novoLembrete = _lembreteService.AddLembrete(lembrete, $"Lembrete criado com intervalo de {lembrete.IntervaloEmDias} dias.");
+                lembrete.UsuarioID = int.Parse(usuarioId);
+                _logger.LogInformation("Usuário {UsuarioId} está adicionando um novo lembrete", usuarioId);
 
-                _logger.LogInformation($"Novo lembrete criado com ID {novoLembrete.LembreteID} pelo usuário com ID {usuarioId}.");
+                // Criar a mensagem antes de salvar o lembrete
+                var mensagem = $"Lembrete criado com intervalo de {lembrete.IntervaloEmDias} dias";
+                var novoLembrete = _lembreteService.AddLembrete(lembrete, mensagem);
 
-                return CreatedAtAction(nameof(GetLembretes), new { id = novoLembrete.LembreteID }, novoLembrete);
+                if (novoLembrete != null)
+                {
+                    // Envia a mensagem (não o objeto lembrete)
+                    _rabbitMqService.PublishReminderAdded(mensagem);
+
+                    _logger.LogInformation(
+                        "Novo lembrete {LembreteId} criado pelo usuário {UsuarioId}",
+                        novoLembrete.LembreteID,
+                        usuarioId
+                    );
+                }
+
+                return CreatedAtAction(
+                    nameof(GetLembretes),
+                    new { id = novoLembrete?.LembreteID },
+                    novoLembrete
+                );
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Erro ao adicionar novo lembrete.");
-                return StatusCode(500, $"Erro ao adicionar novo lembrete: {ex.Message}");
+                _logger.LogError(ex, "Erro ao adicionar lembrete");
+                return StatusCode(500, "Erro interno ao criar lembrete");
             }
         }
 

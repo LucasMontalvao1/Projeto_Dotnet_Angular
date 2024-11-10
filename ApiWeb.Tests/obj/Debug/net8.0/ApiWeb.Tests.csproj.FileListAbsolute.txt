@@ -213,3 +213,13 @@ C:\dev\Projeto_Lucas\ApiWeb.Tests\bin\Debug\net8.0\SerilogTraceListener.dll
 C:\dev\Projeto_Lucas\ApiWeb.Tests\bin\Debug\net8.0\SQLitePCLRaw.core.dll
 C:\dev\Projeto_Lucas\ApiWeb.Tests\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.Relational.dll
 C:\dev\Projeto_Lucas\ApiWeb.Tests\bin\Debug\net8.0\Pomelo.EntityFrameworkCore.MySql.dll
+C:\dev\Projeto_Dotnet_Angular\ApiWeb.Tests\bin\Debug\net8.0\CoverletSourceRootsMapping_ApiWeb.Tests
+C:\dev\Projeto_Dotnet_Angular\ApiWeb.Tests\obj\Debug\net8.0\ApiWeb.Tests.csproj.AssemblyReference.cache
+C:\dev\Projeto_Dotnet_Angular\ApiWeb.Tests\obj\Debug\net8.0\ApiWeb.Tests.GeneratedMSBuildEditorConfig.editorconfig
+C:\dev\Projeto_Dotnet_Angular\ApiWeb.Tests\obj\Debug\net8.0\ApiWeb.Tests.AssemblyInfoInputs.cache
+C:\dev\Projeto_Dotnet_Angular\ApiWeb.Tests\obj\Debug\net8.0\ApiWeb.Tests.AssemblyInfo.cs
+C:\dev\Projeto_Dotnet_Angular\ApiWeb.Tests\obj\Debug\net8.0\ApiWeb.Tests.csproj.CoreCompileInputs.cache
+C:\dev\Projeto_Dotnet_Angular\ApiWeb.Tests\obj\Debug\net8.0\ApiWeb.Tests.sourcelink.json
+C:\dev\Projeto_Dotnet_Angular\ApiWeb.Tests\obj\Debug\net8.0\ApiWeb.Tests.dll
+C:\dev\Projeto_Dotnet_Angular\ApiWeb.Tests\obj\Debug\net8.0\refint\ApiWeb.Tests.dll
+C:\dev\Projeto_Dotnet_Angular\ApiWeb.Tests\obj\Debug\net8.0\ApiWeb.Tests.pdb

@@ -2,8 +2,7 @@
 {
     public interface IRabbitMqService
     {
-        void PublishReminderAdded(object reminderMessage);
-
+        void PublishReminderAdded(string message);
         void SubscribeToReminderQueue();
     }
 }

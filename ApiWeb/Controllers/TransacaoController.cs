@@ -11,7 +11,7 @@ using static ApiWeb.Services.TransacaoService;
 namespace ApiWeb.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/v1/transacao")]
     [Authorize]
     public class TransacaoController : ControllerBase
     {

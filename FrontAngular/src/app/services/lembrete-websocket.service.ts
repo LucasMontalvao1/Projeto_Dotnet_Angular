@@ -19,41 +19,80 @@ export class LembreteWebSocketService {
   private configureRxStomp(): void {
     this.rxStomp.configure({
       brokerURL: 'ws://localhost:15674/ws',
-      connectHeaders: {},
-      heartbeatIncoming: 0,
-      heartbeatOutgoing: 20000,
+      connectHeaders: {
+        login: 'guest',  
+        passcode: 'guest'  
+      },
+      heartbeatIncoming: 4000,
+      heartbeatOutgoing: 4000,
       reconnectDelay: 5000,
-      debug: (str: string) => { console.log(new Date(), str); }
+      debug: (str: string) => { console.log(new Date(), str); },
+      // Configurações para mensagens binárias
+      forceBinaryWSFrames: true,
+      appendMissingNULLonIncoming: true
     });
   }
 
   private initAndConnect(): void {
-    this.rxStomp.activate(); // Ativa a conexão WebSocket
+    console.log('Iniciando conexão WebSocket...');
+    this.rxStomp.activate();
 
-    this.rxStomp.connected$.subscribe(() => {
-      console.log('Conectado ao WebSocket!');
-      this.subscribeToLembretes(); // Inscreve-se para receber lembretes
-    }, (error) => {
-      console.error('Erro ao conectar ao WebSocket:', error);
+    this.rxStomp.connected$.subscribe({
+      next: () => {
+        console.log('Conectado ao WebSocket!');
+        this.subscribeToLembretes();
+      },
+      error: (error) => {
+        console.error('Erro ao conectar ao WebSocket:', error);
+      }
     });
   }
 
   private subscribeToLembretes(): void {
     this.rxStomp.watch('/queue/filaLembretes').subscribe({
       next: (message) => {
-        console.log('Mensagem recebida do servidor:', message);
-        if (message.body) {
-          try {
-            const lembrete: Lembrete = JSON.parse(message.body);
-            console.log('Novo lembrete recebido:', lembrete);
-            this.lembreteSubject.next(lembrete);
-          } catch (error) {
-            console.error('Erro ao fazer parse do lembrete:', error);
+        console.log('Tipo da mensagem:', typeof message.body);
+        console.log('É binário?', message.isBinaryBody);
+        console.log('Headers:', message.headers);
+
+        try {
+          let conteudo: string;
+
+          if (message.isBinaryBody && message.binaryBody) {
+            // Converte o conteúdo binário para string
+            conteudo = new TextDecoder().decode(message.binaryBody);
+            console.log('Conteúdo decodificado:', conteudo);
+          } else {
+            conteudo = message.body;
           }
+
+          // Tenta fazer o parse do JSON
+          if (conteudo) {
+            try {
+              const lembrete: Lembrete = JSON.parse(conteudo);
+              console.log('Lembrete processado:', lembrete);
+              this.lembreteSubject.next(lembrete);
+            } catch (parseError) {
+              // Se não for JSON válido, tenta criar um objeto com o texto recebido
+              console.log('Recebido texto simples:', conteudo);
+              const lembreteSimples: Lembrete = {
+                descricao: conteudo,
+                // Adicione outros campos necessários com valores padrão
+                dataLembrete: new Date(),
+                usuarioID: 0,
+                titulo: '',
+                intervaloEmDias: 0
+              };
+              this.lembreteSubject.next(lembreteSimples);
+            }
+          }
+        } catch (error) {
+          console.error('Erro ao processar mensagem:', error);
+          console.error('Conteúdo da mensagem que causou erro:', message);
         }
       },
       error: (error) => {
-        console.error('Erro ao receber mensagem:', error);
+        console.error('Erro na subscrição:', error);
       }
     });
   }
@@ -63,7 +102,26 @@ export class LembreteWebSocketService {
   }
 
   disconnect(): void {
-    this.rxStomp.deactivate();
-    console.log('Desconectado do WebSocket.');
+    try {
+      this.rxStomp.deactivate();
+      console.log('Desconectado do WebSocket.');
+    } catch (error) {
+      console.error('Erro ao desconectar:', error);
+    }
+  }
+
+  // Método auxiliar para reconexão
+  reconnect(): void {
+    console.log('Tentando reconectar...');
+    this.disconnect();
+    setTimeout(() => {
+      this.configureRxStomp();
+      this.initAndConnect();
+    }, 2000);
+  }
+
+  // Método para verificar status da conexão
+  isConnected(): boolean {
+    return this.rxStomp.connected();
   }
 }

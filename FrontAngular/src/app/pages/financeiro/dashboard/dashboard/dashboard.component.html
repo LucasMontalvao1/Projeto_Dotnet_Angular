@@ -1,0 +1,224 @@
+<app-menu></app-menu>
+
+<div class="main-content">
+  <div class="dashboard-container">
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" *ngIf="isLoading">
+      <mat-spinner diameter="50"></mat-spinner>
+    </div>
+
+    <!-- Error Message -->
+    <div class="error-alert" *ngIf="error" >
+      <mat-card>
+        <mat-card-content>
+          <mat-icon color="warn">error</mat-icon>
+          <span>{{ error }}</span>
+          <button mat-button color="primary" (click)="reloadData()">Tentar Novamente</button>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Header com Filtros -->
+    <div class="dashboard-header">
+      <div class="header-title">
+        <h1>Dashboard Financeiro</h1>
+        <p class="subtitle">Visão geral das suas finanças - {{ getMesAtual() }}</p>
+      </div>
+      <div class="header-filters">
+        <form [formGroup]="filterForm" (ngSubmit)="aplicarFiltro()">
+          <mat-form-field appearance="outline">
+            <mat-label>Mês e Ano</mat-label>
+            <input matInput [matDatepicker]="picker" formControlName="mesAno" 
+                   placeholder="Escolha o mês">
+            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker 
+                            startView="year"
+                            (monthSelected)="setMonthAndYear($event)"
+                            panelClass="month-picker">
+            </mat-datepicker>
+          </mat-form-field>
+      
+          <button mat-raised-button color="primary" type="submit">
+            <mat-icon>filter_list</mat-icon>
+            Filtrar
+          </button>
+      
+          <button mat-icon-button type="button" matTooltip="Recarregar dados" (click)="reloadData()">
+            <mat-icon>refresh</mat-icon>
+          </button>
+        </form>
+      </div>
+
+    <!-- Cards de Resumo -->
+    <div class="summary-cards">
+      <mat-card class="summary-card">
+        <div class="card-content">
+          <div class="card-info">
+            <span class="card-label">Total Entradas</span>
+            <span class="card-value positive">
+              {{ getTotalEntradas() | currency:'BRL' }}
+            </span>
+          </div>
+          <mat-icon class="card-icon positive">trending_up</mat-icon>
+        </div>
+      </mat-card>
+
+      <mat-card class="summary-card">
+        <div class="card-content">
+          <div class="card-info">
+            <span class="card-label">Total Saídas</span>
+            <span class="card-value negative">
+              {{ getTotalSaidas() | currency:'BRL' }}
+            </span>
+          </div>
+          <mat-icon class="card-icon negative">trending_down</mat-icon>
+        </div>
+      </mat-card>
+
+      <mat-card class="summary-card">
+        <div class="card-content">
+          <div class="card-info">
+            <span class="card-label">Saldo</span>
+            <span class="card-value" [ngClass]="{'positive': getSaldo() > 0, 'negative': getSaldo() < 0}">
+              {{ getSaldo() | currency:'BRL' }}
+            </span>
+          </div>
+          <mat-icon class="card-icon">account_balance_wallet</mat-icon>
+        </div>
+      </mat-card>
+
+      <mat-card class="summary-card">
+        <div class="card-content">
+          <div class="card-info">
+            <span class="card-label">Média Mensal</span>
+            <span class="card-value">
+              {{ getMediaMensal() | currency:'BRL' }}
+            </span>
+          </div>
+          <mat-icon class="card-icon">show_chart</mat-icon>
+        </div>
+      </mat-card>
+    </div>
+
+    <!-- Grid de Gráficos -->
+    <div class="charts-grid">
+      <!-- Gráfico de Barras -->
+      <mat-card class="chart-card">
+        <mat-card-header>
+          <mat-card-title>Receitas vs Despesas por Mês</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="chart-wrapper">
+            <canvas baseChart
+              [data]="barChartData"
+              [options]="pieChartOptions"
+              [type]="'bar'">
+            </canvas>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Gráfico de Linha -->
+      <mat-card class="chart-card">
+        <mat-card-header>
+          <mat-card-title>Evolução do Saldo</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="chart-wrapper">
+            <canvas baseChart
+              [data]="lineChartData"
+              [options]="pieChartOptions"
+              [type]="'line'">
+            </canvas>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Gráfico de Pizza -->
+      <mat-card class="chart-card">
+        <mat-card-header>
+          <mat-card-title>Distribuição de Despesas</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="chart-wrapper">
+            <canvas baseChart
+              [data]="pieChartData"
+              [options]="pieChartOptions"
+              [type]="'pie'">
+            </canvas>
+          </div>
+        </mat-card-content>
+      </mat-card>
+      
+    </div>
+
+    <!-- Tabela de Transações -->
+    <mat-card class="transactions-card">
+      <mat-card-header>
+        <mat-card-title>
+          <span>Transações Recentes</span>
+          <div class="table-actions">
+            <mat-form-field appearance="outline">
+              <mat-label>Buscar</mat-label>
+              <input matInput (keyup)="aplicarFiltroTabela($event)" placeholder="Ex: Mercado">
+              <mat-icon matSuffix>search</mat-icon>
+            </mat-form-field>
+          </div>
+        </mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content>
+        <mat-table [dataSource]="dataSource" matSort>
+          <!-- Data Column -->
+          <ng-container matColumnDef="data">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Data </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.data | date:'dd/MM/yyyy'}} </mat-cell>
+          </ng-container>
+
+          <!-- Descrição Column -->
+          <ng-container matColumnDef="descricao">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Descrição </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.descricao}} </mat-cell>
+          </ng-container>
+
+          <!-- Tipo Column -->
+          <ng-container matColumnDef="tipo">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Tipo </mat-header-cell>
+            <mat-cell *matCellDef="let row"> 
+              <span class="tipo-badge" [ngClass]="row.tipo.toLowerCase()">
+                {{row.tipo}}
+              </span>
+            </mat-cell>
+          </ng-container>
+
+          <!-- Valor Column -->
+          <ng-container matColumnDef="valor">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Valor </mat-header-cell>
+            <mat-cell *matCellDef="let row" [ngClass]="{'positive': row.tipo === 'Entrada', 'negative': row.tipo === 'Saída'}">
+              {{row.valor | currency:'BRL'}}
+            </mat-cell>
+          </ng-container>
+
+          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+
+          <!-- Row shown when there is no matching data -->
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell" colspan="4">
+              Nenhuma transação encontrada
+            </td>
+          </tr>
+        </mat-table>
+
+        <mat-paginator 
+          [pageSize]="10"
+          [pageSizeOptions]="[5, 10, 25, 100]"
+          showFirstLastButtons
+          aria-label="Selecione a página de transações">
+        </mat-paginator>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
+
+<app-footer></app-footer>

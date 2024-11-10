@@ -46,8 +46,6 @@ CREATE TABLE IF NOT EXISTS lembreteslog (
     FOREIGN KEY (LembreteID) REFERENCES lembretes(LembreteID)
 );
 
----------------------------------------------------------------
-
 -- Tabela: Categorias
 CREATE TABLE Categorias (
     CategoriaID INT AUTO_INCREMENT PRIMARY KEY,
@@ -65,7 +63,7 @@ CREATE TABLE Transacoes (
     Descricao VARCHAR(255),
     Data DATETIME DEFAULT CURRENT_TIMESTAMP,
     CriadoEm DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (UsuarioID) REFERENCES Usuarios(UsuarioID) ON DELETE CASCADE,
+    FOREIGN KEY (UsuarioID) REFERENCES Usuario(UsuarioID) ON DELETE CASCADE,
     FOREIGN KEY (CategoriaID) REFERENCES Categorias(CategoriaID) ON DELETE CASCADE
 );
 

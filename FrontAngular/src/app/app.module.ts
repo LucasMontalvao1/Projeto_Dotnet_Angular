@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { BrowserModule } from '@angular/platform-browser';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
@@ -18,7 +19,14 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatDividerModule } from '@angular/material/divider';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTableModule } from '@angular/material/table';
+import { MatSortModule } from '@angular/material/sort';
+
+
+import { NgChartsModule } from 'ng2-charts';
 
 // Importação dos componentes da aplicação
 import { AppComponent } from './app.component';
@@ -29,6 +37,12 @@ import { FooterComponent } from './components/footer/footer.component';
 import { LembretesComponent } from './pages/lembretes/lembretes.component';
 import { LembretesDetalhesComponent } from './pages/lembretes/lembretes-detalhes/lembretes-detalhes.component';
 import { LembretesExcluirComponent } from './pages/lembretes/lembretes-excluir/lembretes-excluir.component';
+import { DashboardComponent } from './pages/financeiro/dashboard/dashboard/dashboard.component';
+import { TransacaoListComponent } from './pages/financeiro/transacao/transacao-list/transacao-list.component';
+import { TransacaoCreateComponent } from './pages/financeiro/transacao/transacao-create/transacao-create.component';
+import { TransacaoEditComponent } from './pages/financeiro/transacao/transacao-edit/transacao-edit.component';
+import { TransacaoDetailComponent } from './pages/financeiro/transacao/transacao-detail/transacao-detail.component';
+import { TransacaoDeleteComponent } from './pages/financeiro/transacao/transacao-delete/transacao-delete.component';
 
 
 import { AppRoutingModule } from './app-routing.module';
@@ -43,7 +57,13 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
     FooterComponent,
     LembretesComponent,
     LembretesDetalhesComponent,
-    LembretesExcluirComponent
+    LembretesExcluirComponent,
+    DashboardComponent,
+    TransacaoListComponent,
+    TransacaoCreateComponent,
+    TransacaoEditComponent,
+    TransacaoDetailComponent,
+    TransacaoDeleteComponent
   ],
   imports: [
     BrowserModule,
@@ -65,7 +85,14 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
     MatPaginatorModule,
     MatToolbarModule,
     MatMenuModule,
-    MatDialogModule
+    MatDialogModule,
+    MatProgressSpinnerModule,
+    MatDividerModule,
+    CommonModule,
+    MatTableModule,
+    MatSortModule,
+    MatPaginatorModule,
+    NgChartsModule
   ],
   providers: [
     provideAnimationsAsync()

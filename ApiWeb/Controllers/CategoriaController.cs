@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ApiWeb.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v1/categoria")]
     [ApiController]
     [Authorize]
     public class CategoriaController : ControllerBase

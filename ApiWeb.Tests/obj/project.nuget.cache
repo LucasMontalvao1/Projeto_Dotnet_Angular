@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "GlMZclhs7/I=",
+  "dgSpecHash": "EclTNDC70S0=",
   "success": true,
-  "projectFilePath": "C:\\dev\\Projeto_Lucas\\ApiWeb.Tests\\ApiWeb.Tests.csproj",
+  "projectFilePath": "C:\\dev\\Projeto_Dotnet_Angular\\ApiWeb.Tests\\ApiWeb.Tests.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\lucas.montalvao\\.nuget\\packages\\castle.core\\5.1.1\\castle.core.5.1.1.nupkg.sha512",
     "C:\\Users\\lucas.montalvao\\.nuget\\packages\\coverlet.collector\\6.0.0\\coverlet.collector.6.0.0.nupkg.sha512",
@@ -273,12 +273,5 @@
     "C:\\Users\\lucas.montalvao\\.nuget\\packages\\xunit.runner.visualstudio\\2.5.3\\xunit.runner.visualstudio.2.5.3.nupkg.sha512",
     "C:\\Users\\lucas.montalvao\\.nuget\\packages\\zstdsharp.port\\0.7.1\\zstdsharp.port.0.7.1.nupkg.sha512"
   ],
-  "logs": [
-    {
-      "code": "NU1803",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Você está executando a operação 'restore' com uma fonte 'HTTP', 'http://nexus.maximasistemas.com.br/repository/nuget-hosted/'. O acesso não HTTPS será removido em uma versão futura. Considere migrar para uma fonte 'HTTPS'."
-    }
-  ]
+  "logs": []
 }

@@ -59,7 +59,12 @@ namespace ApiWeb.Services
             try
             {
                 var novoLembrete = _lembreteRepository.AddLembrete(lembrete);
-                _rabbitMqService.PublishReminderAdded(mensagem);
+
+                if (novoLembrete != null)
+                {
+                    _rabbitMqService.PublishReminderAdded(mensagem);
+                }
+
                 return novoLembrete;
             }
             catch (Exception ex)

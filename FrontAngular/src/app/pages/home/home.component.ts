@@ -27,9 +27,10 @@ export class HomeComponent implements OnInit, OnDestroy {
   lembretes: Lembrete[] = [];
   filteredLembretes: Lembrete[] = [];
   displayedLembretes: Lembrete[] = [];
-  pageSize: number = 5;
+  pageSize: number = 3;
   pageIndex: number = 0;
   private lembreteSubscription: Subscription | undefined;
+  private isLoading: boolean = false;
 
   constructor(
     private authService: AuthService,
@@ -72,25 +73,14 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
   }
 
-  carregaDeleteLembretes(): void {
-    this.lembreteService.getLembretes().subscribe(
-      (data: Lembrete[]) => {
-        this.lembretes = data.map(lembrete => ({
-          ...lembrete,
-          dataLembrete: new Date(lembrete.dataLembrete)
-        }));
-        this.filtraLembretes();
-      },
-      (error) => {
-        console.error('Erro ao buscar lembretes:', error);
-      }
-    );
-  }
-
   carregaLembretes(): void {
+    if (this.isLoading) return;
+    
+    this.isLoading = true;
     this.openSnackBar('Carregando lembretes...', 'Fechar');
-    this.lembreteService.getLembretes().subscribe(
-      (data: Lembrete[]) => {
+    
+    this.lembreteService.getLembretes().subscribe({
+      next: (data: Lembrete[]) => {
         this.lembretes = data.map(lembrete => ({
           ...lembrete,
           dataLembrete: new Date(lembrete.dataLembrete)
@@ -98,24 +88,30 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.filtraLembretes();
         this.openSnackBar('Lembretes carregados com sucesso!', 'Fechar');
       },
-      (error) => {
+      error: (error) => {
         console.error('Erro ao buscar lembretes:', error);
         this.openSnackBar('Erro ao buscar lembretes', 'Fechar');
+      },
+      complete: () => {
+        this.isLoading = false;
       }
-    );
+    });
   }
 
   filtraLembretes(): void {
-    console.log('Filtrando lembretes para a data:', this.selectedDate);
-    const selectedTime = this.selectedDate.setHours(0, 0, 0, 0);
+    // Cria uma nova data para não mutar a selectedDate
+    const compareDate = new Date(this.selectedDate);
+    compareDate.setHours(0, 0, 0, 0);
+
     this.filteredLembretes = this.lembretes.filter(lembrete => {
-      const lembreteTime = new Date(lembrete.dataLembrete).setHours(0, 0, 0, 0);
-      return lembreteTime === selectedTime;
+      const lembreteDate = new Date(lembrete.dataLembrete);
+      lembreteDate.setHours(0, 0, 0, 0);
+      return lembreteDate.getTime() === compareDate.getTime();
     });
 
-    console.log('Lembretes filtrados:', this.filteredLembretes);
     if (this.paginator) {
       this.paginator.length = this.filteredLembretes.length;
+      this.paginator.pageIndex = 0; // Reset para primeira página ao filtrar
     }
     this.pageIndex = 0;
     this.updateDisplayedLembretes();
@@ -128,8 +124,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   onDateSelected(date: Date): void {
-    console.log('Data selecionada:', date);
-    this.selectedDate = date;
+    this.selectedDate = new Date(date); 
     this.filtraLembretes();
   }
 
@@ -151,42 +146,42 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   subscribeToLembretes(): void {
-    this.lembreteSubscription = this.lembreteWebSocketService.getLembretes().subscribe(
-      (lembrete: Lembrete) => {
-        console.log('Novo lembrete recebido via WebSocket:', lembrete);
-        this.lembretes.push(lembrete);
+    this.lembreteSubscription = this.lembreteWebSocketService.getLembretes().subscribe({
+      next: (lembrete: Lembrete) => {
+        // Adiciona o novo lembrete e atualiza a visualização
+        const novoLembrete = { ...lembrete, dataLembrete: new Date(lembrete.dataLembrete) };
+        this.lembretes = [...this.lembretes, novoLembrete];
         this.filtraLembretes();
-        this.carregaLembretes();
         this.openSnackBar('Novo lembrete recebido!', 'Fechar');
+        this.carregaLembretes();
       },
-      (error: any) => {
+      error: (error) => {
         console.error('Erro ao receber lembretes via WebSocket:', error);
         this.openSnackBar('Erro ao receber lembretes', 'Fechar');
-      }
-    );
-  }
-
-  createReminder(): void {
-    const dialogRef = this.dialog.open(LembretesComponent);
-  
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        console.log('Dados para criar lembrete:', result);
-        this.carregaLembretes(); 
       }
     });
   }
 
-  editReminder(reminder: Lembrete): void {
-    console.log('Lembrete a ser editado:', reminder); 
+  createReminder(): void {
+    const dialogRef = this.dialog.open(LembretesComponent);
+    
+    dialogRef.afterClosed().subscribe(result => {
+        this.carregaLembretes();
+    });
+  }
 
-    const dialogRef = this.dialog.open(LembretesComponent, { data: reminder });
+  editReminder(reminder: Lembrete): void {
+    const reminderToEdit = {
+      ...reminder,
+      dataLembrete: new Date(reminder.dataLembrete)
+    };
+
+    const dialogRef = this.dialog.open(LembretesComponent, { 
+      data: reminderToEdit
+    });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        console.log('Dados para editar lembrete:', result);
-        this.carregaLembretes(); 
-      }
+        this.carregaLembretes();
     });
   }
 
@@ -194,12 +189,12 @@ export class HomeComponent implements OnInit, OnDestroy {
   deleteReminder(reminder: Lembrete): void {
     const dialogRef = this.dialog.open(LembretesExcluirComponent, {
       data: reminder,
-      width: 'max-content', // Define a largura máxima do diálogo
+      width: 'max-content', 
     });
   
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.carregaDeleteLembretes(); 
+        this.carregaLembretes(); 
       }
     });
   }

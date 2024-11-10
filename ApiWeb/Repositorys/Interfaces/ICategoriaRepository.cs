@@ -8,7 +8,6 @@ namespace ApiWeb.Repositorys.Interfaces
     {
         Task<IEnumerable<Categoria>> GetCategorias();
         Task<Categoria> GetCategoriaById(int id);
-
         Task<bool> CategoriaExiste(int categoriaId);
         Task<int> AddCategoria(Categoria categoria);
         Task UpdateCategoria(Categoria categoria);

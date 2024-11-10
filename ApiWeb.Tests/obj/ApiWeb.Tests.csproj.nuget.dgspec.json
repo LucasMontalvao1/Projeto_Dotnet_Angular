@@ -1,37 +1,40 @@
 {
   "format": 1,
   "restore": {
-    "C:\\dev\\Projeto_Lucas\\ApiWeb.Tests\\ApiWeb.Tests.csproj": {}
+    "C:\\dev\\Projeto_Dotnet_Angular\\ApiWeb.Tests\\ApiWeb.Tests.csproj": {}
   },
   "projects": {
-    "C:\\dev\\Projeto_Lucas\\ApiWeb.Tests\\ApiWeb.Tests.csproj": {
+    "C:\\dev\\Projeto_Dotnet_Angular\\ApiWeb.Tests\\ApiWeb.Tests.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\dev\\Projeto_Lucas\\ApiWeb.Tests\\ApiWeb.Tests.csproj",
+        "projectUniqueName": "C:\\dev\\Projeto_Dotnet_Angular\\ApiWeb.Tests\\ApiWeb.Tests.csproj",
         "projectName": "ApiWeb.Tests",
-        "projectPath": "C:\\dev\\Projeto_Lucas\\ApiWeb.Tests\\ApiWeb.Tests.csproj",
+        "projectPath": "C:\\dev\\Projeto_Dotnet_Angular\\ApiWeb.Tests\\ApiWeb.Tests.csproj",
         "packagesPath": "C:\\Users\\lucas.montalvao\\.nuget\\packages\\",
-        "outputPath": "C:\\dev\\Projeto_Lucas\\ApiWeb.Tests\\obj\\",
+        "outputPath": "C:\\dev\\Projeto_Dotnet_Angular\\ApiWeb.Tests\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
           "C:\\Users\\lucas.montalvao\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "C:\\Program Files\\dotnet\\library-packs": {},
-          "http://nexus.maximasistemas.com.br/repository/nuget-hosted/": {},
-          "https://api.nuget.org/v3/index.json": {}
+          "https://api.nuget.org/v3/index.json": {},
+          "https://nexus.maximasistemas.com.br/repository/nuget-hosted/": {}
         },
         "frameworks": {
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "C:\\dev\\Projeto_Lucas\\ApiWeb\\ApiWeb.csproj": {
-                "projectPath": "C:\\dev\\Projeto_Lucas\\ApiWeb\\ApiWeb.csproj"
+              "C:\\dev\\Projeto_Dotnet_Angular\\ApiWeb\\ApiWeb.csproj": {
+                "projectPath": "C:\\dev\\Projeto_Dotnet_Angular\\ApiWeb\\ApiWeb.csproj"
               }
             }
           }
@@ -112,27 +115,30 @@
         }
       }
     },
-    "C:\\dev\\Projeto_Lucas\\ApiWeb\\ApiWeb.csproj": {
+    "C:\\dev\\Projeto_Dotnet_Angular\\ApiWeb\\ApiWeb.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\dev\\Projeto_Lucas\\ApiWeb\\ApiWeb.csproj",
+        "projectUniqueName": "C:\\dev\\Projeto_Dotnet_Angular\\ApiWeb\\ApiWeb.csproj",
         "projectName": "ApiWeb",
-        "projectPath": "C:\\dev\\Projeto_Lucas\\ApiWeb\\ApiWeb.csproj",
+        "projectPath": "C:\\dev\\Projeto_Dotnet_Angular\\ApiWeb\\ApiWeb.csproj",
         "packagesPath": "C:\\Users\\lucas.montalvao\\.nuget\\packages\\",
-        "outputPath": "C:\\dev\\Projeto_Lucas\\ApiWeb\\obj\\",
+        "outputPath": "C:\\dev\\Projeto_Dotnet_Angular\\ApiWeb\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
           "C:\\Users\\lucas.montalvao\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "C:\\Program Files\\dotnet\\library-packs": {},
-          "http://nexus.maximasistemas.com.br/repository/nuget-hosted/": {},
-          "https://api.nuget.org/v3/index.json": {}
+          "https://api.nuget.org/v3/index.json": {},
+          "https://nexus.maximasistemas.com.br/repository/nuget-hosted/": {}
         },
         "frameworks": {
           "net8.0": {

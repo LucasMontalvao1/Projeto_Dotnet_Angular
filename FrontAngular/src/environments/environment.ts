@@ -5,6 +5,8 @@ export const environment = {
   apiUrl: apiUrl,
   endpoints: {
     login: `${apiUrl}/login`,
-    lembretes: `${apiUrl}/lembretes`
+    lembretes: `${apiUrl}/lembretes`,
+    transacao: `${apiUrl}/transacao`,
+    categoria: `${apiUrl}/categoria`,
   },
 };

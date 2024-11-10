@@ -1,23 +1,27 @@
+/* style.css */
 @import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
 
+/* Reset e estilos base */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-body {
-  font-family: Arial, sans-serif;
-  background-color: #f0f0f0;
-  font-size: 16px;
-  line-height: 1.6;
-}
-
 html, body {
   height: 100%;
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
   background-color: #f7f7f7;
 }
 
+body {
+  overflow-y: auto;
+  padding-top: 64px;
+  padding-bottom: 48px;
+}
+
+/* Layout principal */
 .container {
   width: 100%;
   max-width: 1200px;
@@ -25,65 +29,107 @@ html, body {
   margin: 0 auto;
 }
 
-
+/* Header/Menu */
 .header-toolbar {
-  position: sticky;
+  position: fixed;
   top: 0;
-  z-index: 10;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  height: 64px;
+  background-color: #673ab7;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   display: flex;
-  max-height: 50px;
   justify-content: space-between;
   align-items: center;
-  background-color: #673ab7; 
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 0 16px;
 }
 
-
-.mat-button {
-  transition: background-color 0.3s ease;
-}
-
-.mat-button:hover {
-  background-color: rgba(255, 255, 255, 0.2);
-}
-
-
-.spacer {
-  flex: 1;
-}
-
-
-.mat-menu-panel {
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-
+/* Footer */
 .footer-toolbar {
   position: fixed;
   bottom: 0;
-  width: 100%;
-  max-height: 40px;
-  background-color: #673ab7; 
-  color: #fff;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  height: 48px;
+  background-color: #673ab7;
+  color: white;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 60px;
   box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .footer-text {
   font-size: 14px;
+  color: rgba(255, 255, 255, 0.9);
 }
 
-button[mat-button][color="warn"] {
-  transition: background-color 0.3s ease, transform 0.2s ease;
+/* Scrollbar customizada */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
 }
 
-button[mat-button][color="warn"]:hover {
-  background-color: #e53935;
-  transform: scale(1.05);
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
 }
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Utilitários */
+.spacer {
+  flex: 1 1 auto;
+}
+
+/* Material Design Overrides */
+.mat-card {
+  border-radius: 8px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+}
+
+.mat-button-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Snackbars */
+.success-snackbar {
+  background: #4caf50;
+  color: white;
+}
+
+.error-snackbar {
+  background: #f44336;
+  color: white;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  body {
+    padding-top: 56px;
+    padding-bottom: 40px;
+  }
+
+  .header-toolbar {
+    height: 56px;
+  }
+
+  .footer-toolbar {
+    height: 40px;
+  }
+
+  .footer-text {
+    font-size: 12px;
+  }
+}
