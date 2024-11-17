@@ -1,0 +1,16 @@
+.delete-details {
+    margin: 16px 0;
+    padding: 16px;
+    background-color: #f5f5f5;
+    border-radius: 4px;
+  }
+  
+  .delete-details p {
+    margin: 8px 0;
+  }
+  
+  .error-message {
+    margin-top: 16px;
+    padding: 8px;
+    border-radius: 4px;
+  }

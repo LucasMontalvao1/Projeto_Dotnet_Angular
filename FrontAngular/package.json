@@ -24,6 +24,7 @@
     "@angular/router": "^18.2.0",
     "@angular/ssr": "^18.2.3",
     "@auth0/angular-jwt": "^5.2.0",
+    "@fontsource/roboto": "^5.1.0",
     "@microsoft/signalr": "^8.0.7",
     "@stomp/ng2-stompjs": "^8.0.0",
     "@stomp/rx-stomp": "^2.0.0",

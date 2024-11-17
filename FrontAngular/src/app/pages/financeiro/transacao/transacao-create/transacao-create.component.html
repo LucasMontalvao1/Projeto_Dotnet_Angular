@@ -1,1 +1,76 @@
-<p>transacao-create works!</p>
+<h2 mat-dialog-title>Nova Transação</h2>
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <mat-dialog-content>
+    <div class="form-container">
+      <mat-form-field appearance="outline">
+        <mat-label>Categoria</mat-label>
+        <mat-select formControlName="categoriaID">
+          <mat-option *ngFor="let categoria of categorias" [value]="categoria.categoriaID">
+            {{ categoria.nome }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="form.get('categoriaID')?.hasError('required')">
+          Categoria é obrigatória
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Data</mat-label>
+        <input matInput [matDatepicker]="picker" formControlName="data">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+        <mat-error *ngIf="form.get('data')?.hasError('required')">
+          Data é obrigatória
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Valor</mat-label>
+        <input matInput type="number" formControlName="valor" step="0.01" min="0.01">
+        <mat-error *ngIf="form.get('valor')?.hasError('required')">
+          Valor é obrigatório
+        </mat-error>
+        <mat-error *ngIf="form.get('valor')?.hasError('min')">
+          Valor deve ser maior que zero
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Tipo</mat-label>
+        <mat-select formControlName="tipo">
+          <mat-option value="Entrada">Receita</mat-option>
+          <mat-option value="Saida">Despesa</mat-option>
+        </mat-select>
+        <mat-error *ngIf="form.get('tipo')?.hasError('required')">
+          Tipo é obrigatório
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Descrição</mat-label>
+        <textarea matInput formControlName="descricao" rows="3"></textarea>
+        <mat-error *ngIf="form.get('descricao')?.hasError('required')">
+          Descrição é obrigatória
+        </mat-error>
+        <mat-error *ngIf="form.get('descricao')?.hasError('minlength')">
+          Descrição deve ter no mínimo 3 caracteres
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <mat-error *ngIf="error" class="error-message">
+      {{ error }}
+    </mat-error>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close type="button">Cancelar</button>
+    <button mat-raised-button 
+            color="primary" 
+            type="submit" 
+            [disabled]="form.invalid || isLoading">
+      <mat-spinner diameter="20" *ngIf="isLoading"></mat-spinner>
+      <span *ngIf="!isLoading">Salvar</span>
+    </button>
+  </mat-dialog-actions>
+</form>

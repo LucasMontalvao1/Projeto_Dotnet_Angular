@@ -1,0 +1,29 @@
+.details-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px 0;
+  }
+  
+  .detail-item {
+    display: flex;
+    gap: 8px;
+  }
+  
+  .detail-item .label {
+    font-weight: 500;
+    min-width: 100px;
+  }
+  
+  .detail-item .value {
+    flex: 1;
+  }
+  
+  .receita {
+    color: #4caf50;
+  }
+  
+  .despesa {
+    color: #f44336;
+  }
+  

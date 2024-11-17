@@ -1,0 +1,25 @@
+.form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-width: 350px;
+  }
+  
+  mat-form-field {
+    width: 100%;
+  }
+  
+  .error-message {
+    margin-top: 16px;
+    padding: 8px;
+    border-radius: 4px;
+  }
+  
+  mat-dialog-content {
+    padding-top: 20px;
+    padding-bottom: 20px;
+  }
+  
+  mat-dialog-actions {
+    padding: 16px 0;
+  }

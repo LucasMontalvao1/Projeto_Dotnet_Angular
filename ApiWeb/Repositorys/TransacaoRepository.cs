@@ -23,7 +23,6 @@ namespace ApiWeb.Repositorys
             _categoriaRepository = categoriaRepository;
         }
 
-        // Método para obter todas as transações
         public async Task<IEnumerable<Transacao>> GetTransacoes()
         {
             List<Transacao> transacoes = new List<Transacao>();
@@ -35,7 +34,10 @@ namespace ApiWeb.Repositorys
                     await _connection.OpenAsync();
                 }
 
-                string query = @"SELECT TransacaoID, UsuarioID, CategoriaID, Tipo, Valor, Descricao, Data, CriadoEm FROM Transacoes";
+                string query = @"SELECT t.TransacaoID, t.UsuarioID, t.CategoriaID, t.Tipo, t.Valor, 
+                              t.Descricao, t.Data, t.CriadoEm, c.Nome as CategoriaNome
+                              FROM Transacoes t
+                              INNER JOIN Categorias c ON t.CategoriaID = c.CategoriaID";
 
                 using (MySqlCommand command = new MySqlCommand(query, _connection))
                 {
@@ -52,7 +54,12 @@ namespace ApiWeb.Repositorys
                                 Valor = reader.GetDecimal("Valor"),
                                 Descricao = reader.IsDBNull("Descricao") ? null : reader.GetString("Descricao"),
                                 Data = reader.GetDateTime("Data"),
-                                CriadoEm = reader.GetDateTime("CriadoEm")
+                                CriadoEm = reader.GetDateTime("CriadoEm"),
+                                Categoria = new Categoria
+                                {
+                                    CategoriaID = reader.GetInt32("CategoriaID"),
+                                    Nome = reader.GetString("CategoriaNome")
+                                }
                             };
 
                             transacoes.Add(transacao);
@@ -60,9 +67,9 @@ namespace ApiWeb.Repositorys
                     }
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                throw; 
+                throw new Exception("Erro ao obter transações: " + ex.Message, ex);
             }
             finally
             {
@@ -72,7 +79,6 @@ namespace ApiWeb.Repositorys
             return transacoes;
         }
 
-        // Método para obter uma transação pelo ID
         public async Task<Transacao> GetTransacaoById(int id)
         {
             Transacao transacao = null;
@@ -84,7 +90,11 @@ namespace ApiWeb.Repositorys
                     await _connection.OpenAsync();
                 }
 
-                string query = @"SELECT TransacaoID, UsuarioID, CategoriaID, Tipo, Valor, Descricao, Data, CriadoEm FROM Transacoes WHERE TransacaoID = @id";
+                string query = @"SELECT t.TransacaoID, t.UsuarioID, t.CategoriaID, t.Tipo, t.Valor, 
+                              t.Descricao, t.Data, t.CriadoEm, c.Nome as CategoriaNome
+                              FROM Transacoes t
+                              INNER JOIN Categorias c ON t.CategoriaID = c.CategoriaID
+                              WHERE t.TransacaoID = @id";
 
                 using (MySqlCommand command = new MySqlCommand(query, _connection))
                 {
@@ -103,15 +113,20 @@ namespace ApiWeb.Repositorys
                                 Valor = reader.GetDecimal("Valor"),
                                 Descricao = reader.IsDBNull("Descricao") ? null : reader.GetString("Descricao"),
                                 Data = reader.GetDateTime("Data"),
-                                CriadoEm = reader.GetDateTime("CriadoEm")
+                                CriadoEm = reader.GetDateTime("CriadoEm"),
+                                Categoria = new Categoria
+                                {
+                                    CategoriaID = reader.GetInt32("CategoriaID"),
+                                    Nome = reader.GetString("CategoriaNome")
+                                }
                             };
                         }
                     }
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                throw; 
+                throw new Exception("Erro ao obter transação por ID: " + ex.Message, ex);
             }
             finally
             {
@@ -121,22 +136,8 @@ namespace ApiWeb.Repositorys
             return transacao;
         }
 
-        // Método para adicionar uma nova transação
         public async Task AddTransacao(TransacaoDto transacaoDto)
         {
-            if (transacaoDto.Tipo != "Entrada" && transacaoDto.Tipo != "Saída")
-            {
-                throw new ArgumentException("Tipo de transação deve ser 'Entrada' ou 'Saída'.");
-            }
-
-            bool usuarioExiste = await _authRepository.UsuarioExiste(transacaoDto.UsuarioID);
-            bool categoriaExiste = await _categoriaRepository.CategoriaExiste(transacaoDto.CategoriaID);
-
-            if (!usuarioExiste || !categoriaExiste)
-            {
-                throw new ArgumentException("Usuário ou Categoria não existe.");
-            }
-
             try
             {
                 if (_connection.State == ConnectionState.Closed)
@@ -144,36 +145,25 @@ namespace ApiWeb.Repositorys
                     await _connection.OpenAsync();
                 }
 
-                var transacao = new Transacao
-                {
-                    UsuarioID = transacaoDto.UsuarioID,
-                    CategoriaID = transacaoDto.CategoriaID,
-                    Tipo = transacaoDto.Tipo,
-                    Valor = transacaoDto.Valor,
-                    Descricao = transacaoDto.Descricao,
-                    Data = transacaoDto.Data,
-                    CriadoEm = transacaoDto.CriadoEm
-                };
-
                 string query = @"INSERT INTO Transacoes (UsuarioID, CategoriaID, Tipo, Valor, Descricao, Data, CriadoEm) 
-                                 VALUES (@UsuarioID, @CategoriaID, @Tipo, @Valor, @Descricao, @Data, @CriadoEm)";
+                              VALUES (@UsuarioID, @CategoriaID, @Tipo, @Valor, @Descricao, @Data, @CriadoEm)";
 
                 using (MySqlCommand command = new MySqlCommand(query, _connection))
                 {
-                    command.Parameters.AddWithValue("@UsuarioID", transacao.UsuarioID);
-                    command.Parameters.AddWithValue("@CategoriaID", transacao.CategoriaID);
-                    command.Parameters.AddWithValue("@Tipo", transacao.Tipo);
-                    command.Parameters.AddWithValue("@Valor", transacao.Valor);
-                    command.Parameters.AddWithValue("@Descricao", (object)transacao.Descricao ?? DBNull.Value);
-                    command.Parameters.AddWithValue("@Data", transacao.Data);
-                    command.Parameters.AddWithValue("@CriadoEm", transacao.CriadoEm);
+                    command.Parameters.AddWithValue("@UsuarioID", transacaoDto.UsuarioID);
+                    command.Parameters.AddWithValue("@CategoriaID", transacaoDto.CategoriaID);
+                    command.Parameters.AddWithValue("@Tipo", transacaoDto.Tipo);
+                    command.Parameters.AddWithValue("@Valor", transacaoDto.Valor);
+                    command.Parameters.AddWithValue("@Descricao", (object)transacaoDto.Descricao ?? DBNull.Value);
+                    command.Parameters.AddWithValue("@Data", transacaoDto.Data);
+                    command.Parameters.AddWithValue("@CriadoEm", transacaoDto.CriadoEm);
 
                     await command.ExecuteNonQueryAsync();
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                throw; 
+                throw new Exception("Erro ao adicionar transação: " + ex.Message, ex);
             }
             finally
             {
@@ -181,7 +171,6 @@ namespace ApiWeb.Repositorys
             }
         }
 
-        // Método para atualizar uma transação existente
         public async Task UpdateTransacao(Transacao transacao)
         {
             try
@@ -191,7 +180,14 @@ namespace ApiWeb.Repositorys
                     await _connection.OpenAsync();
                 }
 
-                string query = @"UPDATE Transacoes SET UsuarioID = @UsuarioID, CategoriaID = @CategoriaID, Tipo = @Tipo, Valor = @Valor, Descricao = @Descricao, Data = @Data WHERE TransacaoID = @TransacaoID";
+                string query = @"UPDATE Transacoes 
+                      SET UsuarioID = @UsuarioID, 
+                          CategoriaID = @CategoriaID, 
+                          Tipo = @Tipo, 
+                          Valor = @Valor, 
+                          Descricao = @Descricao, 
+                          Data = @Data 
+                      WHERE TransacaoID = @TransacaoID";
 
                 using (MySqlCommand command = new MySqlCommand(query, _connection))
                 {
@@ -206,9 +202,9 @@ namespace ApiWeb.Repositorys
                     await command.ExecuteNonQueryAsync();
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                throw; 
+                throw new Exception("Erro ao atualizar transação: " + ex.Message, ex);
             }
             finally
             {
@@ -216,7 +212,6 @@ namespace ApiWeb.Repositorys
             }
         }
 
-        // Método para deletar uma transação pelo ID
         public async Task DeleteTransacao(int id)
         {
             try
@@ -234,9 +229,9 @@ namespace ApiWeb.Repositorys
                     await command.ExecuteNonQueryAsync();
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                throw; 
+                throw new Exception("Erro ao deletar transação: " + ex.Message, ex);
             }
             finally
             {

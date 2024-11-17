@@ -20,34 +20,37 @@
 
     <!-- Header com Filtros -->
     <div class="dashboard-header">
-      <div class="header-title">
-        <h1>Dashboard Financeiro</h1>
-        <p class="subtitle">Visão geral das suas finanças - {{ getMesAtual() }}</p>
+      <div class="header-content">
+        <div class="header-title">
+          <h1>Dashboard Financeiro</h1>
+          <p class="subtitle">Visão geral das suas finanças - {{ getMesAtual() }}</p>
+        </div>
+        <div class="header-filters">
+          <form [formGroup]="filterForm" (ngSubmit)="aplicarFiltro()">
+            <mat-form-field appearance="outline">
+              <mat-label>Mês e Ano</mat-label>
+              <input matInput [matDatepicker]="picker" formControlName="mesAno" 
+                     placeholder="Escolha o mês">
+              <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker 
+                              startView="year"
+                              (monthSelected)="setMonthAndYear($event)"
+                              panelClass="month-picker">
+              </mat-datepicker>
+            </mat-form-field>
+        
+            <button mat-raised-button color="primary" type="submit">
+              <mat-icon>filter_list</mat-icon>
+              Filtrar
+            </button>
+        
+            <button mat-icon-button type="button" matTooltip="Recarregar dados" (click)="reloadData()">
+              <mat-icon>refresh</mat-icon>
+            </button>
+          </form>
+        </div>
       </div>
-      <div class="header-filters">
-        <form [formGroup]="filterForm" (ngSubmit)="aplicarFiltro()">
-          <mat-form-field appearance="outline">
-            <mat-label>Mês e Ano</mat-label>
-            <input matInput [matDatepicker]="picker" formControlName="mesAno" 
-                   placeholder="Escolha o mês">
-            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-            <mat-datepicker #picker 
-                            startView="year"
-                            (monthSelected)="setMonthAndYear($event)"
-                            panelClass="month-picker">
-            </mat-datepicker>
-          </mat-form-field>
-      
-          <button mat-raised-button color="primary" type="submit">
-            <mat-icon>filter_list</mat-icon>
-            Filtrar
-          </button>
-      
-          <button mat-icon-button type="button" matTooltip="Recarregar dados" (click)="reloadData()">
-            <mat-icon>refresh</mat-icon>
-          </button>
-        </form>
-      </div>
+    </div>
 
     <!-- Cards de Resumo -->
     <div class="summary-cards">

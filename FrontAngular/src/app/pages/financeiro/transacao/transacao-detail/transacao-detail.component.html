@@ -1,1 +1,36 @@
-<p>transacao-detail works!</p>
+<h2 mat-dialog-title>Detalhes da Transação</h2>
+<mat-dialog-content>
+  <div class="details-container">
+    <div class="detail-item">
+      <span class="label">ID:</span>
+      <span class="value">{{data.transacaoID}}</span>
+    </div>
+    
+    <div class="detail-item">
+      <span class="label">Data:</span>
+      <span class="value">{{data.data | date:'dd/MM/yyyy'}}</span>
+    </div>
+    
+    <div class="detail-item">
+      <span class="label">Valor:</span>
+      <span class="value">{{data.valor | currency:'BRL'}}</span>
+    </div>
+    
+    <div class="detail-item">
+      <span class="label">Tipo:</span>
+      <span class="value" [class.receita]="data.tipo === 'RECEITA'" 
+                         [class.despesa]="data.tipo === 'DESPESA'">
+        {{data.tipo}}
+      </span>
+    </div>
+    
+    <div class="detail-item">
+      <span class="label">Descrição:</span>
+      <span class="value">{{data.descricao}}</span>
+    </div>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Fechar</button>
+</mat-dialog-actions>

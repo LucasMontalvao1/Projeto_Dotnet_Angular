@@ -1,0 +1,81 @@
+.main-content {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .container {
+    padding: 20px;
+    flex: 1;
+  }
+  
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .filter-field {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+  
+  table {
+    width: 100%;
+  }
+  
+  .mat-column-acoes {
+    width: 150px;
+    text-align: center;
+  }
+  
+  .action-buttons {
+    display: flex;
+    justify-content: flex-start;
+    gap: 8px;
+  }
+  
+  .mat-column-transacaoID {
+    width: 80px;
+  }
+  
+  .mat-column-data {
+    width: 120px;
+  }
+  
+  .mat-column-valor {
+    width: 120px;
+  }
+  
+  .mat-column-tipo {
+    width: 100px;
+  }
+  
+  .mat-column-categoria {
+    width: 120px;
+  }
+  
+  .no-data {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    color: rgba(0, 0, 0, 0.54);
+  }
+  
+  .no-data mat-icon {
+    margin-right: 8px;
+  }
+  
+  /* Ajustes responsivos */
+  @media (max-width: 768px) {
+    .mat-column-descricao,
+    .mat-column-categoria {
+      display: none;
+    }
+    
+    .action-buttons {
+      justify-content: center;
+    }
+  }

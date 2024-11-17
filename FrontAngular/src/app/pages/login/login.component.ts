@@ -10,7 +10,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
-  loginForm: FormGroup;  // Remova o ! 
+  loginForm: FormGroup;  
   isLoading = false;
   errorMessage: string | null = null;
   hidePassword = true;
@@ -71,7 +71,7 @@ export class LoginComponent implements OnInit {
   }
 
   private handleError(error: any): void {
-    const errorMessage = error?.error?.message || 'Ocorreu um erro ao fazer login';
+    const errorMessage = error?.error?.message || 'Acesso negado, verifique o login e senha!';
     this.errorMessage = errorMessage;
     this.snackBar.open(errorMessage, 'Fechar', {
       duration: 5000,

@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { TransacaoService } from '@/app/services/transacao.service';
 import { Transacao } from '@/app/models/transacao.model';
+import { Categoria } from '@/app/models/categoria.model';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';
@@ -18,6 +19,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   @ViewChild('picker') picker!: MatDatepicker<any>;
 
   transacoes: Transacao[] = [];
+  categorias: Categoria[] = []; 
   transacoesFiltradas: Transacao[] = [];
   isLoading = false;
   error: string | null = null;
@@ -43,7 +45,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
   constructor(private transacaoService: TransacaoService, private fb: FormBuilder) {
     this.filterForm = this.fb.group({
-      mesAno: new FormControl(new Date()) // Inicializa com a data atual
+      mesAno: new FormControl(new Date()) 
     });
   }
 
@@ -66,7 +68,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         this.error = null;
         this.isLoading = false;
         this.setupCharts();
-        this.aplicarFiltro(); // Aplica o filtro inicial com o mês atual
+        this.aplicarFiltro(); 
       },
       (err) => {
         this.error = 'Erro ao carregar as transações.';
@@ -82,14 +84,12 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     ctrlDate.setFullYear(normalizedMonthAndYear.getFullYear());
     this.filterForm.get('mesAno')?.setValue(ctrlDate);
     this.picker.close();
-    this.aplicarFiltro(); // Aplica o filtro automaticamente ao selecionar o mês
+    this.aplicarFiltro(); 
   }
 
   setupCharts(): void {
-    // Obtém apenas os dados do mês filtrado
     const dadosFiltrados = this.transacoesFiltradas;
     
-    // Calcula os totais de entradas e saídas
     const entradas = dadosFiltrados
       .filter(t => t.tipo === 'Entrada')
       .reduce((sum, t) => sum + t.valor, 0);
@@ -114,7 +114,6 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       ],
     };
 
-    // Calcula a evolução do saldo
     const saldoDiario = dadosFiltrados
       .sort((a, b) => new Date(a.data).getTime() - new Date(b.data).getTime())
       .reduce((acc: any[], transaction) => {
@@ -142,11 +141,10 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       ],
     };
 
-    // Agrupa as despesas por categoria
     const despesasPorCategoria = dadosFiltrados
       .filter(t => t.tipo === 'Saída')
       .reduce((acc: any, t) => {
-        acc[t.categoriaID] = (acc[t.categoriaID] || 0) + t.valor;
+        acc[t.categoria.nome] = (acc[t.categoria.nome] || 0) + t.valor;
         return acc;
       }, {});
 
@@ -210,7 +208,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         });
 
         this.dataSource.data = this.transacoesFiltradas;
-        this.setupCharts(); // Atualiza os gráficos com os dados filtrados
+        this.setupCharts(); 
       }
     }
   }

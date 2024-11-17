@@ -13,7 +13,7 @@ import { FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatNativeDateModule } from '@angular/material/core';
+import { MatNativeDateModule, MatOptionModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatIconModule } from '@angular/material/icon';
 import { MatPaginatorModule } from '@angular/material/paginator';
@@ -24,11 +24,11 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
-
+import { MatSelectModule } from '@angular/material/select';
 
 import { NgChartsModule } from 'ng2-charts';
 
-// Importação dos componentes da aplicação
+// Importação dos componentes
 import { AppComponent } from './app.component';
 import { LoginComponent } from './pages/login/login.component';
 import { HomeComponent } from './pages/home/home.component';
@@ -44,9 +44,7 @@ import { TransacaoEditComponent } from './pages/financeiro/transacao/transacao-e
 import { TransacaoDetailComponent } from './pages/financeiro/transacao/transacao-detail/transacao-detail.component';
 import { TransacaoDeleteComponent } from './pages/financeiro/transacao/transacao-delete/transacao-delete.component';
 
-
 import { AppRoutingModule } from './app-routing.module';
-import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 @NgModule({
   declarations: [
@@ -67,15 +65,15 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
   ],
   imports: [
     BrowserModule,
-    ReactiveFormsModule,
-    HttpClientModule,
-    AppRoutingModule,
     BrowserAnimationsModule,
-
-    // Módulos do Angular Material
+    CommonModule,
+    ReactiveFormsModule,
+    FormsModule,
+    HttpClientModule,
+    RouterModule,
+    NgChartsModule,
     MatCardModule,
     MatFormFieldModule,
-    FormsModule,
     MatInputModule,
     MatButtonModule,
     MatSnackBarModule,
@@ -88,15 +86,13 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
     MatDialogModule,
     MatProgressSpinnerModule,
     MatDividerModule,
-    CommonModule,
     MatTableModule,
     MatSortModule,
-    MatPaginatorModule,
-    NgChartsModule
+    MatOptionModule,
+    MatSelectModule,
+    AppRoutingModule
   ],
-  providers: [
-    provideAnimationsAsync()
-  ],
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
