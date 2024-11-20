@@ -1,1 +1,43 @@
-<p>categoria-edit works!</p>
+<h2 mat-dialog-title>Editar Categoria</h2>
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <mat-dialog-content>
+    <div class="form-container">
+      <mat-form-field appearance="outline">
+        <mat-label>Nome</mat-label>
+        <input matInput formControlName="nome" placeholder="Nome da categoria">
+        <mat-error *ngIf="form.get('nome')?.hasError('required')">
+          Nome é obrigatório
+        </mat-error>
+        <mat-error *ngIf="form.get('nome')?.hasError('minlength')">
+          Nome deve ter no mínimo 3 caracteres
+        </mat-error>
+        <mat-error *ngIf="form.get('nome')?.hasError('maxlength')">
+          Nome pode ter no máximo 50 caracteres
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Descrição</mat-label>
+        <textarea matInput formControlName="descricao" placeholder="Descrição (opcional)" rows="3"></textarea>
+        <mat-error *ngIf="form.get('descricao')?.hasError('maxlength')">
+          Descrição pode ter no máximo 255 caracteres
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <mat-error *ngIf="error" class="error-message">
+      {{ error }}
+    </mat-error>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close type="button">Cancelar</button>
+    <button mat-raised-button 
+            color="primary" 
+            type="submit" 
+            [disabled]="form.invalid || isLoading">
+      <mat-spinner diameter="20" *ngIf="isLoading"></mat-spinner>
+      <span *ngIf="!isLoading">Salvar</span>
+    </button>
+  </mat-dialog-actions>
+</form>

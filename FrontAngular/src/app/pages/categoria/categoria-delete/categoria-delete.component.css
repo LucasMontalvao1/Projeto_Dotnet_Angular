@@ -1,0 +1,17 @@
+.delete-details {
+    margin-top: 10px;
+  }
+  
+  .delete-details p {
+    margin: 5px 0;
+  }
+  
+  .error-message {
+    color: red;
+  }
+  
+  .mat-dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+  }
+  

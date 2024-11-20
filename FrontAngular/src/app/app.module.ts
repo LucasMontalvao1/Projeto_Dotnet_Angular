@@ -44,6 +44,12 @@ import { TransacaoEditComponent } from './pages/financeiro/transacao/transacao-e
 import { TransacaoDetailComponent } from './pages/financeiro/transacao/transacao-detail/transacao-detail.component';
 import { TransacaoDeleteComponent } from './pages/financeiro/transacao/transacao-delete/transacao-delete.component';
 
+import { CategoriaListComponent } from './pages/categoria/categoria-list/categoria-list.component';
+import { CategoriaCreateComponent } from './pages/categoria/categoria-create/categoria-create.component';
+import { CategoriaEditComponent } from './pages/categoria/categoria-edit/categoria-edit.component';
+import { CategoriaDetailComponent } from './pages/categoria/categoria-detail/categoria-detail.component';
+import { CategoriaDeleteComponent } from './pages/categoria/categoria-delete/categoria-delete.component';
+
 import { AppRoutingModule } from './app-routing.module';
 
 @NgModule({
@@ -61,7 +67,12 @@ import { AppRoutingModule } from './app-routing.module';
     TransacaoCreateComponent,
     TransacaoEditComponent,
     TransacaoDetailComponent,
-    TransacaoDeleteComponent
+    TransacaoDeleteComponent,
+    CategoriaListComponent,
+    CategoriaCreateComponent,
+    CategoriaEditComponent,
+    CategoriaDetailComponent,
+    CategoriaDeleteComponent
   ],
   imports: [
     BrowserModule,

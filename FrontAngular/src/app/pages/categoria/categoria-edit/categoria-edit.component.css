@@ -1,0 +1,30 @@
+.form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px; /* Espaçamento entre os campos */
+  }
+  
+  mat-form-field {
+    width: 100%; /* Campos ocupam toda a largura disponível */
+  }
+  
+  .error-message {
+    color: #d32f2f; /* Vermelho para erros */
+    font-size: 14px;
+    margin-top: 8px;
+  }
+  
+  mat-dialog-content {
+    padding: 16px 24px;
+    max-width: 500px;
+    width: 100%; /* Para centralizar e limitar a largura */
+  }
+  
+  mat-dialog-actions {
+    padding: 8px 24px;
+  }
+  
+  mat-spinner {
+    margin-right: 8px; /* Espaçamento ao lado do texto "Salvar" */
+  }
+  

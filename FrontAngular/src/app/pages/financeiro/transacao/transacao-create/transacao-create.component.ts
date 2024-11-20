@@ -68,7 +68,6 @@ export class TransacaoCreateComponent implements OnInit {
     if (this.form.valid && !this.isLoading) {
       this.isLoading = true;
       
-      // Atualizar o objeto transacao com os valores do formulário
       this.transacao = {
         ...this.transacao,
         ...this.form.value,
@@ -77,7 +76,7 @@ export class TransacaoCreateComponent implements OnInit {
         valor: parseFloat(this.form.value.valor)
       };
       
-      console.log('Transação a ser enviada:', this.transacao); // Para debug
+      console.log('Transação a ser enviada:', this.transacao); 
 
       this.transacaoService.createTransacao(this.transacao).subscribe({
         next: (response) => {

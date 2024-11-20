@@ -1,1 +1,75 @@
-<p>categoria-list works!</p>
+<div class="main-content">
+    <app-menu></app-menu>
+  
+    <div class="container">
+      <div class="header">
+        <h1>Categorias</h1>
+        <button mat-raised-button color="primary" (click)="openCreateDialog()">
+          <mat-icon>add</mat-icon>
+          Nova Categoria
+        </button>
+      </div>
+  
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Filtrar</mat-label>
+        <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Alimentação" #input />
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+  
+      <div class="mat-elevation-z8">
+        <mat-progress-bar mode="indeterminate" *ngIf="isLoading"></mat-progress-bar>
+  
+        <table mat-table [dataSource]="dataSource" matSort>
+          <ng-container matColumnDef="categoriaID">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> ID </th>
+            <td mat-cell *matCellDef="let row"> {{ row.categoriaID }} </td>
+          </ng-container>
+  
+          <ng-container matColumnDef="nome">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Nome </th>
+            <td mat-cell *matCellDef="let row"> {{ row.nome }} </td>
+          </ng-container>
+  
+          <ng-container matColumnDef="descricao">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Descrição </th>
+            <td mat-cell *matCellDef="let row"> {{ row.descricao }} </td>
+          </ng-container>
+  
+          <ng-container matColumnDef="acoes">
+            <th mat-header-cell *matHeaderCellDef> Ações </th>
+            <td mat-cell *matCellDef="let row">
+              <div class="action-buttons">
+                <button mat-icon-button color="primary" (click)="openDetailsDialog(row)" matTooltip="Detalhes">
+                  <mat-icon>visibility</mat-icon>
+                </button>
+                <button mat-icon-button color="accent" (click)="openEditDialog(row)" matTooltip="Editar">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button color="warn" (click)="openDeleteDialog(row)" matTooltip="Excluir">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </td>
+          </ng-container>
+  
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell" colspan="4">
+              <div class="no-data">
+                <mat-icon>info</mat-icon>
+                <span *ngIf="input.value">Nenhuma categoria encontrada para "{{ input.value }}"</span>
+                <span *ngIf="!input.value">Nenhuma categoria cadastrada</span>
+              </div>
+            </td>
+          </tr>
+        </table>
+  
+        <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Selecione a página de categorias"></mat-paginator>
+      </div>
+    </div>
+  
+    <app-footer></app-footer>
+  </div>
+  

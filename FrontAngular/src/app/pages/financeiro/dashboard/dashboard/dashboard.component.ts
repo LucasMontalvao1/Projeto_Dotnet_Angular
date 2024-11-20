@@ -95,7 +95,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       .reduce((sum, t) => sum + t.valor, 0);
     
     const saidas = dadosFiltrados
-      .filter(t => t.tipo === 'Saída')
+      .filter(t => t.tipo === 'Saida')
       .reduce((sum, t) => sum + t.valor, 0);
 
     this.barChartData = {
@@ -107,7 +107,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
           backgroundColor: 'rgba(0, 255, 0, 0.2)',
         },
         {
-          label: 'Saídas',
+          label: 'Saidas',
           data: [saidas],
           backgroundColor: 'rgba(255, 0, 0, 0.2)',
         },
@@ -142,7 +142,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     };
 
     const despesasPorCategoria = dadosFiltrados
-      .filter(t => t.tipo === 'Saída')
+      .filter(t => t.tipo === 'Saida')
       .reduce((acc: any, t) => {
         acc[t.categoria.nome] = (acc[t.categoria.nome] || 0) + t.valor;
         return acc;
@@ -167,7 +167,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
   getTotalSaidas(): number {
     return this.transacoesFiltradas
-      .filter((t) => t.tipo === 'Saída')
+      .filter((t) => t.tipo === 'Saida')
       .reduce((sum, t) => sum + t.valor, 0);
   }
 

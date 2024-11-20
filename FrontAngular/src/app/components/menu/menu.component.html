@@ -30,7 +30,7 @@
       </button>
       
       <mat-menu #submenu1="matMenu">
-        <button mat-menu-item>
+        <button mat-menu-item [routerLink]="['/categoria']" routerLinkActive="active-link">
           <mat-icon>description</mat-icon>
           <span>Categoria</span>
         </button>
@@ -41,23 +41,6 @@
       </mat-menu>
       
 
-    </mat-menu>
-
-    <button mat-button [matMenuTriggerFor]="menu2" class="menu-trigger">
-      <mat-icon>admin_panel_settings</mat-icon>
-      <span>Menu 2</span>
-      <mat-icon class="dropdown-icon">expand_more</mat-icon>
-    </button>
-    
-    <mat-menu #menu2="matMenu" class="custom-menu">
-      <button mat-menu-item>
-        <mat-icon>person</mat-icon>
-        <span>Perfil</span>
-      </button>
-      <button mat-menu-item>
-        <mat-icon>settings</mat-icon>
-        <span>Configurações</span>
-      </button>
     </mat-menu>
   </div>
 
