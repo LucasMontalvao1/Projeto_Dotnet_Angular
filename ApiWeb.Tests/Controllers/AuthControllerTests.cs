@@ -7,218 +7,123 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
+using System.ComponentModel.DataAnnotations;
+using Microsoft.IdentityModel.Tokens;
 
 namespace ApiWeb.Tests.Controllers
 {
+    /// <summary>
+    /// Testes unitários para o AuthController
+    /// </summary>
     public class AuthControllerTests
     {
+        // Campos privados para mocks e controller
         private readonly Mock<IAuthService> _authServiceMock;
         private readonly Mock<ILogger<AuthController>> _loggerMock;
         private readonly AuthController _controller;
 
+        // Dados de teste comuns
+        private readonly UserDto _validUserDto;
+        private readonly User _validUser;
+
         public AuthControllerTests()
         {
+            // Configuração inicial dos mocks
             _authServiceMock = MockAuthService.GetMock();
             _loggerMock = new Mock<ILogger<AuthController>>();
             _controller = new AuthController(_authServiceMock.Object, _loggerMock.Object);
+
+            // Inicialização dos dados de teste comuns
+            _validUserDto = new UserDto { Username = "usuario", Password = "senha" };
+            _validUser = new User
+            {
+                UsuarioID = 1,
+                Username = "usuario",
+                Name = "Nome",
+                Foto = "foto.jpg",
+                Email = "email@dominio.com"
+            };
         }
+
+        #region Testes de Login Bem-Sucedido
 
         [Fact]
         public void Login_UsuarioValido_DeveRetornarOk()
         {
             // Arrange
-            var userDto = new UserDto { Username = "usuario", Password = "senha" };
-            var usuario = new User
-            {
-                UsuarioID = 1,
-                Username = "usuario",
-                Name = "Nome",
-                Foto = "foto.jpg",
-                Email = "email@dominio.com"
-            };
+            ConfigurarLoginBemSucedido();
 
             // Act
-            var result = _controller.Login(userDto);
+            var result = _controller.Login(_validUserDto);
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
-            var responseValue = Assert.IsAssignableFrom<LoginResponse>(okResult.Value);
+            var response = Assert.IsAssignableFrom<LoginResponse>(okResult.Value);
 
-            Assert.NotNull(responseValue);
-            Assert.NotNull(responseValue.Token);
-            Assert.NotNull(responseValue.User);
-            Assert.Equal("usuario", responseValue.User.Username);
-        }
-
-        [Fact]
-        public void Login_UsuarioInvalido_DeveRetornarUnauthorized()
-        {
-            // Arrange
-            var userDto = new UserDto { Username = "usuario", Password = "senha" };
-            _authServiceMock.Setup(a => a.ValidarUsuario(userDto.Username, userDto.Password)).Returns((User)null);
-
-            // Act
-            var result = _controller.Login(userDto) as UnauthorizedObjectResult;
-
-            // Assert
-            Assert.NotNull(result);
-            Assert.Equal(401, result.StatusCode);
-            Assert.Equal("Login ou senha incorretos", result.Value);
-        }
-
-        [Fact]
-        public void Login_ErroAoValidarUsuario_DeveRetornar500()
-        {
-            // Arrange
-            var userDto = new UserDto { Username = "usuario", Password = "senha" };
-            _authServiceMock.Setup(a => a.ValidarUsuario(userDto.Username, userDto.Password)).Throws(new Exception("Erro interno"));
-
-            // Act
-            var result = _controller.Login(userDto) as ObjectResult;
-
-            // Assert
-            Assert.NotNull(result);
-            Assert.Equal(500, result.StatusCode);
-        }
-
-        [Fact]
-        public void Login_UserDtoNulo_DeveRetornarBadRequest()
-        {
-            // Arrange
-            UserDto userDto = null;
-
-            // Act
-            var result = _controller.Login(userDto);
-
-            // Assert
-            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
-            Assert.Equal("Usuário não pode ser nulo", badRequestResult.Value);
-        }
-
-        [Fact]
-        public void Login_DadosDeLoginVazios_DeveRetornarBadRequest()
-        {
-            // Arrange
-            var userDto = new UserDto { Username = "", Password = "" };
-
-            // Act
-            var result = _controller.Login(userDto);
-
-            // Assert
-            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
-            Assert.Equal("Nome de usuário e senha não podem estar vazios", badRequestResult.Value);
-        }
-
-        [Fact]
-        public void Login_UsuarioValido_ChamaValidarUsuario()
-        {
-            // Arrange
-            var userDto = new UserDto { Username = "usuario", Password = "senha" };
-            var usuario = new User
-            {
-                UsuarioID = 1,
-                Username = "usuario",
-                Name = "Nome",
-                Foto = "foto.jpg",
-                Email = "email@dominio.com"
-            };
-
-            _authServiceMock.Setup(a => a.ValidarUsuario(userDto.Username, userDto.Password)).Returns(usuario);
-
-            // Act
-            _controller.Login(userDto);
-
-            // Assert
-            _authServiceMock.Verify(a => a.ValidarUsuario(userDto.Username, userDto.Password), Times.Once);
+            Assert.NotNull(response);
+            Assert.NotNull(response.Token);
+            Assert.NotNull(response.User);
+            Assert.Equal(_validUser.Username, response.User.Username);
         }
 
         [Fact]
         public void Login_UsuarioValido_DeveRetornarTokenValido()
         {
             // Arrange
-            var userDto = new UserDto { Username = "usuario", Password = "senha" };
-            var usuario = new User
-            {
-                UsuarioID = 1,
-                Username = "usuario",
-                Name = "Nome",
-                Foto = "foto.jpg",
-                Email = "email@dominio.com"
-            };
-
             var token = "token-gerado";
-            _authServiceMock.Setup(a => a.ValidarUsuario(userDto.Username, userDto.Password)).Returns(usuario);
-            _authServiceMock.Setup(a => a.GenerateToken(usuario)).Returns(token); // Supondo que você tenha esse método
+            ConfigurarLoginBemSucedido(token);
 
             // Act
-            var result = _controller.Login(userDto) as OkObjectResult;
+            var result = _controller.Login(_validUserDto) as OkObjectResult;
 
             // Assert
-            var responseValue = Assert.IsAssignableFrom<LoginResponse>(result.Value);
-            Assert.Equal(token, responseValue.Token);
+            var response = Assert.IsAssignableFrom<LoginResponse>(result.Value);
+            Assert.Equal(token, response.Token);
+            Assert.False(string.IsNullOrEmpty(response.Token), "Token não deve ser vazio");
         }
 
         [Fact]
-        public void Login_ErroAoValidarUsuario_LogErro()
+        public void Login_UsuarioValido_DeveChamarValidarUsuario()
         {
             // Arrange
-            var userDto = new UserDto { Username = "usuario", Password = "senha" };
-            _authServiceMock.Setup(a => a.ValidarUsuario(userDto.Username, userDto.Password)).Throws(new Exception("Erro interno"));
+            ConfigurarLoginBemSucedido();
 
             // Act
-            var result = _controller.Login(userDto) as ObjectResult;
+            _controller.Login(_validUserDto);
 
             // Assert
-            _loggerMock.Verify(l => l.Log(
-                LogLevel.Error,
-                It.IsAny<EventId>(),
-                It.IsAny<It.IsAnyType>(),
-                It.IsAny<Exception>(),
-                It.IsAny<Func<It.IsAnyType, Exception, string>>()), Times.Once);
+            _authServiceMock.Verify(a => a.ValidarUsuario(_validUserDto.Username, _validUserDto.Password), Times.Once);
         }
 
+        #endregion
+
+        #region Testes de Falha de Login
+
         [Fact]
-        public void Login_UsuarioValido_LogSucesso()
+        public void Login_UsuarioInvalido_DeveRetornarUnauthorized()
         {
             // Arrange
-            var userDto = new UserDto { Username = "usuario", Password = "senha" };
-            var usuario = new User { UsuarioID = 1, Username = "usuario", Name = "Nome", Foto = "foto.jpg", Email = "email@dominio.com" };
-            _authServiceMock.Setup(a => a.ValidarUsuario(userDto.Username, userDto.Password)).Returns(usuario);
+            _authServiceMock.Setup(a => a.ValidarUsuario(_validUserDto.Username, _validUserDto.Password))
+                .Returns((User)null);
 
             // Act
-            _controller.Login(userDto);
+            var result = _controller.Login(_validUserDto);
 
             // Assert
-            _loggerMock.Verify(l => l.Log(
-                LogLevel.Information,
-                It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => v.ToString().Contains("Login bem-sucedido para o usuário")),
-                It.IsAny<Exception>(),
-                It.IsAny<Func<It.IsAnyType, Exception, string>>()), Times.Once);
+            var unauthorizedResult = Assert.IsType<UnauthorizedObjectResult>(result);
+            Assert.Equal(401, unauthorizedResult.StatusCode);
+            Assert.Equal("Login ou senha incorretos", unauthorizedResult.Value);
         }
 
-        [Fact]
-        public void Login_UsuarioValido_TokenNaoDeveSerVazio()
+        [Theory]
+        [InlineData(null, "senha")]
+        [InlineData("usuario", null)]
+        [InlineData("", "senha")]
+        [InlineData("usuario", "")]
+        public void Login_DadosInvalidos_DeveRetornarBadRequest(string username, string password)
         {
             // Arrange
-            var userDto = new UserDto { Username = "usuario", Password = "senha" };
-            var usuario = new User { UsuarioID = 1, Username = "usuario", Name = "Nome", Foto = "foto.jpg", Email = "email@dominio.com" };
-            _authServiceMock.Setup(a => a.ValidarUsuario(userDto.Username, userDto.Password)).Returns(usuario);
-            _authServiceMock.Setup(a => a.GenerateToken(usuario)).Returns("token-gerado");
-
-            // Act
-            var result = _controller.Login(userDto) as OkObjectResult;
-
-            // Assert
-            var responseValue = Assert.IsAssignableFrom<LoginResponse>(result.Value);
-            Assert.False(string.IsNullOrEmpty(responseValue.Token), "Token não deve ser vazio");
-        }
-
-        [Fact]
-        public void Login_UsernameOuPasswordNulo_DeveRetornarBadRequest()
-        {
-            // Arrange
-            var userDto = new UserDto { Username = null, Password = "senha" }; // ou Password nulo
+            var userDto = new UserDto { Username = username, Password = password };
 
             // Act
             var result = _controller.Login(userDto);
@@ -227,5 +132,98 @@ namespace ApiWeb.Tests.Controllers
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
             Assert.Equal("Nome de usuário e senha não podem estar vazios", badRequestResult.Value);
         }
+
+        [Fact]
+        public void Login_UserDtoNulo_DeveRetornarBadRequest()
+        {
+            // Act
+            var result = _controller.Login(null);
+
+            // Assert
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal("Usuário não pode ser nulo", badRequestResult.Value);
+        }
+
+        #endregion
+
+        #region Testes de Erro e Logging
+
+        [Fact]
+        public void Login_ErroAoValidarUsuario_DeveRetornar500()
+        {
+            // Arrange
+            _authServiceMock.Setup(a => a.ValidarUsuario(_validUserDto.Username, _validUserDto.Password))
+                .Throws(new Exception("Erro interno"));
+
+            // Act
+            var result = _controller.Login(_validUserDto);
+
+            // Assert
+            var statusCodeResult = Assert.IsType<ObjectResult>(result);
+            Assert.Equal(500, statusCodeResult.StatusCode);
+        }
+
+        [Fact]
+        public void Login_ErroAoValidarUsuario_DeveLogarErro()
+        {
+            // Arrange
+            _authServiceMock.Setup(a => a.ValidarUsuario(_validUserDto.Username, _validUserDto.Password))
+                .Throws(new Exception("Erro interno"));
+
+            // Act
+            _controller.Login(_validUserDto);
+
+            // Assert
+            VerificarLogErro();
+        }
+
+        [Fact]
+        public void Login_LoginBemSucedido_DeveLogarSucesso()
+        {
+            // Arrange
+            ConfigurarLoginBemSucedido();
+
+            // Act
+            _controller.Login(_validUserDto);
+
+            // Assert
+            VerificarLogSucesso();
+        }
+
+        #endregion
+
+        #region Métodos Auxiliares
+
+        private void ConfigurarLoginBemSucedido(string token = "token-valido")
+        {
+            _authServiceMock.Setup(a => a.ValidarUsuario(_validUserDto.Username, _validUserDto.Password))
+                .Returns(_validUser);
+            _authServiceMock.Setup(a => a.GenerateToken(_validUser))
+                .Returns(token);
+        }
+
+        private void VerificarLogErro()
+        {
+            _loggerMock.Verify(l => l.Log(
+                LogLevel.Error,
+                It.IsAny<EventId>(),
+                It.IsAny<It.IsAnyType>(),
+                It.IsAny<Exception>(),
+                It.IsAny<Func<It.IsAnyType, Exception, string>>()),
+                Times.Once);
+        }
+
+        private void VerificarLogSucesso()
+        {
+            _loggerMock.Verify(l => l.Log(
+                LogLevel.Information,
+                It.IsAny<EventId>(),
+                It.Is<It.IsAnyType>((v, t) => v.ToString().Contains("Login bem-sucedido para o usuário")),
+                It.IsAny<Exception>(),
+                It.IsAny<Func<It.IsAnyType, Exception, string>>()),
+                Times.Once);
+        }
+
+        #endregion
     }
 }
