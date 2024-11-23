@@ -48,8 +48,7 @@ namespace ApiWeb.Tests.Controllers
 
         #region Testes de Obtenção (GET)
 
-        // Testa se retorna todos os lembretes
-        [Fact]
+        [Fact (DisplayName = "Testa se retorna todos os lembretes")]
         public void GetAllLembretes_ShouldReturnAllLembretes()
         {
             // Act
@@ -61,8 +60,7 @@ namespace ApiWeb.Tests.Controllers
             Assert.Equal(2, lembretes.Count);
         }
 
-        // Testa se retorna os lembretes de um usuário específico
-        [Fact]
+        [Fact (DisplayName = "Testa se retorna os lembretes de um usuário específico")]
         public void GetLembretes_ShouldReturnUserLembretes()
         {
             // Arrange
@@ -92,8 +90,7 @@ namespace ApiWeb.Tests.Controllers
             Assert.Equal("Lembrete Usuario 1", returnedLembretes[0].Titulo);
         }
 
-        // Testa se retorna um lembrete específico por ID
-        [Fact]
+        [Fact (DisplayName = "Testa se retorna um lembrete específico por ID")]
         public void GetLembreteById_ExistingId_ShouldReturnLembrete()
         {
             // Arrange
@@ -113,8 +110,7 @@ namespace ApiWeb.Tests.Controllers
 
         #region Testes de Criação (POST)
 
-        // Testa a criação bem-sucedida de um lembrete
-        [Fact]
+        [Fact (DisplayName = "Testa a criação bem-sucedida de um lembrete")]
         public void AddLembrete_ValidLembrete_ShouldReturnCreatedAtAction()
         {
             // Arrange
@@ -130,9 +126,8 @@ namespace ApiWeb.Tests.Controllers
             var lembrete = Assert.IsType<Lembrete>(createdAtActionResult.Value);
             Assert.Equal("Novo Lembrete", lembrete.Titulo);
         }
-
-        // Testa o tratamento de erro na criação de um lembrete
-        [Fact]
+         
+        [Fact (DisplayName = "Testa o tratamento de erro na criação de um lembrete")]
         public void AddLembrete_ServiceThrowsException_ShouldReturnInternalServerError()
         {
             // Arrange
@@ -149,8 +144,7 @@ namespace ApiWeb.Tests.Controllers
             Assert.Contains("Erro interno ao criar lembrete", statusCodeResult.Value.ToString());
         }
 
-        // Testa a tentativa de adicionar um lembrete nulo
-        [Fact]
+        [Fact (DisplayName = "Testa a tentativa de adicionar um lembrete nulo")]
         public void AddLembrete_NullLembrete_ShouldReturnBadRequest()
         {
             // Arrange
@@ -163,8 +157,7 @@ namespace ApiWeb.Tests.Controllers
             Assert.IsType<BadRequestObjectResult>(result);
         }
 
-        // Testa a validação do ModelState
-        [Fact]
+        [Fact (DisplayName = "Testa a validação do ModelState")]
         public void AddLembrete_InvalidModelState_ShouldReturnBadRequest()
         {
             // Arrange
@@ -178,8 +171,7 @@ namespace ApiWeb.Tests.Controllers
             Assert.IsType<BadRequestObjectResult>(result);
         }
 
-        // Testa diferentes cenários de título inválido
-        [Theory]
+        [Theory (DisplayName = "Testa diferentes cenários de título inválido")]
         [InlineData("")]
         [InlineData(null)]
         [InlineData("   ")]
@@ -199,8 +191,7 @@ namespace ApiWeb.Tests.Controllers
 
         #region Testes de Atualização (PUT)
 
-        // Testa a atualização bem-sucedida de um lembrete
-        [Fact]
+        [Fact (DisplayName = "Testa a atualização bem-sucedida de um lembrete")]
         public void UpdateLembrete_ValidLembrete_ShouldReturnOkResult()
         {
             // Arrange
@@ -224,8 +215,7 @@ namespace ApiWeb.Tests.Controllers
             Assert.Equal("Lembrete Atualizado", updatedLembrete.Titulo);
         }
 
-        // Testa a atualização com erros
-        [Fact]
+        [Fact(DisplayName = "Testa a atualização com erros")]
         public void UpdateLembrete_NonExistingId_ShouldReturnNotFound()
         {
             // Arrange
@@ -251,8 +241,7 @@ namespace ApiWeb.Tests.Controllers
 
         #region Testes de Deleção (DELETE)
 
-        // Testa a deleção bem-sucedida de um lembrete
-        [Fact]
+        [Fact (DisplayName = "Testa a deleção bem-sucedida de um lembrete")]
         public void DeleteLembrete_ExistingId_ShouldReturnNoContent()
         {
             // Arrange
@@ -265,8 +254,7 @@ namespace ApiWeb.Tests.Controllers
             Assert.IsType<NoContentResult>(result);
         }
 
-        // Testa a tentativa de deletar um lembrete inexistente
-        [Fact]
+        [Fact(DisplayName = "Testa a tentativa de deletar um lembrete inexistente")]
         public void DeleteLembrete_NonExistingId_ShouldReturnNotFound()
         {
             // Arrange
@@ -284,8 +272,7 @@ namespace ApiWeb.Tests.Controllers
 
         #region Testes de Utilidade
 
-        // Testa o cálculo de diferença entre datas
-        [Fact]
+        [Fact(DisplayName = "Testa o cálculo de diferença entre datas")]
         public void CalculateDateDifference_ShouldReturnCorrectDifference()
         {
             // Arrange
@@ -299,8 +286,7 @@ namespace ApiWeb.Tests.Controllers
             Assert.Equal(9, difference);
         }
 
-        // Testa a autorização
-        [Fact]
+        [Fact (DisplayName = "Testa a autorização")]
         public void GetLembretes_UserNotAuthenticated_ShouldReturnUnauthorized()
         {
             // Arrange
@@ -317,8 +303,7 @@ namespace ApiWeb.Tests.Controllers
 
         #region Testes de Casos Vazios/Nulos
 
-        // Testa quando não há lembretes para um usuário
-        [Fact]
+        [Fact (DisplayName = "Testa quando não há lembretes para um usuário")]
         public void GetLembretes_NoLembretesForUser_ShouldReturnEmptyList()
         {
             // Arrange
@@ -343,8 +328,7 @@ namespace ApiWeb.Tests.Controllers
             Assert.Empty(returnedLembretes);
         }
 
-        // Testa quando não encontra um lembrete por ID
-        [Fact]
+        [Fact (DisplayName = "Testa quando não encontra um lembrete por ID")]
         public void GetLembreteById_NonExistingId_ShouldReturnNotFound()
         {
             // Arrange

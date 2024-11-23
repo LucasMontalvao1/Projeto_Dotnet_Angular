@@ -11,7 +11,7 @@ namespace ApiWeb.Tests.Fixtures
 
         public DatabaseFixture()
         {
-            var connectionString = "server=localhost;userid=root;password=asd123;database=projeto_producao"; 
+            var connectionString = "server=localhost;userid=root;password=asd123;database=projeto_producao";
             _connection = new MySqlConnection(connectionString);
             _connection.Open();
 

@@ -47,7 +47,7 @@ namespace ApiWeb.Tests.Controllers
 
         #region Testes de Login Bem-Sucedido
 
-        [Fact]
+        [Fact(DisplayName = "Testa o usuario valido se retorna ok")]
         public void Login_UsuarioValido_DeveRetornarOk()
         {
             // Arrange
@@ -66,7 +66,7 @@ namespace ApiWeb.Tests.Controllers
             Assert.Equal(_validUser.Username, response.User.Username);
         }
 
-        [Fact]
+        [Fact(DisplayName = "Testa login sucesso e se retorna token valido")]
         public void Login_UsuarioValido_DeveRetornarTokenValido()
         {
             // Arrange
@@ -82,7 +82,7 @@ namespace ApiWeb.Tests.Controllers
             Assert.False(string.IsNullOrEmpty(response.Token), "Token não deve ser vazio");
         }
 
-        [Fact]
+        [Fact (DisplayName = "Testa usaurio valida e valida o usuario")]
         public void Login_UsuarioValido_DeveChamarValidarUsuario()
         {
             // Arrange
