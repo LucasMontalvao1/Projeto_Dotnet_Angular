@@ -1,0 +1,120 @@
+.summary-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-bottom: 32px;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.summary-card {
+  background: white;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  }
+
+  .card-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+  }
+
+  .card-info {
+    flex: 1;
+    
+    .card-label {
+      display: block;
+      font-size: 0.9rem;
+      color: rgba(0, 0, 0, 0.6);
+      margin-bottom: 8px;
+    }
+
+    .card-value {
+      display: block;
+      font-size: 1.5rem;
+      font-weight: 600;
+      line-height: 1.2;
+    }
+  }
+
+  .card-icon {
+    width: 48px;
+    height: 48px;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    margin-left: 16px;
+    background: rgba(0, 0, 0, 0.04);
+    transition: all 0.3s ease;
+  }
+}
+
+// Status colors
+.positive {
+  color: #2ecc71;
+  &.card-icon {
+    background-color: rgba(46, 204, 113, 0.1);
+  }
+}
+
+.negative {
+  color: #e74c3c;
+  &.card-icon {
+    background-color: rgba(231, 76, 60, 0.1);
+  }
+}
+
+// Card specific styles
+.income .card-icon { background-color: rgba(46, 204, 113, 0.1); }
+.expense .card-icon { background-color: rgba(231, 76, 60, 0.1); }
+.balance .card-icon { background-color: rgba(52, 152, 219, 0.1); }
+.average .card-icon { background-color: rgba(155, 89, 182, 0.1); }
+
+.no-data {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  color: rgba(0, 0, 0, 0.5);
+  margin-bottom: 32px;
+  
+  mat-icon {
+    margin-right: 8px;
+  }
+}
+
+@media (max-width: 768px) {
+  .summary-cards {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .card-value {
+    font-size: 1.25rem;
+  }
+
+  .card-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+  }
+}
+
+@keyframes fadeIn {
+  from { 
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

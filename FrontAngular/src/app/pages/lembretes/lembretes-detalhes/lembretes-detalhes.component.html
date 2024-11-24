@@ -1,12 +1,53 @@
-<h2 mat-dialog-title>Detalhes do Lembrete</h2>
+<div class="dialog-content">
+  <h2 mat-dialog-title>
+    <mat-icon>event_note</mat-icon>
+    Detalhes do Lembrete
+  </h2>
 
-<mat-dialog-content>
-  <p><strong>Título:</strong> {{ data.titulo }}</p>
-  <p><strong>Descrição:</strong> {{ data.descricao }}</p>
-  <p><strong>Data do Lembrete:</strong> {{ data.dataLembrete | date: 'dd/MM/yyyy HH:mm' }}</p>
-  <p><strong>Intervalo em Dias:</strong> {{ data.intervaloEmDias }}</p>
-</mat-dialog-content>
+  <mat-dialog-content>
+    <div class="detail-grid">
+      <div class="detail-item">
+        <div class="label">
+          <mat-icon>title</mat-icon>
+          Título
+        </div>
+        <p class="value">{{ data.titulo }}</p>
+      </div>
 
-<mat-dialog-actions>
-  <button mat-button (click)="onClose()">Fechar</button>
-</mat-dialog-actions>
+      <div class="detail-item description">
+        <div class="label">
+          <mat-icon>description</mat-icon>
+          Descrição
+        </div>
+        <p class="value">{{ data.descricao || 'Nenhuma descrição fornecida' }}</p>
+      </div>
+
+      <div class="detail-item">
+        <div class="label">
+          <mat-icon>event</mat-icon>
+          Data do Lembrete
+        </div>
+        <p class="value">{{ data.dataLembrete | date: 'dd/MM/yyyy HH:mm' }}</p>
+      </div>
+
+      <div class="detail-item">
+        <div class="label">
+          <mat-icon>update</mat-icon>
+          Intervalo de Repetição
+        </div>
+        <p class="value">
+          {{ data.intervaloEmDias === 0 ? 'Não se repete' : 
+             data.intervaloEmDias === 1 ? 'Todo dia' : 
+             'A cada ' + data.intervaloEmDias + ' dias' }}
+        </p>
+      </div>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions>
+    <button mat-flat-button (click)="onClose()">
+      <mat-icon>close</mat-icon>
+      Fechar
+    </button>
+  </mat-dialog-actions>
+</div>

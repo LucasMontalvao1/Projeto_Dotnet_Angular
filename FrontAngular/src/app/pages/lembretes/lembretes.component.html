@@ -1,41 +1,110 @@
-<h2 mat-dialog-title class="dialog-title">{{ lembrete.lembreteID ? 'Editar Lembrete - ID: ' + lembrete.lembreteID : 'Criar Lembrete' }}</h2>
+<div class="dialog-form">
+  <div class="dialog-title">
+    <mat-icon>{{ lembrete.lembreteID ? 'edit' : 'add_circle' }}</mat-icon>
+    <span class="title-text">
+      {{ lembrete.lembreteID ? 'Editar Lembrete' : 'Novo Lembrete' }}
+    </span>
+    <span class="id-badge" *ngIf="lembrete.lembreteID">
+      ID: {{ lembrete.lembreteID }}
+    </span>
+  </div>
 
-<mat-dialog-content>
-  <form #form="ngForm">
+  <mat-dialog-content>
+    <form #form="ngForm">
+      <div class="form-field">
+        <mat-icon class="field-icon">title</mat-icon>
+        <mat-form-field appearance="outline">
+          <mat-label>Título</mat-label>
+          <input 
+            matInput 
+            [(ngModel)]="lembrete.titulo" 
+            name="titulo" 
+            required 
+            placeholder="Digite o título do lembrete"
+            #tituloField="ngModel">
+          <mat-error *ngIf="tituloField.invalid && tituloField.touched">
+            Título é obrigatório
+          </mat-error>
+        </mat-form-field>
+      </div>
 
-    <mat-form-field appearance="fill">
-      <mat-label>Título</mat-label>
-      <input matInput [(ngModel)]="lembrete.titulo" name="titulo" required aria-label="Título do lembrete">
-      <mat-error *ngIf="!lembrete.titulo">Título é obrigatório!</mat-error>
-    </mat-form-field>
+      <div class="form-field">
+        <mat-icon class="field-icon">description</mat-icon>
+        <mat-form-field appearance="outline">
+          <mat-label>Descrição</mat-label>
+          <textarea 
+            matInput 
+            [(ngModel)]="lembrete.descricao" 
+            name="descricao" 
+            required
+            #descricao="ngModel"
+            maxlength="500"
+            placeholder="Digite a descrição do lembrete">
+          </textarea>
+          <mat-hint align="end">{{descricao.value?.length || 0}}/500</mat-hint>
+        </mat-form-field>
+      </div>
 
-    <mat-form-field appearance="fill">
-      <mat-label>Descrição</mat-label>
-      <textarea matInput [(ngModel)]="lembrete.descricao" name="descricao" required aria-label="Descrição do lembrete"></textarea>
-      <mat-error *ngIf="!lembrete.descricao">Descrição é obrigatória!</mat-error>
-    </mat-form-field>
+      <div class="date-time-group">
+        <div class="form-field">
+          <mat-icon class="field-icon">event</mat-icon>
+          <mat-form-field appearance="outline">
+            <mat-label>Data do Lembrete</mat-label>
+            <input 
+              matInput 
+              [(ngModel)]="lembrete.dataLembrete" 
+              [matDatepicker]="picker" 
+              name="dataLembrete"
+              required
+              #dataField="ngModel"
+              placeholder="DD/MM/AAAA">
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+            <mat-error *ngIf="dataField.invalid && dataField.touched">
+              Data é obrigatória
+            </mat-error>
+          </mat-form-field>
+        </div>
 
-    <div style="display: flex; align-items: center; justify-content: space-between;">
-      <mat-form-field appearance="fill" style="flex: 1; margin-right: 16px;">
-        <mat-label>Data do Lembrete</mat-label>
-        <input matInput [(ngModel)]="lembrete.dataLembrete" name="dataLembrete" [matDatepicker]="picker" required aria-label="Data do lembrete">
-        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-        <mat-datepicker #picker></mat-datepicker>
-        <mat-error *ngIf="!lembrete.dataLembrete">Data é obrigatória!</mat-error>
-      </mat-form-field>
+        <div class="form-field">
+          <mat-icon class="field-icon">update</mat-icon>
+          <mat-form-field appearance="outline">
+            <mat-label>Intervalo</mat-label>
+            <input 
+              matInput 
+              type="number" 
+              [(ngModel)]="lembrete.intervaloEmDias" 
+              name="intervaloEmDias"
+              min="0"
+              required
+              placeholder="Dias"
+              #intervaloField="ngModel">
+            <mat-hint>Dias entre repetições</mat-hint>
+            <mat-error *ngIf="intervaloField.value < 0">
+              Deve ser maior ou igual a zero
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+    </form>
+  </mat-dialog-content>
 
-      <mat-form-field appearance="fill" style="width: 120px;">
-        <mat-label>Intervalo em Dias</mat-label>
-        <input matInput type="number" [(ngModel)]="lembrete.intervaloEmDias" name="intervaloEmDias" min="0" required aria-label="Intervalo em dias">
-        <mat-error *ngIf="lembrete.intervaloEmDias < 0">Intervalo deve ser maior ou igual a zero!</mat-error>
-      </mat-form-field>
-    </div>
-  </form>
-</mat-dialog-content>
-
-<mat-dialog-actions>
-  <button mat-button (click)="onCancel()">Cancelar</button>
-  <button mat-raised-button color="primary" (click)="onSave()" [disabled]="!form.valid">
-    {{ lembrete.lembreteID ? 'Salvar' : 'Criar' }}
-  </button>
-</mat-dialog-actions>
+  <mat-dialog-actions>
+    <button 
+      mat-button 
+      class="cancel-btn"
+      (click)="onCancel()"
+      matTooltip="Cancelar operação">
+      Cancelar
+    </button>
+    <button 
+      mat-flat-button
+      class="save-btn"
+      (click)="onSave()"
+      [disabled]="!form.valid"
+      matTooltip="{{ form.valid ? 'Salvar alterações' : 'Preencha todos os campos obrigatórios' }}">
+      <mat-icon>{{ lembrete.lembreteID ? 'save' : 'add' }}</mat-icon>
+      {{ lembrete.lembreteID ? 'Salvar' : 'Criar' }}
+    </button>
+  </mat-dialog-actions>
+</div>

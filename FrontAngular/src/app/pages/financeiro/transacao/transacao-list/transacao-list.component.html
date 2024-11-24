@@ -2,47 +2,12 @@
   <app-menu></app-menu>
 
   <div class="container">
-    <!-- Cabeçalho com Cards de Resumo -->
     <div class="dashboard-header">
       <h1>Transações</h1>
-      <div class="summary-cards">
-        <mat-card class="summary-card income">
-          <mat-card-content>
-            <div class="card-icon">
-              <mat-icon>arrow_upward</mat-icon>
-            </div>
-            <div class="card-info">
-              <span class="card-label">Receitas</span>
-              <span class="card-value">{{ resumo.totalReceitas | currency:'BRL' }}</span>
-            </div>
-          </mat-card-content>
-        </mat-card>
-
-        <mat-card class="summary-card expense">
-          <mat-card-content>
-            <div class="card-icon">
-              <mat-icon>arrow_downward</mat-icon>
-            </div>
-            <div class="card-info">
-              <span class="card-label">Despesas</span>
-              <span class="card-value">{{ resumo.totalDespesas | currency:'BRL' }}</span>
-            </div>
-          </mat-card-content>
-        </mat-card>
-
-        <mat-card class="summary-card balance">
-          <mat-card-content>
-            <div class="card-icon">
-              <mat-icon>account_balance</mat-icon>
-            </div>
-            <div class="card-info">
-              <span class="card-label">Saldo</span>
-              <span class="card-value">{{ resumo.saldoTotal | currency:'BRL' }}</span>
-            </div>
-          </mat-card-content>
-        </mat-card>
-      </div>
+      <app-transacao-totais [resumo]="resumoFinanceiro"></app-transacao-totais>
     </div>
+
+    <app-transacao-filtro (filtroAplicado)="onFiltroAplicado($event)"></app-transacao-filtro>
 
     <!-- Barra de Ações -->
     <div class="actions-bar">
@@ -77,7 +42,7 @@
       </div>
     </div>
 
-    <!-- Tabela com Card Container -->
+    <!-- Tabela -->
     <mat-card class="table-container">
       <mat-progress-bar mode="indeterminate" *ngIf="isLoading"></mat-progress-bar>
 
@@ -142,7 +107,6 @@
           </td>
         </ng-container>
 
-        <!-- Cabeçalhos e Linhas da Tabela -->
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 

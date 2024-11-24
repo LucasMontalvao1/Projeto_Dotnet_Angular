@@ -1,0 +1,20 @@
+<div class="summary-cards" *ngIf="resumo">
+  <mat-card class="summary-card" *ngFor="let card of cardData" [ngClass]="card.class">
+    <div class="card-content">
+      <div class="card-info">
+        <span class="card-label">{{ card.label }}</span>
+        <span class="card-value" [ngClass]="getColorClass(card, card.value())">
+          {{ card.value() | currency:'BRL' }}
+        </span>
+      </div>
+      <mat-icon class="card-icon" [ngClass]="getColorClass(card, card.value())">
+        {{ card.icon }}
+      </mat-icon>
+    </div>
+  </mat-card>
+</div>
+
+<div class="no-data" *ngIf="!resumo">
+  <mat-icon>info</mat-icon>
+  <span>Nenhum dado disponível</span>
+</div>

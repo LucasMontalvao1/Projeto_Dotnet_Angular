@@ -1,0 +1,169 @@
+.filter-card {
+  margin-bottom: 24px;
+  border-radius: 12px;
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  mat-card-content {
+    padding: 16px;
+  }
+}
+
+.filter-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+
+  .filter-type-group {
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    margin-right: 16px;
+
+    mat-button-toggle {
+      padding: 4px 12px;
+
+      mat-icon {
+        margin-right: 8px;
+        font-size: 18px;
+        vertical-align: middle;
+      }
+    }
+  }
+
+  mat-form-field {
+    width: auto;
+    min-width: 200px;
+    margin-bottom: -1.25em;
+
+    &.mat-form-field-appearance-outline {
+      .mat-form-field-wrapper {
+        margin: 0;
+      }
+    }
+  }
+
+  .action-button {
+    height: 36px;
+    margin-top: 3px;
+    padding: 0 16px;
+    
+    mat-icon {
+      margin-right: 8px;
+    }
+
+    &[disabled] {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+
+  .clear-button {
+    height: 36px;
+    margin-top: 3px;
+    
+    mat-icon {
+      margin-right: 8px;
+    }
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.04);
+    }
+  }
+}
+
+// Estilos para o DatePicker
+:host ::ng-deep {
+  .month-picker {
+    .mat-calendar-period-button {
+      pointer-events: none;
+    }
+    .mat-calendar-arrow {
+      display: none;
+    }
+    .mat-calendar-table {
+      height: auto;
+    }
+  }
+
+  .mat-button-toggle-checked {
+    background-color: #3498db !important;
+    color: white !important;
+
+    mat-icon {
+      color: white !important;
+    }
+  }
+
+  .mat-form-field-appearance-outline {
+    .mat-form-field-outline {
+      background-color: #ffffff;
+    }
+  }
+}
+
+.periodo-container {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  
+  mat-form-field {
+    flex: 1;
+    min-width: 200px;
+  }
+}
+
+@media (max-width: 600px) {
+  .periodo-container {
+    flex-direction: column;
+    gap: 8px;
+    
+    mat-form-field {
+      width: 100%;
+    }
+  }
+}
+
+// Responsividade
+@media (max-width: 768px) {
+  .filter-form {
+    flex-direction: column;
+    align-items: stretch;
+
+    .filter-type-group {
+      width: 100%;
+      margin-right: 0;
+      margin-bottom: 16px;
+
+      mat-button-toggle {
+        flex: 1;
+        text-align: center;
+      }
+    }
+
+    mat-form-field {
+      width: 100%;
+    }
+
+    .action-button,
+    .clear-button {
+      width: 100%;
+      margin-top: 8px;
+    }
+  }
+}
+
+// Animações
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.filter-card {
+  animation: fadeIn 0.3s ease-out;
+}

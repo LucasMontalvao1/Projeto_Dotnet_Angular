@@ -1,53 +1,69 @@
-import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { TransacaoService } from '@/app/services/transacao.service';
 import { Transacao } from '@/app/models/transacao.model';
 import { Categoria } from '@/app/models/categoria.model';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';
-import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
-import { MatDatepicker } from '@angular/material/datepicker';
+import { ResumoFinanceiro } from '@/app/models/resumo-financeiro.model';
+import { FiltroData } from '@/app/models/filtro-data.model';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
-export class DashboardComponent implements OnInit, AfterViewInit {
+export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild('picker') picker!: MatDatepicker<any>;
 
   transacoes: Transacao[] = [];
-  categorias: Categoria[] = []; 
   transacoesFiltradas: Transacao[] = [];
   isLoading = false;
   error: string | null = null;
+  private destroy$ = new Subject<void>();
+
+  // Dados da Tabela
   dataSource: MatTableDataSource<Transacao> = new MatTableDataSource<Transacao>();
   displayedColumns: string[] = ['data', 'descricao', 'tipo', 'valor'];
 
-  filterForm: FormGroup;
-  barChartData = {};
-  lineChartData = {};
-  pieChartData = {};
+  // Dados do Resumo
+  resumoFinanceiro: ResumoFinanceiro = {
+    totalEntradas: 0,
+    totalSaidas: 0,
+    saldo: 0,
+    mediaMensal: 0
+  };
+
+  // Dados dos Gráficos
+  barChartData: any = {};
+  lineChartData: any = {};
+  pieChartData: any = {};
+  
   chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
     scales: {
       x: { 
-        ticks: {
-          autoSkip: true,
-          maxTicksLimit: 20
+        ticks: { autoSkip: true, maxTicksLimit: 20 }
+      }
+    },
+    plugins: {
+      legend: {
+        position: 'top',
+        labels: { font: { size: 12 }, padding: 10 }
+      },
+      tooltip: {
+        callbacks: {
+          label: (tooltipItem: any) => `R$ ${tooltipItem.raw.toFixed(2)}`
         }
       }
     }
   };
 
-  constructor(private transacaoService: TransacaoService, private fb: FormBuilder) {
-    this.filterForm = this.fb.group({
-      mesAno: new FormControl(new Date()) 
-    });
-  }
+  constructor(private transacaoService: TransacaoService) {}
 
   ngOnInit(): void {
     this.loadData();
@@ -58,38 +74,109 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     this.dataSource.paginator = this.paginator;
   }
 
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
   loadData(): void {
     this.isLoading = true;
-    this.transacaoService.getTransacoes().subscribe(
-      (data) => {
-        this.transacoes = data;
-        this.transacoesFiltradas = data;
-        this.dataSource.data = this.transacoesFiltradas;
-        this.error = null;
-        this.isLoading = false;
-        this.setupCharts();
-        this.aplicarFiltro(); 
-      },
-      (err) => {
-        this.error = 'Erro ao carregar as transações.';
-        this.isLoading = false;
-      }
-    );
+    this.error = null;
+
+    this.transacaoService.getTransacoes()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data) => {
+          console.log('Dados recebidos:', data);
+          this.transacoes = data;
+          this.transacoesFiltradas = data;
+          this.dataSource.data = data;
+          this.atualizarResumoFinanceiro(data);
+          this.setupCharts();
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('Erro ao carregar transações:', error);
+          this.error = 'Erro ao carregar as transações.';
+          this.isLoading = false;
+        }
+      });
   }
 
-  setMonthAndYear(normalizedMonthAndYear: Date) {
-    const ctrlValue = this.filterForm.get('mesAno')?.value;
-    const ctrlDate = new Date(ctrlValue);
-    ctrlDate.setMonth(normalizedMonthAndYear.getMonth());
-    ctrlDate.setFullYear(normalizedMonthAndYear.getFullYear());
-    this.filterForm.get('mesAno')?.setValue(ctrlDate);
-    this.picker.close();
-    this.aplicarFiltro(); 
+  onFiltroAplicado(filtro: FiltroData): void {
+    let transacoesFiltradas = [...this.transacoes];
+
+    if (filtro.tipoFiltro === 'mes' && filtro.mesAno) {
+      const mesAnoSelecionado = new Date(filtro.mesAno);
+      transacoesFiltradas = this.transacoes.filter(transacao => {
+        const dataTransacao = new Date(transacao.data);
+        return dataTransacao.getMonth() === mesAnoSelecionado.getMonth() &&
+               dataTransacao.getFullYear() === mesAnoSelecionado.getFullYear();
+      });
+    } else if (filtro.tipoFiltro === 'periodo' && filtro.dataInicio && filtro.dataFim) {
+      const inicio = new Date(filtro.dataInicio);
+      const fim = new Date(filtro.dataFim);
+      fim.setHours(23, 59, 59);
+
+      transacoesFiltradas = this.transacoes.filter(transacao => {
+        const dataTransacao = new Date(transacao.data);
+        return dataTransacao >= inicio && dataTransacao <= fim;
+      });
+    }
+
+    this.transacoesFiltradas = transacoesFiltradas;
+    this.dataSource.data = transacoesFiltradas;
+    this.atualizarResumoFinanceiro(transacoesFiltradas);
+    this.setupCharts();
   }
 
-  setupCharts(): void {
+  aplicarFiltroTabela(event: Event): void {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
+  }
+
+  reloadData(): void {
+    this.loadData();
+  }
+
+  private atualizarResumoFinanceiro(transacoes: Transacao[]): void {
+    const totalEntradas = transacoes
+      .filter(t => t.tipo === 'Entrada')
+      .reduce((sum, t) => sum + t.valor, 0);
+
+    const totalSaidas = transacoes
+      .filter(t => t.tipo === 'Saida')
+      .reduce((sum, t) => sum + t.valor, 0);
+
+    this.resumoFinanceiro = {
+      totalEntradas: totalEntradas,
+      totalSaidas: totalSaidas,
+      saldo: totalEntradas - totalSaidas,
+      mediaMensal: this.calcularMediaMensal(transacoes)
+    };
+  }
+
+  private calcularMediaMensal(transacoes: Transacao[]): number {
+    if (transacoes.length === 0) return 0;
+
+    const datas = transacoes.map(t => new Date(t.data));
+    const minData = new Date(Math.min(...datas.map(d => d.getTime())));
+    const maxData = new Date(Math.max(...datas.map(d => d.getTime())));
+    
+    const mesesDiferenca = (maxData.getFullYear() - minData.getFullYear()) * 12 + 
+      (maxData.getMonth() - minData.getMonth()) + 1;
+
+    return (this.resumoFinanceiro.saldo) / Math.max(1, mesesDiferenca);
+  }
+
+  private setupCharts(): void {
     const dadosFiltrados = this.transacoesFiltradas;
     
+    // Configuração do gráfico de barras
     const entradas = dadosFiltrados
       .filter(t => t.tipo === 'Entrada')
       .reduce((sum, t) => sum + t.valor, 0);
@@ -99,22 +186,56 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       .reduce((sum, t) => sum + t.valor, 0);
 
     this.barChartData = {
-      labels: [this.getMesAtual()],
+      labels: ['Atual'],
       datasets: [
         {
           label: 'Entradas',
           data: [entradas],
-          backgroundColor: 'rgba(0, 255, 0, 0.2)',
+          backgroundColor: 'rgba(75, 192, 192, 0.2)',
+          borderColor: 'rgba(75, 192, 192, 1)',
+          borderWidth: 1
         },
         {
-          label: 'Saidas',
+          label: 'Saídas',
           data: [saidas],
-          backgroundColor: 'rgba(255, 0, 0, 0.2)',
-        },
-      ],
+          backgroundColor: 'rgba(255, 99, 132, 0.2)',
+          borderColor: 'rgba(255, 99, 132, 1)',
+          borderWidth: 1
+        }
+      ]
     };
 
-    const saldoDiario = dadosFiltrados
+    // Configuração do gráfico de linha (evolução do saldo)
+    const saldoDiario = this.calcularSaldoDiario(dadosFiltrados);
+    this.lineChartData = {
+      labels: saldoDiario.map(item => item.data),
+      datasets: [{
+        label: 'Saldo',
+        data: saldoDiario.map(item => item.saldo),
+        fill: false,
+        borderColor: 'rgb(75, 192, 192)',
+        tension: 0.1
+      }]
+    };
+
+    // Configuração do gráfico de pizza (despesas por categoria)
+    const despesasPorCategoria = this.calcularDespesasPorCategoria(dadosFiltrados);
+    this.pieChartData = {
+      labels: Object.keys(despesasPorCategoria),
+      datasets: [{
+        data: Object.values(despesasPorCategoria),
+        backgroundColor: [
+          'rgba(255, 99, 132, 0.8)',
+          'rgba(54, 162, 235, 0.8)',
+          'rgba(255, 206, 86, 0.8)',
+          'rgba(75, 192, 192, 0.8)'
+        ]
+      }]
+    };
+  }
+
+  private calcularSaldoDiario(transacoes: Transacao[]): any[] {
+    return transacoes
       .sort((a, b) => new Date(a.data).getTime() - new Date(b.data).getTime())
       .reduce((acc: any[], transaction) => {
         const lastBalance = acc.length > 0 ? acc[acc.length - 1].saldo : 0;
@@ -128,122 +249,15 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         });
         return acc;
       }, []);
+  }
 
-    this.lineChartData = {
-      labels: saldoDiario.map(item => item.data),
-      datasets: [
-        {
-          label: 'Evolução do Saldo',
-          data: saldoDiario.map(item => item.saldo),
-          borderColor: 'rgba(0, 255, 255, 0.8)',
-          fill: false,
-        },
-      ],
-    };
-
-    const despesasPorCategoria = dadosFiltrados
+  private calcularDespesasPorCategoria(transacoes: Transacao[]): Record<string, number> {
+    return transacoes
       .filter(t => t.tipo === 'Saida')
-      .reduce((acc: any, t) => {
-        acc[t.categoria.nome] = (acc[t.categoria.nome] || 0) + t.valor;
+      .reduce((acc: Record<string, number>, t) => {
+        const categoria = t.categoria.nome;
+        acc[categoria] = (acc[categoria] || 0) + t.valor;
         return acc;
       }, {});
-
-    this.pieChartData = {
-      labels: Object.keys(despesasPorCategoria),
-      datasets: [
-        {
-          data: Object.values(despesasPorCategoria),
-          backgroundColor: ['#ff9999', '#66b3ff', '#99ff99', '#ffcc99'],
-        },
-      ],
-    };
   }
-
-  getTotalEntradas(): number {
-    return this.transacoesFiltradas
-      .filter((t) => t.tipo === 'Entrada')
-      .reduce((sum, t) => sum + t.valor, 0);
-  }
-
-  getTotalSaidas(): number {
-    return this.transacoesFiltradas
-      .filter((t) => t.tipo === 'Saida')
-      .reduce((sum, t) => sum + t.valor, 0);
-  }
-
-  getSaldo(): number {
-    return this.getTotalEntradas() - this.getTotalSaidas();
-  }
-
-  getMediaMensal(): number {
-    const total = this.transacoesFiltradas.reduce((sum, t) => sum + t.valor, 0);
-    return total / 12;
-  }
-
-  getMesAtual(): string {
-    const mesAnoSelecionado = this.filterForm.get('mesAno')?.value || new Date();
-    const months = [
-      'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
-      'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
-    ];
-    return months[mesAnoSelecionado.getMonth()];
-  }
-
-  reloadData(): void {
-    this.loadData();
-  }
-
-  aplicarFiltro(): void {
-    if (this.filterForm.valid) {
-      const mesAnoSelecionado = this.filterForm.get('mesAno')?.value;
-      
-      if (mesAnoSelecionado) {
-        const mes = mesAnoSelecionado.getMonth();
-        const ano = mesAnoSelecionado.getFullYear();
-
-        this.transacoesFiltradas = this.transacoes.filter(t => {
-          const transacaoDate = new Date(t.data);
-          return transacaoDate.getMonth() === mes && 
-                 transacaoDate.getFullYear() === ano;
-        });
-
-        this.dataSource.data = this.transacoesFiltradas;
-        this.setupCharts(); 
-      }
-    }
-  }
-
-  aplicarFiltroTabela(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
-
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
-    }
-  }
-
-  public pieChartOptions: any = {
-    responsive: true,
-    maintainAspectRatio: false,
-    aspectRatio: 1,
-    plugins: {
-      legend: {
-        position: 'top',
-        labels: {
-          font: {
-            size: 12,
-          },
-          padding: 10,
-        }
-      },
-      tooltip: {
-        callbacks: {
-          label: function(tooltipItem: { raw: any; }) {
-            return `R$ ${tooltipItem.raw.toFixed(2)}`;
-          }
-        }
-      }
-    },
-    cutout: '60%',
-  };
 }

@@ -1,16 +1,50 @@
+.delete-message {
+  font-size: 16px;
+  font-weight: 500;
+  color: #d32f2f; 
+  margin-bottom: 16px;
+}
+
+/* Container de detalhes */
 .delete-details {
-    margin: 16px 0;
-    padding: 16px;
-    background-color: #f5f5f5;
-    border-radius: 4px;
-  }
-  
-  .delete-details p {
-    margin: 8px 0;
-  }
-  
-  .error-message {
-    margin-top: 16px;
-    padding: 8px;
-    border-radius: 4px;
-  }
+  margin: 16px 0;
+  padding: 16px;
+  background-color: #fdf5f5; 
+  border: 1px solid #f8d7da; 
+  border-radius: 4px;
+}
+
+/* Parágrafos dentro dos detalhes */
+.delete-details p {
+  margin: 8px 0;
+  font-size: 14px;
+  color: #333; 
+}
+
+/* Mensagem de erro */
+.error-message {
+  margin-top: 16px;
+  padding: 8px;
+  border-radius: 4px;
+  color: #f44336; 
+  background-color: #fdecea; 
+}
+
+/* Ações do diálogo */
+mat-dialog-actions {
+  display: flex;
+  justify-content: center; 
+  gap: 16px; 
+  padding: 16px 0;
+}
+
+/* Botão Cancelar */
+button[mat-dialog-close] {
+  color: #757575; 
+  font-weight: 500;
+}
+
+/* Botão Excluir */
+button[color="warn"] {
+  font-weight: bold;
+}

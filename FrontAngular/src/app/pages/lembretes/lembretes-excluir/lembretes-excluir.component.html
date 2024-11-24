@@ -1,10 +1,33 @@
-<h2 mat-dialog-title>Confirmação de Exclusão</h2>
+<div class="dialog-content">
+  <h2 mat-dialog-title>
+    <mat-icon>warning</mat-icon>
+    Confirmar Exclusão
+  </h2>
 
-<mat-dialog-content>
-  <p>Você tem certeza que deseja excluir o lembrete <strong>{{data.titulo}}</strong>?</p>
-</mat-dialog-content>
+  <mat-dialog-content>
+    <p>Você tem certeza que deseja excluir o lembrete <strong>"{{data.titulo}}"</strong>?</p>
+    
+    <div class="warning-message">
+      <mat-icon>info</mat-icon>
+      <p>Esta ação não poderá ser desfeita. O lembrete será permanentemente removido do sistema.</p>
+    </div>
+  </mat-dialog-content>
 
-<mat-dialog-actions>
-  <button mat-button (click)="onCancel()">Cancelar</button>
-  <button mat-button color="warn" (click)="onConfirm()">Excluir</button>
-</mat-dialog-actions>
+  <mat-dialog-actions>
+    <button 
+      mat-button 
+      class="cancel-button" 
+      (click)="onCancel()"
+      matTooltip="Cancelar exclusão">
+      Cancelar
+    </button>
+    <button 
+      mat-flat-button
+      class="delete-button" 
+      (click)="onConfirm()"
+      matTooltip="Confirmar exclusão">
+      <mat-icon>delete</mat-icon>
+      Excluir
+    </button>
+  </mat-dialog-actions>
+</div>

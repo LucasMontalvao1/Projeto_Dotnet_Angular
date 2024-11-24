@@ -25,6 +25,9 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
 import { MatSelectModule } from '@angular/material/select';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { NgChartsModule } from 'ng2-charts';
 
@@ -34,6 +37,7 @@ import { LoginComponent } from './pages/login/login.component';
 import { HomeComponent } from './pages/home/home.component';
 import { MenuComponent } from './components/menu/menu.component';
 import { FooterComponent } from './components/footer/footer.component';
+import { TransacaoTotaisComponent } from './components/transacao-totais/transacao-totais.component';
 import { LembretesComponent } from './pages/lembretes/lembretes.component';
 import { LembretesDetalhesComponent } from './pages/lembretes/lembretes-detalhes/lembretes-detalhes.component';
 import { LembretesExcluirComponent } from './pages/lembretes/lembretes-excluir/lembretes-excluir.component';
@@ -43,6 +47,8 @@ import { TransacaoCreateComponent } from './pages/financeiro/transacao/transacao
 import { TransacaoEditComponent } from './pages/financeiro/transacao/transacao-edit/transacao-edit.component';
 import { TransacaoDetailComponent } from './pages/financeiro/transacao/transacao-detail/transacao-detail.component';
 import { TransacaoDeleteComponent } from './pages/financeiro/transacao/transacao-delete/transacao-delete.component';
+import { TransacaoFiltroComponent } from './components/transacao-filtro/transacao-filtro.component';
+import { TransacaoFiltroModule } from './components/transacao-filtro/transacao-filtro.module';
 
 import { CategoriaListComponent } from './pages/categoria/categoria-list/categoria-list.component';
 import { CategoriaCreateComponent } from './pages/categoria/categoria-create/categoria-create.component';
@@ -68,6 +74,7 @@ import { AppRoutingModule } from './app-routing.module';
     TransacaoEditComponent,
     TransacaoDetailComponent,
     TransacaoDeleteComponent,
+    TransacaoTotaisComponent,
     CategoriaListComponent,
     CategoriaCreateComponent,
     CategoriaEditComponent,
@@ -83,6 +90,7 @@ import { AppRoutingModule } from './app-routing.module';
     HttpClientModule,
     RouterModule,
     NgChartsModule,
+    // Material Modules
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
@@ -101,6 +109,11 @@ import { AppRoutingModule } from './app-routing.module';
     MatSortModule,
     MatOptionModule,
     MatSelectModule,
+    MatButtonToggleModule,
+    MatProgressBarModule,
+    MatTooltipModule,
+    TransacaoFiltroModule,
+    // App Routing
     AppRoutingModule
   ],
   providers: [],

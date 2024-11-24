@@ -1,29 +1,42 @@
 .details-container {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    padding: 16px 0;
-  }
-  
-  .detail-item {
-    display: flex;
-    gap: 8px;
-  }
-  
-  .detail-item .label {
-    font-weight: 500;
-    min-width: 100px;
-  }
-  
-  .detail-item .value {
-    flex: 1;
-  }
-  
-  .receita {
-    color: #4caf50;
-  }
-  
-  .despesa {
-    color: #f44336;
-  }
-  
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
+  background-color: #f9f9f9; 
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+}
+
+.detail-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  transition: background-color 0.3s ease; 
+}
+
+.detail-item:hover {
+  background-color: #f0f0f0; 
+}
+
+.detail-item .label {
+  font-weight: 600;
+  min-width: 120px; 
+  color: #616161; 
+}
+
+.detail-item .value {
+  flex: 1;
+  font-weight: 500;
+  color: #424242; 
+}
+
+.detail-item .value.receita {
+  color: #2e7d32; 
+}
+
+.detail-item .value.despesa {
+  color: #d32f2f; 
+}

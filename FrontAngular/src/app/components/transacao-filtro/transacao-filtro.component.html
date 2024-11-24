@@ -1,0 +1,88 @@
+<mat-card class="filter-card">
+  <mat-card-content>
+    <form [formGroup]="filterForm" class="filter-form">
+      <!-- Seleção do tipo de filtro -->
+      <mat-button-toggle-group formControlName="tipoFiltro" class="filter-type-group">
+        <mat-button-toggle value="mes">
+          <mat-icon>calendar_today</mat-icon>
+          <span>Mês Específico</span>
+        </mat-button-toggle>
+        <mat-button-toggle value="periodo">
+          <mat-icon>date_range</mat-icon>
+          <span>Período</span>
+        </mat-button-toggle>
+      </mat-button-toggle-group>
+
+      <!-- Filtro por Mês -->
+      <ng-container *ngIf="filterForm.get('tipoFiltro')?.value === 'mes'">
+        <mat-form-field appearance="outline">
+          <mat-label>Selecione o Mês</mat-label>
+          <input matInput 
+                 [matDatepicker]="monthPicker" 
+                 formControlName="mesAno" 
+                 readonly
+                 (click)="monthPicker.open()"
+                 placeholder="MM/YYYY">
+          <mat-datepicker-toggle matSuffix [for]="monthPicker"></mat-datepicker-toggle>
+          <mat-datepicker #monthPicker
+                        startView="year"
+                        (monthSelected)="setMonthAndYear($event, monthPicker)">
+          </mat-datepicker>
+          <mat-error *ngIf="filterForm.get('mesAno')?.errors?.['required']">
+            Selecione um mês
+          </mat-error>
+        </mat-form-field>
+      </ng-container>
+
+      <!-- Filtro por Período -->
+      <ng-container *ngIf="filterForm.get('tipoFiltro')?.value === 'periodo'">
+        <div class="periodo-container">
+          <mat-form-field appearance="outline">
+            <mat-label>Data Início</mat-label>
+            <input matInput 
+                   [matDatepicker]="startPicker" 
+                   formControlName="dataInicio" 
+                   [max]="filterForm.get('dataFim')?.value || maxDate"
+                   placeholder="DD/MM/YYYY">
+            <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+            <mat-datepicker #startPicker></mat-datepicker>
+            <mat-error *ngIf="filterForm.get('dataInicio')?.errors?.['required']">
+              Data inicial obrigatória
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Data Fim</mat-label>
+            <input matInput 
+                   [matDatepicker]="endPicker" 
+                   formControlName="dataFim" 
+                   [min]="filterForm.get('dataInicio')?.value"
+                   [max]="maxDate"
+                   placeholder="DD/MM/YYYY">
+            <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+            <mat-datepicker #endPicker></mat-datepicker>
+            <mat-error *ngIf="filterForm.get('dataFim')?.errors?.['required']">
+              Data final obrigatória
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <button mat-raised-button 
+                color="primary" 
+                (click)="aplicarFiltro()" 
+                [disabled]="!isPeriodoValido() || filterForm.invalid"
+                class="action-button">
+          <mat-icon>filter_list</mat-icon>
+          <span>Aplicar</span>
+        </button>
+      </ng-container>
+
+      <button mat-button 
+              (click)="limparFiltro()"
+              class="clear-button">
+        <mat-icon>clear</mat-icon>
+        <span>Limpar</span>
+      </button>
+    </form>
+  </mat-card-content>
+</mat-card>

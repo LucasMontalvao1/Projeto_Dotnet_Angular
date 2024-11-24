@@ -17,25 +17,24 @@ import { TransacaoService } from '../../../../services/transacao.service';
 import { Transacao } from '../../../../models/transacao.model';
 import { TransacaoDto } from '../../../../models/transacao-dto.model';
 import { Categoria } from '../../../../models/categoria.model';
+import { ResumoFinanceiro } from '@/app/models/resumo-financeiro.model';
 
 // Components
 import { TransacaoCreateComponent } from '../transacao-create/transacao-create.component';
 import { TransacaoEditComponent } from '../transacao-edit/transacao-edit.component';
 import { TransacaoDetailComponent } from '../transacao-detail/transacao-detail.component';
 import { TransacaoDeleteComponent } from '../transacao-delete/transacao-delete.component';
-
-interface ResumoFinanceiro {
-  totalReceitas: number;
-  totalDespesas: number;
-  saldoTotal: number;
-}
+import { FiltroData } from '@/app/components/transacao-filtro/transacao-filtro.component';
 
 @Component({
   selector: 'app-transacao-list',
   templateUrl: './transacao-list.component.html',
-  styleUrls: ['./transacao-list.component.css']
+  styleUrls: ['./transacao-list.component.scss']
 })
 export class TransacaoListComponent implements OnInit, OnDestroy {
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
+
   // Propriedades da Tabela
   displayedColumns: string[] = [
     'transacaoID',
@@ -53,15 +52,14 @@ export class TransacaoListComponent implements OnInit, OnDestroy {
   error: string | null = null;
   private destroy$ = new Subject<void>();
 
-  // Resumo Financeiro
-  resumo: ResumoFinanceiro = {
-    totalReceitas: 0,
-    totalDespesas: 0,
-    saldoTotal: 0
+  // Dados
+  transacoesOriginais: Transacao[] = [];
+  resumoFinanceiro: ResumoFinanceiro = {
+    totalEntradas: 0,
+    totalSaidas: 0,
+    saldo: 0,
+    mediaMensal: 0
   };
-
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
 
   constructor(
     private transacaoService: TransacaoService,
@@ -81,6 +79,7 @@ export class TransacaoListComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
+  // Configuração do DataSource com filtros personalizados
   private configurarDataSource(): void {
     this.dataSource.filterPredicate = (data: Transacao, filter: string) => {
       const searchStr = filter.toLowerCase();
@@ -100,17 +99,18 @@ export class TransacaoListComponent implements OnInit, OnDestroy {
     };
   }
 
+  // Carregamento inicial das transações
   loadTransacoes(): void {
     this.isLoading = true;
     this.transacaoService.getTransacoes()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (transacoes) => {
-          console.log('Transações recebidas:', transacoes);
+          this.transacoesOriginais = transacoes;
           this.dataSource.data = transacoes;
           this.dataSource.paginator = this.paginator;
           this.dataSource.sort = this.sort;
-          this.calcularResumoFinanceiro();
+          this.calcularResumoFinanceiro(transacoes);
           this.isLoading = false;
         },
         error: (error) => {
@@ -122,20 +122,49 @@ export class TransacaoListComponent implements OnInit, OnDestroy {
       });
   }
 
-  private calcularResumoFinanceiro(): void {
-    if (!this.dataSource.data) return;
+  // Handler do filtro de data
+  onFiltroAplicado(filtro: FiltroData): void {
+    let transacoesFiltradas = [...this.transacoesOriginais];
 
-    this.resumo.totalReceitas = this.dataSource.data
-      .filter(t => t.tipo === 'Entrada')
-      .reduce((acc, curr) => acc + curr.valor, 0);
+    if (filtro.dataInicio && filtro.dataFim) {
+      const inicio = new Date(filtro.dataInicio);
+      const fim = new Date(filtro.dataFim);
+      fim.setHours(23, 59, 59);
 
-    this.resumo.totalDespesas = this.dataSource.data
-      .filter(t => t.tipo === 'Saida')
-      .reduce((acc, curr) => acc + curr.valor, 0);
+      transacoesFiltradas = this.transacoesOriginais.filter(transacao => {
+        const dataTransacao = new Date(transacao.data);
+        return dataTransacao >= inicio && dataTransacao <= fim;
+      });
+    }
 
-    this.resumo.saldoTotal = this.resumo.totalReceitas - this.resumo.totalDespesas;
+    this.dataSource.data = transacoesFiltradas;
+    this.calcularResumoFinanceiro(transacoesFiltradas);
+
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
   }
 
+  // Cálculo do resumo financeiro
+  private calcularResumoFinanceiro(transacoes: Transacao[]): void {
+    const totalEntradas = transacoes
+      .filter(t => t.tipo === 'Entrada')
+      .reduce((sum, t) => sum + t.valor, 0);
+
+    const totalSaidas = transacoes
+      .filter(t => t.tipo === 'Saida')
+      .reduce((sum, t) => sum + t.valor, 0);
+
+    this.resumoFinanceiro = {
+      totalEntradas,
+      totalSaidas,
+      saldo: totalEntradas - totalSaidas,
+      mediaMensal: transacoes.length > 0 ? 
+        (totalEntradas - totalSaidas) / 12 : 0
+    };
+  }
+
+  // Filtro da tabela
   applyFilter(event: Event): void {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
@@ -145,6 +174,7 @@ export class TransacaoListComponent implements OnInit, OnDestroy {
     }
   }
 
+  // CRUD Operations
   openCreateDialog(): void {
     const dialogRef = this.dialog.open(TransacaoCreateComponent, {
       width: '600px',
@@ -202,6 +232,7 @@ export class TransacaoListComponent implements OnInit, OnDestroy {
       });
   }
 
+  // Export Methods
   exportarParaExcel(): void {
     const dadosExportacao = this.prepararDadosExportacao();
     const planilha = XLSX.utils.json_to_sheet(dadosExportacao);
@@ -224,18 +255,16 @@ export class TransacaoListComponent implements OnInit, OnDestroy {
     this.showMessage('Arquivo PDF gerado com sucesso');
   }
 
+  // Export Helper Methods
   private prepararDadosExportacao() {
     return this.dataSource.filteredData.map(linha => ({
       'ID': linha.transacaoID,
-      'Data': new Date(linha.data).toLocaleDateString('pt-BR'),
-      'Valor': new Intl.NumberFormat('pt-BR', { 
-        style: 'currency', 
-        currency: 'BRL' 
-      }).format(linha.valor),
+      'Data': this.formatarData(linha.data),
+      'Valor': this.formatarMoeda(linha.valor),
       'Tipo': linha.tipo,
       'Categoria': linha.categoria.nome,
       'Descrição': linha.descricao,
-      'Criado em': new Date(linha.criadoEm).toLocaleDateString('pt-BR')
+      'Criado em': this.formatarData(linha.criadoEm)
     }));
   }
 
@@ -243,23 +272,11 @@ export class TransacaoListComponent implements OnInit, OnDestroy {
     doc.setFontSize(16);
     doc.text('Relatório de Transações', 14, 15);
     doc.setFontSize(10);
-    doc.text(`Período: ${this.getDataFormatada()}`, 14, 22);
+    doc.text(`Data: ${this.formatarData(new Date())}`, 14, 22);
     
-    // Adiciona informações do resumo financeiro
-    doc.text(`Total Receitas: ${new Intl.NumberFormat('pt-BR', { 
-      style: 'currency', 
-      currency: 'BRL' 
-    }).format(this.resumo.totalReceitas)}`, 14, 29);
-    
-    doc.text(`Total Despesas: ${new Intl.NumberFormat('pt-BR', { 
-      style: 'currency', 
-      currency: 'BRL' 
-    }).format(this.resumo.totalDespesas)}`, 14, 36);
-    
-    doc.text(`Saldo: ${new Intl.NumberFormat('pt-BR', { 
-      style: 'currency', 
-      currency: 'BRL' 
-    }).format(this.resumo.saldoTotal)}`, 14, 43);
+    doc.text(`Total Entradas: ${this.formatarMoeda(this.resumoFinanceiro.totalEntradas)}`, 14, 29);
+    doc.text(`Total Saídas: ${this.formatarMoeda(this.resumoFinanceiro.totalSaidas)}`, 14, 36);
+    doc.text(`Saldo: ${this.formatarMoeda(this.resumoFinanceiro.saldo)}`, 14, 43);
   }
 
   private adicionarTabelaPDF(doc: jsPDF, dados: any[]): void {
@@ -276,15 +293,27 @@ export class TransacaoListComponent implements OnInit, OnDestroy {
         fillColor: [66, 66, 66]
       },
       didDrawPage: (data) => {
-        const rodape = `Gerado em: ${new Date().toLocaleDateString('pt-BR')} ${new Date().toLocaleTimeString('pt-BR')}`;
+        const rodape = `Gerado em: ${this.formatarData(new Date())} ${new Date().toLocaleTimeString('pt-BR')}`;
         doc.setFontSize(8);
         doc.text(rodape, data.settings.margin.left, doc.internal.pageSize.height - 10);
       }
     });
   }
 
+  // Utility Methods
   private getDataFormatada(): string {
     return new Date().toISOString().split('T')[0];
+  }
+
+  private formatarData(data: Date | string): string {
+    return new Date(data).toLocaleDateString('pt-BR');
+  }
+
+  private formatarMoeda(valor: number): string {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    }).format(valor);
   }
 
   private showMessage(message: string, isError = false): void {

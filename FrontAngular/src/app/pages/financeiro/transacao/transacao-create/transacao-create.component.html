@@ -1,76 +1,111 @@
-<h2 mat-dialog-title>Nova Transação</h2>
-<form [formGroup]="form" (ngSubmit)="onSubmit()">
-  <mat-dialog-content>
-    <div class="form-container">
-      <mat-form-field appearance="outline">
-        <mat-label>Categoria</mat-label>
-        <mat-select formControlName="categoriaID">
-          <mat-option *ngFor="let categoria of categorias" [value]="categoria.categoriaID">
-            {{ categoria.nome }}
-          </mat-option>
-        </mat-select>
-        <mat-error *ngIf="form.get('categoriaID')?.hasError('required')">
-          Categoria é obrigatória
-        </mat-error>
-      </mat-form-field>
+<div class="transaction-dialog">
+  <div class="dialog-header">
+    <mat-icon>add_circle</mat-icon>
+    <h2 mat-dialog-title>Nova Transação</h2>
+  </div>
 
-      <mat-form-field appearance="outline">
-        <mat-label>Data</mat-label>
-        <input matInput [matDatepicker]="picker" formControlName="data">
-        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-        <mat-datepicker #picker></mat-datepicker>
-        <mat-error *ngIf="form.get('data')?.hasError('required')">
-          Data é obrigatória
-        </mat-error>
-      </mat-form-field>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <mat-dialog-content>
+      <div class="form-container">
+        <!-- Tipo de Transação -->
+        <div class="tipo-toggle full-width">
+          <div class="tipo-option receita" 
+               [class.selected]="form.get('tipo')?.value === 'Entrada'"
+               (click)="form.get('tipo')?.setValue('Entrada')">
+            <mat-icon>arrow_upward</mat-icon>
+            <span>Receita</span>
+          </div>
+          <div class="tipo-option despesa"
+               [class.selected]="form.get('tipo')?.value === 'Saida'"
+               (click)="form.get('tipo')?.setValue('Saida')">
+            <mat-icon>arrow_downward</mat-icon>
+            <span>Despesa</span>
+          </div>
+        </div>
 
-      <mat-form-field appearance="outline">
-        <mat-label>Valor</mat-label>
-        <input matInput type="number" formControlName="valor" step="0.01" min="0.01">
-        <mat-error *ngIf="form.get('valor')?.hasError('required')">
-          Valor é obrigatório
-        </mat-error>
-        <mat-error *ngIf="form.get('valor')?.hasError('min')">
-          Valor deve ser maior que zero
-        </mat-error>
-      </mat-form-field>
+        <div class="form-row">
+          <!-- Categoria -->
+          <mat-form-field appearance="outline">
+            <mat-label>Categoria</mat-label>
+            <mat-select formControlName="categoriaID">
+              <mat-option *ngFor="let categoria of categorias" [value]="categoria.categoriaID">
+                {{ categoria.nome }}
+              </mat-option>
+            </mat-select>
+            <mat-icon matPrefix>category</mat-icon>
+            <mat-error *ngIf="form.get('categoriaID')?.hasError('required')">
+              Categoria é obrigatória
+            </mat-error>
+          </mat-form-field>
 
-      <mat-form-field appearance="outline">
-        <mat-label>Tipo</mat-label>
-        <mat-select formControlName="tipo">
-          <mat-option value="Entrada">Receita</mat-option>
-          <mat-option value="Saida">Despesa</mat-option>
-        </mat-select>
-        <mat-error *ngIf="form.get('tipo')?.hasError('required')">
-          Tipo é obrigatório
-        </mat-error>
-      </mat-form-field>
+          <!-- Data -->
+          <mat-form-field appearance="outline">
+            <mat-label>Data</mat-label>
+            <input matInput [matDatepicker]="picker" formControlName="data">
+            <mat-icon matPrefix>event</mat-icon>
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+            <mat-error *ngIf="form.get('data')?.hasError('required')">
+              Data é obrigatória
+            </mat-error>
+          </mat-form-field>
+        </div>
 
-      <mat-form-field appearance="outline">
-        <mat-label>Descrição</mat-label>
-        <textarea matInput formControlName="descricao" rows="3"></textarea>
-        <mat-error *ngIf="form.get('descricao')?.hasError('required')">
-          Descrição é obrigatória
-        </mat-error>
-        <mat-error *ngIf="form.get('descricao')?.hasError('minlength')">
-          Descrição deve ter no mínimo 3 caracteres
-        </mat-error>
-      </mat-form-field>
-    </div>
+        <!-- Valor -->
+        <mat-form-field appearance="outline">
+          <mat-label>Valor</mat-label>
+          <input matInput type="number" formControlName="valor" step="0.01" min="0.01">
+          <mat-icon matPrefix>attach_money</mat-icon>
+          <mat-hint align="end">R$</mat-hint>
+          <mat-error *ngIf="form.get('valor')?.hasError('required')">
+            Valor é obrigatório
+          </mat-error>
+          <mat-error *ngIf="form.get('valor')?.hasError('min')">
+            Valor deve ser maior que zero
+          </mat-error>
+        </mat-form-field>
 
-    <mat-error *ngIf="error" class="error-message">
-      {{ error }}
-    </mat-error>
-  </mat-dialog-content>
+        <!-- Descrição -->
+        <mat-form-field appearance="outline">
+          <mat-label>Descrição</mat-label>
+          <textarea matInput formControlName="descricao" rows="3"
+                    placeholder="Descreva os detalhes da transação..."></textarea>
+          <mat-icon matPrefix>description</mat-icon>
+          <mat-hint align="end">
+            {{form.get('descricao')?.value?.length || 0}}/100
+          </mat-hint>
+          <mat-error *ngIf="form.get('descricao')?.hasError('required')">
+            Descrição é obrigatória
+          </mat-error>
+          <mat-error *ngIf="form.get('descricao')?.hasError('minlength')">
+            Descrição deve ter no mínimo 3 caracteres
+          </mat-error>
+        </mat-form-field>
+      </div>
 
-  <mat-dialog-actions align="end">
-    <button mat-button mat-dialog-close type="button">Cancelar</button>
-    <button mat-raised-button 
-            color="primary" 
-            type="submit" 
-            [disabled]="form.invalid || isLoading">
-      <mat-spinner diameter="20" *ngIf="isLoading"></mat-spinner>
-      <span *ngIf="!isLoading">Salvar</span>
-    </button>
-  </mat-dialog-actions>
-</form>
+      <!-- Mensagem de Erro -->
+      <div class="error-message" *ngIf="error">
+        <mat-icon>error_outline</mat-icon>
+        <span>{{ error }}</span>
+      </div>
+    </mat-dialog-content>
+
+    <mat-dialog-actions>
+      <button mat-button 
+              class="cancel-btn"
+              type="button" 
+              mat-dialog-close>
+        <mat-icon>close</mat-icon>
+        Cancelar
+      </button>
+      <button mat-flat-button
+              class="save-btn"
+              type="submit"
+              [disabled]="form.invalid || isLoading">
+        <mat-spinner diameter="20" *ngIf="isLoading"></mat-spinner>
+        <mat-icon *ngIf="!isLoading">save</mat-icon>
+        <span>Salvar</span>
+      </button>
+    </mat-dialog-actions>
+  </form>
+</div>

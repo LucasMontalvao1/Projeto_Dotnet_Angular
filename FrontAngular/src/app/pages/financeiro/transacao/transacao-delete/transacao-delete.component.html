@@ -1,12 +1,12 @@
 <h2 mat-dialog-title>Confirmar Exclusão</h2>
 <mat-dialog-content>
-  <p>Tem certeza que deseja excluir esta transação?</p>
-  
+  <p class="delete-message">Tem certeza que deseja excluir esta transação?</p>
+
   <div class="delete-details">
-    <p><strong>Data:</strong> {{data.data | date:'dd/MM/yyyy'}}</p>
-    <p><strong>Valor:</strong> {{data.valor | currency:'BRL'}}</p>
-    <p><strong>Tipo:</strong> {{data.tipo}}</p>
-    <p><strong>Descrição:</strong> {{data.descricao}}</p>
+    <p><strong>Data:</strong> {{ data.data | date:'dd/MM/yyyy' }}</p>
+    <p><strong>Valor:</strong> {{ data.valor | currency:'BRL' }}</p>
+    <p><strong>Tipo:</strong> {{ data.tipo }}</p>
+    <p><strong>Descrição:</strong> {{ data.descricao }}</p>
   </div>
 
   <mat-error *ngIf="error" class="error-message">
@@ -14,7 +14,7 @@
   </mat-error>
 </mat-dialog-content>
 
-<mat-dialog-actions align="end">
+<mat-dialog-actions align="center">
   <button mat-button mat-dialog-close>Cancelar</button>
   <button mat-raised-button 
           color="warn" 
