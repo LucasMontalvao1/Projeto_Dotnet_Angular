@@ -1,60 +1,79 @@
+/* Container com fundo gradiente vibrante e conteúdo centralizado */
 .login-container {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background-color: #f5f5f5;
-  padding: 1rem;
+  background: linear-gradient(135deg, #6e8efb, #a777e3);
+  padding: 2rem;
 }
 
+/* Card de login com efeito de transparência, bordas arredondadas e sombra */
 .login-card {
   width: 100%;
-  max-width: 400px;
-  padding: 2rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
-  border-radius: 12px !important;
+  max-width: 420px;
+  padding: 2.5rem;
+  border-radius: 16px;
+  background-color: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  animation: fadeInUp 0.5s ease-out;
 }
 
+/* Animação de entrada para o card */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.title {
+  margin: 5px;
+}
+
+/* Cabeçalho com logo e textos centralizados */
 .login-header {
   text-align: center;
   margin-bottom: 2rem;
 }
 
+.login-logo {
+  width: 100px;
+  margin-bottom: 1rem;
+  margin: 5px;
+}
+
 .login-header h1 {
-  font-size: 1.75rem;
-  font-weight: 600;
-  color: #333;
   margin: 0;
-  margin-bottom: 0.5rem;
+  font-size: 2rem;
+  color: #333;
 }
 
 .subtitle {
-  color: #666;
-  font-size: 0.9rem;
-  margin: 0;
+  margin: 5;
+  font-size: 1rem;
+  color: #777;
 }
 
+/* Espaçamento entre os campos do formulário */
 .form-field {
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 mat-form-field {
   width: 100%;
 }
 
-.field-icon {
-  margin-right: 8px;
-  color: #666;
+mat-form-field .mat-form-field-flex {
+  background-color: #f9f9f9;
+  border-radius: 8px;
 }
 
-.form-options {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.5rem;
-  font-size: 0.9rem;
-}
-
+/* Botão de login com transição suave e efeito hover */
 .login-button {
   width: 100%;
   padding: 0.75rem;
@@ -62,6 +81,11 @@ mat-form-field {
   border-radius: 8px;
   position: relative;
   min-height: 48px;
+  transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.login-button:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
 .login-button mat-spinner {
@@ -71,50 +95,35 @@ mat-form-field {
   transform: translate(-50%, -50%);
 }
 
+/* Estilização do link para cadastro */
 .register-link {
   text-align: center;
   margin-top: 1.5rem;
   font-size: 0.9rem;
-  color: #666;
+  color: #555;
 }
 
 .register-button {
   color: #1976d2;
-  text-decoration: none;
   font-weight: 500;
+  text-decoration: none;
   margin-left: 0.5rem;
-  transition: color 0.2s;
+  transition: color 0.3s;
 }
 
 .register-button:hover {
-  color: #1565c0;
+  color: #0d47a1;
 }
 
-/* Responsividade */
+/* Ajustes responsivos para dispositivos menores */
 @media (max-width: 480px) {
   .login-card {
-    padding: 1.5rem;
+    padding: 2rem;
   }
-
-  .form-options {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
+  .login-header h1 {
+    font-size: 1.75rem;
   }
-}
-
-/* Animações */
-.login-card {
-  animation: fadeIn 0.3s ease-out;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+  .subtitle {
+    font-size: 0.9rem;
   }
 }

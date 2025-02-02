@@ -1,4 +1,4 @@
-import { Component, OnInit  } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
@@ -10,11 +10,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
-  loginForm: FormGroup;  
+  loginForm: FormGroup;
   isLoading = false;
-  errorMessage: string | null = null;
   hidePassword = true;
-  year = new Date().getFullYear();
 
   constructor(
     private fb: FormBuilder,
@@ -23,48 +21,50 @@ export class LoginComponent implements OnInit {
     private snackBar: MatSnackBar
   ) {
     this.loginForm = this.fb.group({
-      username: ['', [Validators.required, Validators.minLength(1)]],
-      password: ['', [Validators.required, Validators.minLength(1)]],
+      username: ['', Validators.required],
+      password: ['', Validators.required],
       rememberMe: [false]
     });
   }
 
-  ngOnInit(): void {
-    
-  }
+  ngOnInit(): void {}
 
   onSubmit(): void {
-    if (this.loginForm.valid) {
-      this.isLoading = true;
-      this.errorMessage = null;
-      const { username, password, rememberMe } = this.loginForm.value;
-      
-      this.authService.login({ username, password }).subscribe({
-        next: (user) => {
-          if (user && user.token) {
-            if (rememberMe) {
-              localStorage.setItem('rememberMe', 'true');
-            }
-            this.authService.storeToken(user.token);
-            this.router.navigate(['/home']);
-            this.showSuccessMessage('Bem-vindo de volta!');
-          } else {
-            this.handleError('Falha na autenticação');
-          }
-        },
-        error: (error) => {
-          this.handleError(error);
-        }
-      });
-    } else {
+    if (this.loginForm.invalid) {
       this.markFormGroupTouched(this.loginForm);
+      return;
     }
+
+    this.isLoading = true;
+    const { username, password, rememberMe } = this.loginForm.value;
+    
+    this.authService.login({ username, password }).subscribe({
+      next: (user) => {
+        if (user && user.token) {
+          if (rememberMe) {
+            localStorage.setItem('rememberMe', 'true');
+          }
+          this.authService.storeToken(user.token);
+          this.router.navigate(['/home']);
+          this.showMessage('Bem-vindo de volta!', 'success');
+        } else {
+          this.handleError('Falha na autenticação');
+        }
+      },
+      error: (error) => {
+        this.handleError(error);
+      }
+    });
   }
 
-  private showSuccessMessage(message: string): void {
+  togglePasswordVisibility(): void {
+    this.hidePassword = !this.hidePassword;
+  }
+
+  private showMessage(message: string, type: 'success' | 'error'): void {
     this.snackBar.open(message, 'Fechar', {
       duration: 3000,
-      panelClass: ['success-snackbar'],
+      panelClass: type === 'success' ? ['success-snackbar'] : ['error-snackbar'],
       horizontalPosition: 'end',
       verticalPosition: 'top'
     });
@@ -72,35 +72,16 @@ export class LoginComponent implements OnInit {
 
   private handleError(error: any): void {
     const errorMessage = error?.error?.message || 'Acesso negado, verifique o login e senha!';
-    this.errorMessage = errorMessage;
-    this.snackBar.open(errorMessage, 'Fechar', {
-      duration: 5000,
-      panelClass: ['error-snackbar'],
-      horizontalPosition: 'end',
-      verticalPosition: 'top'
-    });
     this.isLoading = false;
+    this.showMessage(errorMessage, 'error');
   }
 
-  private markFormGroupTouched(formGroup: FormGroup) {
+  private markFormGroupTouched(formGroup: FormGroup): void {
     Object.values(formGroup.controls).forEach(control => {
       control.markAsTouched();
       if (control instanceof FormGroup) {
         this.markFormGroupTouched(control);
       }
     });
-  }
-
-  getErrorMessage(controlName: string): string {
-    const control = this.loginForm.get(controlName);
-    if (control?.hasError('required')) {
-      return `${controlName === 'username' ? 'Usuário' : 'Senha'} é obrigatório`;
-    }
-    if (control?.hasError('minlength')) {
-      return `${controlName === 'username' ? 'Usuário' : 'Senha'} deve ter no mínimo ${
-        control.errors?.['minlength'].requiredLength
-      } caracteres`;
-    }
-    return '';
   }
 }
