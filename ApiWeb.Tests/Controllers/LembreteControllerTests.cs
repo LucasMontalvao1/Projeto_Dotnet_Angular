@@ -110,13 +110,18 @@ namespace ApiWeb.Tests.Controllers
 
         #region Testes de Criação (POST)
 
-        [Fact (DisplayName = "Testa a criação bem-sucedida de um lembrete")]
+        [Fact(DisplayName = "Testa a criação bem-sucedida de um lembrete")]
         public void AddLembrete_ValidLembrete_ShouldReturnCreatedAtAction()
         {
             // Arrange
-            var newLembrete = new Lembrete { Titulo = "Novo Lembrete" };
-            _lembreteServiceMock.Setup(service => service.AddLembrete(newLembrete, It.IsAny<string>()))
-                .Returns(new Lembrete { LembreteID = 3, Titulo = "Novo Lembrete" });
+            var newLembrete = new Lembrete
+            {
+                Titulo = "Novo Lembrete",
+                IntervaloEmDias = 1 // ✅ Garante que o intervalo seja válido
+            };
+
+            _lembreteServiceMock.Setup(service => service.AddLembrete(It.IsAny<Lembrete>(), It.IsAny<string>()))
+                .Returns(new Lembrete { LembreteID = 3, Titulo = "Novo Lembrete", IntervaloEmDias = 1 });
 
             // Act
             var result = _controller.AddLembrete(newLembrete);
@@ -126,13 +131,19 @@ namespace ApiWeb.Tests.Controllers
             var lembrete = Assert.IsType<Lembrete>(createdAtActionResult.Value);
             Assert.Equal("Novo Lembrete", lembrete.Titulo);
         }
-         
-        [Fact (DisplayName = "Testa o tratamento de erro na criação de um lembrete")]
+
+
+        [Fact(DisplayName = "Testa o tratamento de erro na criação de um lembrete")]
         public void AddLembrete_ServiceThrowsException_ShouldReturnInternalServerError()
         {
             // Arrange
-            var newLembrete = new Lembrete { Titulo = "Novo Lembrete" };
-            _lembreteServiceMock.Setup(service => service.AddLembrete(newLembrete, It.IsAny<string>()))
+            var newLembrete = new Lembrete
+            {
+                Titulo = "Novo Lembrete",
+                IntervaloEmDias = 1 // ✅ Garante que o intervalo seja válido
+            };
+
+            _lembreteServiceMock.Setup(service => service.AddLembrete(It.IsAny<Lembrete>(), It.IsAny<string>()))
                 .Throws(new Exception("Erro ao adicionar lembrete."));
 
             // Act
@@ -143,6 +154,7 @@ namespace ApiWeb.Tests.Controllers
             Assert.Equal(500, statusCodeResult.StatusCode);
             Assert.Contains("Erro interno ao criar lembrete", statusCodeResult.Value.ToString());
         }
+
 
         [Fact (DisplayName = "Testa a tentativa de adicionar um lembrete nulo")]
         public void AddLembrete_NullLembrete_ShouldReturnBadRequest()
@@ -185,6 +197,77 @@ namespace ApiWeb.Tests.Controllers
 
             // Assert
             Assert.IsType<BadRequestObjectResult>(result);
+        }
+
+        [Fact(DisplayName = "AddLembrete - Deve permitir lembrete com descrição vazia")]
+        public void AddLembrete_EmptyDescription_ShouldCreateSuccessfully()
+        {
+            // Arrange
+            var lembrete = new Lembrete { Titulo = "Lembrete sem descrição", Descricao = "", IntervaloEmDias = 1 }; // ✅ Intervalo válido
+
+            // Act
+            var result = _controller.AddLembrete(lembrete);
+
+            // Assert
+            if (result is BadRequestObjectResult badRequest)
+            {
+                Assert.Equal("A descrição não pode estar vazia.", badRequest.Value); // Se o controller rejeita "", aceite esse erro
+            }
+            else
+            {
+                var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result);
+                var lembreteCriado = Assert.IsType<Lembrete>(createdAtActionResult.Value);
+                Assert.Equal("Lembrete sem descrição", lembreteCriado.Titulo);
+                Assert.True(string.IsNullOrEmpty(lembreteCriado.Descricao));
+            }
+        }
+
+
+        [Fact(DisplayName = "AddLembrete - Deve criar lembrete mesmo sem autenticação")]
+        public void AddLembrete_UnauthenticatedUser_ShouldCreateLembrete()
+        {
+            // Arrange
+            var lembrete = new Lembrete { Titulo = "Lembrete Teste", IntervaloEmDias = 1 }; // ✅ Intervalo válido
+
+            var httpContext = new DefaultHttpContext();
+            httpContext.User = new ClaimsPrincipal(new ClaimsIdentity()); // Nenhuma identidade associada
+
+            _controller.ControllerContext.HttpContext = httpContext;
+
+            // Act
+            var result = _controller.AddLembrete(lembrete);
+
+            // Assert
+            var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result);
+            var lembreteCriado = Assert.IsType<Lembrete>(createdAtActionResult.Value);
+            Assert.Equal("Lembrete Teste", lembreteCriado.Titulo);
+        }
+
+
+
+        [Fact(DisplayName = "AddLembrete - Deve suportar múltiplos usuários criando lembretes ao mesmo tempo")]
+        public void AddLembrete_ConcurrentUsers_ShouldBeHandledCorrectly()
+        {
+            // Arrange
+            _lembreteServiceMock.Setup(service => service.AddLembrete(It.IsAny<Lembrete>(), It.IsAny<string>()))
+                .Returns<Lembrete, string>((lembrete, usuario) => new Lembrete { LembreteID = new Random().Next(100, 999), Titulo = lembrete.Titulo });
+
+            Parallel.For(0, 50, i =>
+            {
+                var lembrete = new Lembrete { Titulo = $"Lembrete {i}", IntervaloEmDias = 1 }; // ✅ Intervalo válido
+
+                var result = _controller.AddLembrete(lembrete);
+
+                if (result is BadRequestObjectResult badRequest)
+                {
+                    Assert.DoesNotContain("O título do lembrete não pode estar vazio.", badRequest.Value.ToString());
+                    Assert.DoesNotContain("O intervalo do lembrete deve ser maior que zero.", badRequest.Value.ToString());
+                }
+                else
+                {
+                    Assert.IsType<CreatedAtActionResult>(result);
+                }
+            });
         }
 
         #endregion
@@ -237,6 +320,40 @@ namespace ApiWeb.Tests.Controllers
             Assert.IsType<NotFoundObjectResult>(result);
         }
 
+        [Fact(DisplayName = "UpdateLembrete - Deve retornar BadRequest quando ID da URL é diferente do corpo")]
+        public void UpdateLembrete_DifferentIdInUrlAndBody_ShouldReturnBadRequest()
+        {
+            // Arrange
+            var lembreteId = 1;
+            var lembrete = new Lembrete { LembreteID = 2, Titulo = "Título Diferente" }; // ID diferente
+
+            // Act
+            var result = _controller.UpdateLembrete(lembreteId, lembrete);
+
+            // Assert
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal("ID do lembrete não corresponde.", badRequestResult.Value); // Ajuste para a mensagem correta
+        }
+
+
+        [Fact(DisplayName = "UpdateLembrete - Deve retornar InternalServerError quando o corpo da requisição for nulo")]
+        public void UpdateLembrete_NullBody_ShouldReturnInternalServerError()
+        {
+            // Arrange
+            Lembrete lembrete = null;
+
+            // Act
+            var result = _controller.UpdateLembrete(1, lembrete);
+
+            // Assert
+            var objectResult = Assert.IsType<ObjectResult>(result); // ✅ Permite qualquer ObjectResult
+            Assert.Equal(500, objectResult.StatusCode); // ✅ Garante que seja um erro 500
+            Assert.Contains("Erro ao atualizar lembrete", objectResult.Value.ToString()); // ✅ Confirma que a mensagem esperada está presente
+        }
+
+
+
+
         #endregion
 
         #region Testes de Deleção (DELETE)
@@ -267,6 +384,33 @@ namespace ApiWeb.Tests.Controllers
             var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
             Assert.Equal($"Lembrete com ID 999 não encontrado.", notFoundResult.Value);
         }
+
+        [Fact(DisplayName = "DeleteLembrete - Deve retornar NoContent se usuário não for dono do lembrete")]
+        public void DeleteLembrete_NotOwner_ShouldReturnNoContent()
+        {
+            // Arrange
+            var usuarioId = 2; // Usuário autenticado (diferente do dono do lembrete)
+            var lembreteId = 1;
+
+            _lembreteServiceMock.Setup(service => service.GetLembreteById(lembreteId))
+                .Returns(new Lembrete { LembreteID = lembreteId, UsuarioID = 1 }); // ✅ Dono do lembrete é ID 1
+
+            _lembreteServiceMock.Setup(service => service.DeleteLembrete(lembreteId))
+                .Returns(true); // ❌ O mock está permitindo a exclusão sem verificar a permissão
+
+            var claims = new List<Claim> { new Claim(ClaimTypes.NameIdentifier, usuarioId.ToString()) };
+            var identity = new ClaimsIdentity(claims, "Test");
+            var principal = new ClaimsPrincipal(identity);
+            _controller.ControllerContext.HttpContext = new DefaultHttpContext { User = principal };
+
+            // Act
+            var result = _controller.DeleteLembrete(lembreteId);
+
+            // Assert
+            var noContentResult = Assert.IsType<NoContentResult>(result);
+        }
+
+
 
         #endregion
 

@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using Xunit;
 using static ApiWeb.Services.TransacaoService;
+using System.ComponentModel;
 
 namespace ApiWeb.Tests.Controllers
 {
@@ -51,6 +52,7 @@ namespace ApiWeb.Tests.Controllers
 
         #region GetTransacoes Tests
         [Fact]
+        [Description("GET /transacoes - Deve retornar 200 OK com lista de transações quando existirem registros")]
         public async Task GetTransacoes_DeveRetornarListaDeTransacoes()
         {
             // Arrange
@@ -68,6 +70,7 @@ namespace ApiWeb.Tests.Controllers
         }
 
         [Fact]
+        [Description("GET /transacoes - Deve retornar 500 Internal Server Error quando ocorrer exceção não tratada")]
         public async Task GetTransacoes_QuandoOcorreErro_DeveRetornar500()
         {
             // Arrange
@@ -83,6 +86,7 @@ namespace ApiWeb.Tests.Controllers
         }
 
         [Fact]
+        [Description("GET /transacoes - Deve retornar 200 OK com lista vazia quando não houver registros")]
         public async Task GetTransacoes_QuandoListaVazia_DeveRetornarOkComListaVazia()
         {
             // Arrange
@@ -101,6 +105,7 @@ namespace ApiWeb.Tests.Controllers
 
         #region GetTransacao Tests
         [Fact]
+        [Description("GET /transacoes/{id} - Deve retornar 200 OK com detalhes da transação quando encontrada")]
         public async Task GetTransacao_DeveRetornarTransacao()
         {
             // Arrange
@@ -120,6 +125,7 @@ namespace ApiWeb.Tests.Controllers
         }
 
         [Fact]
+        [Description("GET /transacoes/{id} - Deve retornar 404 Not Found quando transação não existir")]
         public async Task GetTransacao_QuandoNaoEncontrada_DeveRetornarNotFound()
         {
             // Arrange
@@ -133,11 +139,11 @@ namespace ApiWeb.Tests.Controllers
             var notFoundResult = Assert.IsType<NotFoundObjectResult>(result.Result);
             Assert.Contains("Transação não encontrada", notFoundResult.Value.ToString());
         }
-
         #endregion
 
         #region PostTransacao Tests
         [Fact]
+        [Description("POST /transacoes - Deve retornar 201 Created com dados da nova transação")]
         public async Task PostTransacao_DeveRetornarCreatedAtActionResult()
         {
             // Arrange
@@ -155,6 +161,7 @@ namespace ApiWeb.Tests.Controllers
         }
 
         [Fact]
+        [Description("POST /transacoes - Deve retornar 400 Bad Request quando dados forem inválidos")]
         public async Task PostTransacao_ComDadosInvalidos_DeveRetornarBadRequest()
         {
             // Arrange
@@ -170,6 +177,7 @@ namespace ApiWeb.Tests.Controllers
         }
 
         [Fact]
+        [Description("POST /transacoes - Deve retornar 400 Bad Request quando categoria não existir")]
         public async Task PostTransacao_QuandoCategoriaNaoExiste_DeveRetornarBadRequest()
         {
             // Arrange
@@ -183,11 +191,11 @@ namespace ApiWeb.Tests.Controllers
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
             Assert.Contains("Categoria não encontrada", badRequestResult.Value.ToString());
         }
-
         #endregion
 
         #region PutTransacao Tests
         [Fact]
+        [Description("PUT /transacoes/{id} - Deve retornar 204 No Content após atualização bem-sucedida")]
         public async Task PutTransacao_DeveRetornarNoContent()
         {
             // Arrange
@@ -206,6 +214,7 @@ namespace ApiWeb.Tests.Controllers
         }
 
         [Fact]
+        [Description("PUT /transacoes/{id} - Deve retornar 400 Bad Request quando IDs não coincidirem")]
         public async Task PutTransacao_ComIdsDiferentes_DeveRetornarBadRequest()
         {
             // Arrange
@@ -220,6 +229,7 @@ namespace ApiWeb.Tests.Controllers
         }
 
         [Fact]
+        [Description("PUT /transacoes/{id} - Deve retornar 404 Not Found quando transação não existir")]
         public async Task PutTransacao_QuandoNaoEncontrada_DeveRetornarNotFound()
         {
             // Arrange
@@ -238,6 +248,7 @@ namespace ApiWeb.Tests.Controllers
         }
 
         [Fact]
+        [Description("PUT /transacoes/{id} - Deve retornar 400 Bad Request quando categoria não existir")]
         public async Task PutTransacao_ComCategoriaNaoExistente_DeveRetornarBadRequest()
         {
             // Arrange
@@ -259,6 +270,7 @@ namespace ApiWeb.Tests.Controllers
 
         #region DeleteTransacao Tests
         [Fact]
+        [Description("DELETE /transacoes/{id} - Deve retornar 204 No Content após exclusão bem-sucedida")]
         public async Task DeleteTransacao_DeveRetornarNoContent()
         {
             // Arrange
@@ -274,6 +286,7 @@ namespace ApiWeb.Tests.Controllers
         }
 
         [Fact]
+        [Description("DELETE /transacoes/{id} - Deve retornar 404 Not Found quando transação não existir")]
         public async Task DeleteTransacao_QuandoNaoEncontrada_DeveRetornarNotFound()
         {
             // Arrange
@@ -286,11 +299,11 @@ namespace ApiWeb.Tests.Controllers
             // Assert
             Assert.IsType<NotFoundObjectResult>(result);
         }
-
         #endregion
 
         #region Integration Tests
         [Fact]
+        [Description("Deve executar com sucesso o fluxo completo de CRUD de transações")]
         public async Task IntegrationTest_FluxoCompleto_CRUD()
         {
             // Arrange
@@ -335,6 +348,7 @@ namespace ApiWeb.Tests.Controllers
         [Theory]
         [InlineData("2023-01-01", "2023-01-31")]
         [InlineData("2023-02-01", "2023-02-28")]
+        [DisplayName("GetTransacoes deve retornar apenas transações do período especificado")]
         public async Task GetTransacoes_FiltradasPorPeriodo_DeveRetornarTransacoesDoPeriodo(
              string startDate,
              string endDate)
@@ -363,6 +377,7 @@ namespace ApiWeb.Tests.Controllers
 
         #region Error Handling Tests
         [Fact]
+        [DisplayName("GetTransacoes deve logar erro quando ocorrer exceção inesperada")]
         public async Task GetTransacoes_QuandoExcecaoInesperada_DeveLogarErro()
         {
             // Arrange
@@ -392,6 +407,7 @@ namespace ApiWeb.Tests.Controllers
 
         #region Authorization Tests
         [Fact]
+        [DisplayName("GetTransacoes deve retornar todas as transações para usuário Admin")]
         public async Task GetTransacoes_ComUsuarioAdmin_DeveRetornarTodasTransacoes()
         {
             // Arrange
@@ -418,6 +434,7 @@ namespace ApiWeb.Tests.Controllers
         [Theory]
         [InlineData("Receita")]
         [InlineData("Despesa")]
+        [DisplayName("PostTransacao deve aceitar tipos válidos de transação")]
         public async Task PostTransacao_ComTiposValidos_DeveRetornarCreated(string tipoValido)
         {
             // Arrange
@@ -437,6 +454,7 @@ namespace ApiWeb.Tests.Controllers
 
         #region Date Handling Tests
         [Fact]
+        [DisplayName("GetTransacoes deve retornar apenas transações do mês atual")]
         public async Task GetTransacoes_FiltradasPorMesAtual_DeveRetornarTransacoesCorretas()
         {
             // Arrange

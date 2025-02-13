@@ -17,23 +17,18 @@ namespace ApiWeb.Tests.Controllers
     /// </summary>
     public class AuthControllerTests
     {
-        // Campos privados para mocks e controller
         private readonly Mock<IAuthService> _authServiceMock;
         private readonly Mock<ILogger<AuthController>> _loggerMock;
         private readonly AuthController _controller;
-
-        // Dados de teste comuns
         private readonly UserDto _validUserDto;
         private readonly User _validUser;
 
         public AuthControllerTests()
         {
-            // Configuração inicial dos mocks
             _authServiceMock = MockAuthService.GetMock();
             _loggerMock = new Mock<ILogger<AuthController>>();
             _controller = new AuthController(_authServiceMock.Object, _loggerMock.Object);
 
-            // Inicialização dos dados de teste comuns
             _validUserDto = new UserDto { Username = "usuario", Password = "senha" };
             _validUser = new User
             {
@@ -47,7 +42,7 @@ namespace ApiWeb.Tests.Controllers
 
         #region Testes de Login Bem-Sucedido
 
-        [Fact(DisplayName = "Testa o usuario valido se retorna ok")]
+        [Fact(DisplayName = "Login - Deve retornar OK e dados do usuário quando credenciais são válidas")]
         public void Login_UsuarioValido_DeveRetornarOk()
         {
             // Arrange
@@ -66,7 +61,7 @@ namespace ApiWeb.Tests.Controllers
             Assert.Equal(_validUser.Username, response.User.Username);
         }
 
-        [Fact(DisplayName = "Testa login sucesso e se retorna token valido")]
+        [Fact(DisplayName = "Login - Deve retornar token válido quando autenticação é bem-sucedida")]
         public void Login_UsuarioValido_DeveRetornarTokenValido()
         {
             // Arrange
@@ -82,7 +77,7 @@ namespace ApiWeb.Tests.Controllers
             Assert.False(string.IsNullOrEmpty(response.Token), "Token não deve ser vazio");
         }
 
-        [Fact (DisplayName = "Testa usaurio valida e valida o usuario")]
+        [Fact(DisplayName = "Login - Deve chamar ValidarUsuario uma vez com credenciais corretas")]
         public void Login_UsuarioValido_DeveChamarValidarUsuario()
         {
             // Arrange
@@ -99,7 +94,7 @@ namespace ApiWeb.Tests.Controllers
 
         #region Testes de Falha de Login
 
-        [Fact]
+        [Fact(DisplayName = "Login - Deve retornar Unauthorized quando credenciais são inválidas")]
         public void Login_UsuarioInvalido_DeveRetornarUnauthorized()
         {
             // Arrange
@@ -115,7 +110,7 @@ namespace ApiWeb.Tests.Controllers
             Assert.Equal("Login ou senha incorretos", unauthorizedResult.Value);
         }
 
-        [Theory]
+        [Theory(DisplayName = "Login - Deve retornar BadRequest para dados de login inválidos")]
         [InlineData(null, "senha")]
         [InlineData("usuario", null)]
         [InlineData("", "senha")]
@@ -133,7 +128,7 @@ namespace ApiWeb.Tests.Controllers
             Assert.Equal("Nome de usuário e senha não podem estar vazios", badRequestResult.Value);
         }
 
-        [Fact]
+        [Fact(DisplayName = "Login - Deve retornar BadRequest quando UserDto é nulo")]
         public void Login_UserDtoNulo_DeveRetornarBadRequest()
         {
             // Act
@@ -144,11 +139,46 @@ namespace ApiWeb.Tests.Controllers
             Assert.Equal("Usuário não pode ser nulo", badRequestResult.Value);
         }
 
+        [Fact(DisplayName = "Login - Deve retornar Unauthorized quando senha está incorreta")]
+        public void Login_SenhaIncorreta_DeveRetornarUnauthorized()
+        {
+            // Arrange
+            _authServiceMock.Setup(a => a.ValidarUsuario(_validUserDto.Username, "senhaErrada"))
+                .Returns((User)null);
+
+            var invalidUserDto = new UserDto { Username = _validUserDto.Username, Password = "senhaErrada" };
+
+            // Act
+            var result = _controller.Login(invalidUserDto);
+
+            // Assert
+            var unauthorizedResult = Assert.IsType<UnauthorizedObjectResult>(result);
+            Assert.Equal(401, unauthorizedResult.StatusCode);
+            Assert.Equal("Login ou senha incorretos", unauthorizedResult.Value);
+        }
+
+        [Fact(DisplayName = "Login - Deve suportar múltiplos logins simultâneos")]
+        public void Login_MultiplosLogins_DeveSerProcessadoCorretamente()
+        {
+            // Arrange
+            ConfigurarLoginBemSucedido();
+
+            Parallel.For(0, 100, i =>
+            {
+                // Act
+                var result = _controller.Login(_validUserDto);
+
+                // Assert
+                Assert.IsType<OkObjectResult>(result);
+            });
+        }
+
+
         #endregion
 
         #region Testes de Erro e Logging
 
-        [Fact]
+        [Fact(DisplayName = "Login - Deve retornar StatusCode 500 quando ocorre erro interno")]
         public void Login_ErroAoValidarUsuario_DeveRetornar500()
         {
             // Arrange
@@ -163,7 +193,7 @@ namespace ApiWeb.Tests.Controllers
             Assert.Equal(500, statusCodeResult.StatusCode);
         }
 
-        [Fact]
+        [Fact(DisplayName = "Login - Deve registrar log de erro quando ocorre exceção")]
         public void Login_ErroAoValidarUsuario_DeveLogarErro()
         {
             // Arrange
@@ -177,7 +207,7 @@ namespace ApiWeb.Tests.Controllers
             VerificarLogErro();
         }
 
-        [Fact]
+        [Fact(DisplayName = "Login - Deve registrar log de sucesso após login bem-sucedido")]
         public void Login_LoginBemSucedido_DeveLogarSucesso()
         {
             // Arrange
