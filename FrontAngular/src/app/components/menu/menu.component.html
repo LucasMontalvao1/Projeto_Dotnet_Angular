@@ -1,78 +1,61 @@
-<mat-toolbar [class.scrolled]="isScrolled" class="header-toolbar">
-  <!-- Logo/Brand -->
+<mat-toolbar class="header-toolbar" [class.scrolled]="isScrolled">
   <div class="brand">
-    <img src="https://maximatech.com.br/wp-content/uploads/elementor/thumbs/logo-maximatech-e1554815418600-oa8r41ergk9cf56ap4p8pal7ouvqot7p1tovm0cili.png" alt="Logo" class="logo">
+    <img src="https://maximatech.com.br/wp-content/uploads/elementor/thumbs/logo-maximatech-e1554815418600-oa8r41ergk9cf56ap4p8pal7ouvqot7p1tovm0cili.png" alt="Logo" class="logo" routerLink="/home">
   </div>
 
-  <!-- Menu Principal -->
-  <div class="menu-items">
-    <button mat-button [routerLink]="['/home']" routerLinkActive="active-link">
+  <nav class="nav-items">
+    <a class="nav-item" routerLink="/home" routerLinkActive="active">
       <mat-icon>home</mat-icon>
       <span>Home</span>
-    </button>
+    </a>
 
-    <button mat-button [matMenuTriggerFor]="menu1" class="menu-trigger">
+    <button class="nav-item" [matMenuTriggerFor]="financialMenu">
       <mat-icon>business</mat-icon>
       <span>Financeiro</span>
-      <mat-icon class="dropdown-icon">expand_more</mat-icon> 
-    </button>
-    
-    <mat-menu #menu1="matMenu" class="custom-menu">
-
-      <button mat-menu-item [routerLink]="['/dashboard']" routerLinkActive="active-link">
-        <mat-icon>home</mat-icon>
-        <span>Home</span>
-      </button>
-
-      <button mat-menu-item [matMenuTriggerFor]="submenu1">
-        <mat-icon>folder</mat-icon>
-        <span>Cadastro</span>
-      </button>
-      
-      <mat-menu #submenu1="matMenu">
-        <button mat-menu-item [routerLink]="['/categoria']" routerLinkActive="active-link">
-          <mat-icon>description</mat-icon>
-          <span>Categoria</span>
-        </button>
-        <button mat-menu-item [routerLink]="['/transacao']" routerLinkActive="active-link">
-          <mat-icon>assignment</mat-icon>
-          <span>Transacao</span>
-        </button>
-      </mat-menu>
-      
-
-    </mat-menu>
-  </div>
-
-  <!-- Espaço flexível -->
-  <span class="spacer"></span>
-
-  <!-- Menu do Usuário -->
-  <div class="user-menu">
-    <button mat-button [matMenuTriggerFor]="userMenu" class="user-button">
-      <mat-icon class="user-avatar">account_circle</mat-icon>
-      <span class="user-name">{{userName}}</span>
       <mat-icon class="dropdown-icon">expand_more</mat-icon>
     </button>
-    
-    <mat-menu #userMenu="matMenu" class="custom-menu">
-      <div class="user-menu-header">
-        <mat-icon>account_circle</mat-icon>
-        <div class="user-info">
-          <strong>{{userName}}</strong>
-        </div>
+
+    <mat-menu #financialMenu="matMenu">
+      <a mat-menu-item routerLink="/dashboard">
+        <mat-icon>trending_up</mat-icon>
+        <span>Visão Geral</span>
+      </a>
+      <a mat-menu-item routerLink="/categoria">
+        <mat-icon>category</mat-icon>
+        <span>Categorias</span>
+      </a>
+      <a mat-menu-item routerLink="/transacao">
+        <mat-icon>assignment</mat-icon>
+        <span>Transações</span>
+      </a>
+    </mat-menu>
+  </nav>
+
+  <span class="spacer"></span>
+
+  <div class="user-menu">
+    <button class="user-button" [matMenuTriggerFor]="userMenu">
+      <mat-icon class="user-avatar">account_circle</mat-icon>
+      <span>{{user?.name}}</span>
+      <mat-icon class="dropdown-icon">expand_more</mat-icon>
+    </button>
+
+    <mat-menu #userMenu="matMenu" class="user-menu-panel">
+      <div class="menu-header">
+        <div class="user-name">{{user?.name}}</div>
       </div>
-      <mat-divider></mat-divider>
-      <button mat-menu-item>
+
+      <a mat-menu-item class="menu-item" routerLink="/perfil">
         <mat-icon>person</mat-icon>
         <span>Meu Perfil</span>
-      </button>
-      <button mat-menu-item>
+      </a>
+
+      <a mat-menu-item class="menu-item" routerLink="/configuracoes">
         <mat-icon>settings</mat-icon>
         <span>Configurações</span>
-      </button>
-      <mat-divider></mat-divider>
-      <button mat-menu-item (click)="logout()" class="logout-button">
+      </a>
+
+      <button mat-menu-item class="menu-item logout" (click)="logout()">
         <mat-icon>logout</mat-icon>
         <span>Sair</span>
       </button>

@@ -1,39 +1,40 @@
-/* home.component.css */
 /* Estilos base */
 .page-container {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  background-color: #f5f5f5;
 }
 
 .home-container {
-  padding-top: 64px; /* Altura do header */
-  padding-bottom: 60px; /* Aumentado para dar espaço ao footer */
-  min-height: calc(100vh - 124px); /* 100vh - (header + footer) */
-  height: calc(100vh - 124px);
-  overflow-y: auto;
-  background-color: #f5f5f5;
+  padding: 84px 20px 60px;
+  min-height: calc(100vh - 144px);
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 24px;
 }
 
 /* Cartão de perfil */
 .profile-card {
   width: 100%;
   max-width: 1000px;
-  margin: 20px;
   background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.profile-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
 .header-avatar {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-right: 16px;
-  flex-shrink: 0;
+  margin-right: 24px;
 }
 
 .user-avatar {
@@ -41,83 +42,124 @@
   height: 80px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid #f0f0f0;
+  border: 3px solid #f0f0f0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease;
+}
+
+.user-avatar:hover {
+  transform: scale(1.05);
 }
 
 .header-details {
-  flex-grow: 1;
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
 .header-details mat-card-title {
-  margin-bottom: 8px;
+  margin: 0;
   font-size: 24px;
   color: #333;
+  font-weight: 600;
 }
 
-/* Calendário e Lembretes */
+.header-details mat-card-subtitle {
+  color: #666;
+  font-size: 16px;
+}
+
+.username {
+  color: #666;
+  font-size: 14px;
+  margin: 0;
+}
+
+/* Layout Calendário e Lembretes */
 .calendar-reminders {
   display: flex;
   gap: 24px;
   width: 100%;
   max-width: 1200px;
-  margin: 0 20px;
-  flex: 1;
-  height: auto; /* Removido height fixo */
+  margin: 0 auto;
 }
 
 /* Card do Calendário */
 .calendar-card {
   flex: 0.4;
   background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  min-width: 260px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  min-width: 300px;
   height: fit-content;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* Ajustes no calendário Material */
+.calendar-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* Customização do calendário Material */
 ::ng-deep .mat-calendar {
   width: 100%;
-  min-height: auto !important;
 }
 
 ::ng-deep .mat-calendar-header {
-  padding: 0.5em 8px 0 8px !important;
+  padding: 0.5em 8px !important;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  margin: 8px;
 }
 
 ::ng-deep .mat-calendar-table-header th {
-  padding: 0 0 4px 0 !important;
-  font-size: 12px !important;
+  padding: 8px !important;
+  font-size: 13px !important;
+  color: #666;
 }
 
 ::ng-deep .mat-calendar-body-cell {
-  height: 28px !important;
-  width: 28px !important;
+  height: 32px !important;
+  width: 32px !important;
 }
 
 ::ng-deep .mat-calendar-body-cell-content {
-  font-size: 13px !important;
+  font-size: 14px !important;
 }
 
 /* Card de Lembretes */
 .reminders-card {
   flex: 1.6;
   background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   display: flex;
   flex-direction: column;
-  height: auto; /* Removido max-height */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.reminders-card mat-card-content {
-  flex: 1;
-  overflow: hidden;
+.reminders-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* Cabeçalho dos Cards */
+mat-card-title {
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 24px;
+  font-size: 20px !important;
+  font-weight: 500 !important;
+  color: #333;
+  border-bottom: 1px solid #eee;
+  background-color: #f8f9fa;
+  border-radius: 12px 12px 0 0;
+  margin: 0 !important;
+}
+
+.title-icon {
+  color: #666;
 }
 
 /* Header dos lembretes */
@@ -130,29 +172,50 @@
   background-color: #f8f9fa;
 }
 
+.date-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
 .selected-date {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-size: 18px;
   color: #333;
   font-weight: 500;
   margin: 0 !important;
 }
 
+.reminder-count {
+  font-size: 14px;
+  color: #666;
+}
+
 .create-button {
   min-width: 140px;
   height: 40px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 /* Lista de lembretes */
 .reminders-list {
   padding: 16px;
-  height: auto;
-  max-height: none; /* Removido max-height */
-  overflow: visible; /* Removido overflow */
+  position: relative;
+  min-height: 200px;
 }
 
-.mat-paginator {
-  background: transparent;
-  margin-top: auto;
+.loading-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
 }
 
 .reminders-list ul {
@@ -161,24 +224,26 @@
   margin: 0;
 }
 
-.reminders-list li {
+/* Item do lembrete */
+.reminder-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 16px;
-  margin-bottom: 8px;
-  border-radius: 4px;
+  margin-bottom: 12px;
+  border-radius: 8px;
   background-color: #f8f9fa;
   border: 1px solid #eee;
   transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
-.reminders-list li:hover {
-  background-color: #f0f0f0;
+.reminder-item:hover {
   transform: translateX(4px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  border-color: #e0e0e0;
 }
 
-/* Conteúdo do lembrete */
 .reminder-content {
   display: flex;
   gap: 16px;
@@ -186,9 +251,19 @@
 }
 
 .reminder-date {
-  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 180px;
   color: #666;
-  min-width: 90px;
+  font-size: 14px;
+}
+
+.reminder-date mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: #999;
 }
 
 .reminder-details {
@@ -197,29 +272,36 @@
 
 .reminder-details strong {
   display: block;
-  margin-bottom: 4px;
   color: #333;
+  margin-bottom: 4px;
+  font-size: 16px;
 }
 
 .reminder-details p {
   margin: 0;
   color: #666;
   font-size: 14px;
+  line-height: 1.4;
 }
 
 /* Ações do lembrete */
 .reminder-actions {
   display: flex;
   gap: 8px;
-}
-
-.reminder-actions button {
   opacity: 0.7;
   transition: opacity 0.2s ease;
 }
 
-.reminder-actions button:hover {
+.reminder-item:hover .reminder-actions {
   opacity: 1;
+}
+
+.reminder-actions button {
+  transition: transform 0.2s ease;
+}
+
+.reminder-actions button:hover {
+  transform: scale(1.1);
 }
 
 /* Mensagem sem lembretes */
@@ -233,7 +315,7 @@
   color: #666;
   background-color: #f8f9fa;
   border-radius: 8px;
-  margin: 16px 0;
+  border: 2px dashed #ddd;
 }
 
 .no-reminders mat-icon {
@@ -244,15 +326,11 @@
   margin-bottom: 16px;
 }
 
-/* Títulos dos cards */
-mat-card-title {
-  padding: 20px 24px;
-  font-size: 20px !important;
-  font-weight: 500 !important;
-  color: #333;
-  border-bottom: 1px solid #eee;
-  background-color: #f8f9fa;
-  margin: 0 !important;
+/* Paginador */
+.mat-paginator {
+  background: transparent;
+  margin-top: auto;
+  border-top: 1px solid #eee;
 }
 
 /* Scrollbar personalizada */
@@ -274,75 +352,77 @@ mat-card-title {
   background: #555;
 }
 
-.footer-toolbar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 48px;
-  z-index: 1000;
-}
-
 /* Responsividade */
-@media (max-width: 768px) {
-  .home-container {
-    padding-top: 56px; /* Altura menor do header em mobile */
-    padding-bottom: 40px; /* Altura menor do footer em mobile */
-  }
-
+@media (max-width: 1024px) {
   .calendar-reminders {
     flex-direction: column;
-    height: auto;
-    margin: 12px;
   }
 
   .calendar-card {
     width: 100%;
-    margin-bottom: 16px;
+    min-width: auto;
   }
+}
 
-  .reminders-card {
-    width: 100%;
-    height: calc(100vh - 500px);
-  }
-
-  .header-reminder {
-    flex-direction: column;
-    gap: 12px;
-    padding: 12px 16px;
-  }
-
-  .create-button {
-    width: 100%;
+@media (max-width: 768px) {
+  .home-container {
+    padding: 72px 12px 48px;
   }
 
   .header-avatar {
     margin: 0 0 16px 0;
   }
 
-  .header-details {
+  .profile-card mat-card-header {
+    flex-direction: column;
+    align-items: center;
     text-align: center;
   }
 
-  .reminders-list li {
+  .header-details {
+    align-items: center;
+  }
+
+  .header-reminder {
     flex-direction: column;
-    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .date-info {
+    align-items: center;
+  }
+
+  .create-button {
+    width: 100%;
+  }
+
+  .reminder-item {
+    flex-direction: column;
+    gap: 12px;
   }
 
   .reminder-content {
     flex-direction: column;
-    gap: 8px;
+    width: 100%;
+  }
+
+  .reminder-date {
+    justify-content: center;
+  }
+
+  .reminder-details {
+    text-align: center;
   }
 
   .reminder-actions {
     width: 100%;
-    justify-content: flex-end;
+    justify-content: center;
     margin-top: 8px;
   }
 }
 
 /* Animações */
-@keyframes slideIn {
+@keyframes fadeIn {
   from {
     opacity: 0;
     transform: translateY(20px);
@@ -356,5 +436,34 @@ mat-card-title {
 .profile-card,
 .calendar-card,
 .reminders-card {
-  animation: slideIn 0.3s ease-out;
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Estados de loading */
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Utilitários */
+.text-truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.elevation-1 {
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.elevation-2 {
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }

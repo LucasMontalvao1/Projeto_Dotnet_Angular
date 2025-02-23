@@ -1,17 +1,17 @@
-// menu.component.ts
 import { Component } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { User } from '@/app/models/User';
 
 @Component({
   selector: 'app-menu',
   templateUrl: './menu.component.html',
-  styleUrls: ['./menu.component.css']
+  styleUrls: ['./menu.component.scss']
 })
 export class MenuComponent {
   isScrolled = false;
-  userName: string = 'Usuário'; 
+  user: User | null = null;
 
   constructor(
     private authService: AuthService,
@@ -22,6 +22,28 @@ export class MenuComponent {
     window.addEventListener('scroll', () => {
       this.isScrolled = window.scrollY > 10;
     });
+  }
+
+  ngOnInit(): void {
+    this.checkAuthentication();
+  }
+
+  checkAuthentication(): void {
+    const decodedToken = this.authService.getDecodedToken();
+    const token = this.authService.getToken();
+
+    if (decodedToken && token) {
+      this.user = {
+        usuarioID: decodedToken.nameid,
+        username: decodedToken.given_name,
+        name: decodedToken.unique_name,
+        email: decodedToken.email,
+        foto: decodedToken.Foto,
+        token: token
+      };
+    } else {
+      this.router.navigate(['/login']);
+    }
   }
 
   logout(): void {
