@@ -82,17 +82,16 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   loadData(): void {
     this.isLoading = true;
     this.error = null;
-
+  
     this.transacaoService.getTransacoes()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data) => {
           console.log('Dados recebidos:', data);
           this.transacoes = data;
-          this.transacoesFiltradas = data;
-          this.dataSource.data = data;
-          this.atualizarResumoFinanceiro(data);
-          this.setupCharts();
+          
+          this.aplicarFiltroMesAtual();
+          
           this.isLoading = false;
         },
         error: (error) => {
@@ -138,6 +137,24 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       this.dataSource.paginator.firstPage();
     }
   }
+
+  aplicarFiltroMesAtual(): void {
+    const hoje = new Date();
+    const mesAtual = hoje.getMonth();
+    const anoAtual = hoje.getFullYear();
+    
+    const transacoesFiltradas = this.transacoes.filter(transacao => {
+      const dataTransacao = new Date(transacao.data);
+      return dataTransacao.getMonth() === mesAtual && 
+             dataTransacao.getFullYear() === anoAtual;
+    });
+    
+    this.transacoesFiltradas = transacoesFiltradas;
+    this.dataSource.data = transacoesFiltradas;
+    this.atualizarResumoFinanceiro(transacoesFiltradas);
+    this.setupCharts();
+  }
+  
 
   reloadData(): void {
     this.loadData();

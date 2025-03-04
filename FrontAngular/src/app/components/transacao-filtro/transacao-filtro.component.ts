@@ -29,6 +29,10 @@ export class TransacaoFiltroComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.initializeForm();
     this.setupFormSubscription();
+
+    setTimeout(() => {
+      this.aplicarFiltro();
+    }, 0);
   }
 
   ngOnDestroy(): void {

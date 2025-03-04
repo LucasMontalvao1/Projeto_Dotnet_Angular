@@ -68,16 +68,26 @@ export class TransacaoCreateComponent implements OnInit {
     if (this.form.valid && !this.isLoading) {
       this.isLoading = true;
       
+      // Clone os valores do formulário
+      const formValues = {...this.form.value};
+      
+      // Garantir que as datas sejam enviadas como strings ISO
+      const dataTransacao = new Date(formValues.data);
+      const dataAtual = new Date();
+      
       this.transacao = {
         ...this.transacao,
-        ...this.form.value,
         usuarioID: parseInt(this.authService.getDecodedToken().nameid),
-        categoriaID: parseInt(this.form.value.categoriaID),
-        valor: parseFloat(this.form.value.valor)
+        categoriaID: parseInt(formValues.categoriaID),
+        tipo: formValues.tipo,
+        valor: parseFloat(formValues.valor),
+        descricao: formValues.descricao,
+        data: dataTransacao.toISOString(),
+        criadoEm: dataAtual.toISOString()
       };
       
-      console.log('Transação a ser enviada:', this.transacao); 
-
+      console.log('Transação a ser enviada:', this.transacao);
+  
       this.transacaoService.createTransacao(this.transacao).subscribe({
         next: (response) => {
           console.log('Transação criada com sucesso:', response);

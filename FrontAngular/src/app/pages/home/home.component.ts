@@ -221,7 +221,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   deleteReminder(reminder: Lembrete): void {
     const dialogRef = this.dialog.open(LembretesExcluirComponent, {
       data: reminder,
-      width: '400px',
+      width: '650px',
     });
   
     dialogRef.afterClosed().subscribe(result => {

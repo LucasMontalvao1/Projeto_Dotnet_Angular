@@ -110,7 +110,9 @@ export class TransacaoListComponent implements OnInit, OnDestroy {
           this.dataSource.data = transacoes;
           this.dataSource.paginator = this.paginator;
           this.dataSource.sort = this.sort;
-          this.calcularResumoFinanceiro(transacoes);
+          
+          this.aplicarFiltroMesAtual();
+          
           this.isLoading = false;
         },
         error: (error) => {
@@ -122,24 +124,50 @@ export class TransacaoListComponent implements OnInit, OnDestroy {
       });
   }
 
+  aplicarFiltroMesAtual(): void {
+    const hoje = new Date();
+    const mesAtual = hoje.getMonth();
+    const anoAtual = hoje.getFullYear();
+    
+    const transacoesFiltradas = this.transacoesOriginais.filter(transacao => {
+      const dataTransacao = new Date(transacao.data);
+      return dataTransacao.getMonth() === mesAtual && 
+             dataTransacao.getFullYear() === anoAtual;
+    });
+    
+    this.dataSource.data = transacoesFiltradas;
+    this.calcularResumoFinanceiro(transacoesFiltradas);
+    
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
+  }
+
   // Handler do filtro de data
   onFiltroAplicado(filtro: FiltroData): void {
     let transacoesFiltradas = [...this.transacoesOriginais];
-
-    if (filtro.dataInicio && filtro.dataFim) {
+  
+    if (filtro.tipoFiltro === 'mes' && filtro.mesAno) {
+      const mesAnoSelecionado = new Date(filtro.mesAno);
+      transacoesFiltradas = this.transacoesOriginais.filter(transacao => {
+        const dataTransacao = new Date(transacao.data);
+        return dataTransacao.getMonth() === mesAnoSelecionado.getMonth() &&
+               dataTransacao.getFullYear() === mesAnoSelecionado.getFullYear();
+      });
+    } else if (filtro.tipoFiltro === 'periodo' && filtro.dataInicio && filtro.dataFim) {
       const inicio = new Date(filtro.dataInicio);
       const fim = new Date(filtro.dataFim);
       fim.setHours(23, 59, 59);
-
+  
       transacoesFiltradas = this.transacoesOriginais.filter(transacao => {
         const dataTransacao = new Date(transacao.data);
         return dataTransacao >= inicio && dataTransacao <= fim;
       });
     }
-
+  
     this.dataSource.data = transacoesFiltradas;
     this.calcularResumoFinanceiro(transacoesFiltradas);
-
+  
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
