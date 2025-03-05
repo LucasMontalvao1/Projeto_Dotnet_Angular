@@ -93,7 +93,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     this.cdr.detectChanges();
     
-    this.lembreteService.getLembretes()
+    this.lembreteService.getLembretesByUser()
       .pipe(debounceTime(300))
       .subscribe({
         next: (data: Lembrete[]) => {
@@ -188,7 +188,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   createReminder(): void {
     const dialogRef = this.dialog.open(LembretesComponent, {
-      width: '600px',
+      width: '650px',
       disableClose: true
     });
     
@@ -206,7 +206,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     };
 
     const dialogRef = this.dialog.open(LembretesComponent, {
-      width: '600px',
+      width: '650px',
       data: reminderToEdit,
       disableClose: true
     });

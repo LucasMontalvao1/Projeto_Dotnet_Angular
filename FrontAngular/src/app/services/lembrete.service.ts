@@ -24,6 +24,12 @@ export class LembreteService {
       .pipe(catchError(this.handleError));
   }
 
+  getLembretesByUser(): Observable<Lembrete[]> {
+    return this.http.get<Lembrete[]>(this.apiUrl, { headers: this.getHeaders() })
+      .pipe(catchError(this.handleError));
+  }
+
+
   getLembreteById(id: number): Observable<Lembrete> {
     return this.http.get<Lembrete>(`${this.apiUrl}/${id}`);
   }
