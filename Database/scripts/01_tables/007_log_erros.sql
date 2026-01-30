@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS log_erros (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    procedimento VARCHAR(100),
+    mensagem TEXT,
+    data_erro DATETIME DEFAULT CURRENT_TIMESTAMP
+);

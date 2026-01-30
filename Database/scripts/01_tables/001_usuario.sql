@@ -1,0 +1,10 @@
+CREATE TABLE IF NOT EXISTS usuario (
+    UsuarioID INT AUTO_INCREMENT PRIMARY KEY,
+    Username VARCHAR(50) NOT NULL UNIQUE,
+    Password VARCHAR(255) NOT NULL,
+    Name VARCHAR(100),
+    Foto VARCHAR(200),
+    Email VARCHAR(100),
+    Cargo VARCHAR(50),
+    Matricula VARCHAR(50)
+);

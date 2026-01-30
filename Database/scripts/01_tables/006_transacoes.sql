@@ -1,0 +1,12 @@
+CREATE TABLE IF NOT EXISTS Transacoes (
+    TransacaoID INT AUTO_INCREMENT PRIMARY KEY,
+    UsuarioID INT,
+    CategoriaID INT,
+    Tipo ENUM('Entrada', 'Saída') NOT NULL,
+    Valor DECIMAL(10, 2) NOT NULL,
+    Descricao VARCHAR(255),
+    Data DATETIME DEFAULT CURRENT_TIMESTAMP,
+    CriadoEm DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (UsuarioID) REFERENCES usuario(UsuarioID) ON DELETE CASCADE,
+    FOREIGN KEY (CategoriaID) REFERENCES Categorias(CategoriaID) ON DELETE CASCADE
+);

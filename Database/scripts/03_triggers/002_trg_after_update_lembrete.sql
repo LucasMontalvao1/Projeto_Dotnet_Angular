@@ -1,4 +1,3 @@
--- Trigger para UPDATE
 DELIMITER //
 
 CREATE TRIGGER trg_after_update_lembrete
@@ -7,32 +6,25 @@ FOR EACH ROW
 BEGIN
     INSERT INTO lembreteslog (
         LembreteID, 
+        UsuarioID,
         Titulo, 
         Descricao, 
         DataLembrete, 
         CriadoEm, 
         IntervaloEmDias, 
         Acao,
-        DataAcao,
-        UsuarioID,
-        ValoresAntigos
+        DataAcao
     )
     VALUES (
         NEW.LembreteID, 
+        NEW.UsuarioID,
         NEW.Titulo, 
         NEW.Descricao, 
         NEW.DataLembrete, 
         NEW.CriadoEm, 
         NEW.IntervaloEmDias, 
         'UPDATE',
-        NOW(),
-        NEW.UsuarioID,
-        CONCAT(
-            'Título anterior: ', OLD.Titulo, ', ',
-            'Descrição anterior: ', OLD.Descricao, ', ',
-            'Data anterior: ', OLD.DataLembrete, ', ',
-            'Intervalo anterior: ', OLD.IntervaloEmDias
-        )
+        NOW()
     );
 END //
 

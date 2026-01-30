@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS Categorias (
+    CategoriaID INT AUTO_INCREMENT PRIMARY KEY,
+    Nome VARCHAR(100) NOT NULL,
+    Descricao VARCHAR(255)
+);

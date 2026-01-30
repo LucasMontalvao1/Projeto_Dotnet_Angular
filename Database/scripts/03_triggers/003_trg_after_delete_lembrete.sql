@@ -6,6 +6,7 @@ FOR EACH ROW
 BEGIN
     INSERT INTO lembreteslog (
         LembreteID, 
+        UsuarioID,
         Titulo, 
         Descricao, 
         DataLembrete, 
@@ -16,6 +17,7 @@ BEGIN
     )
     VALUES (
         OLD.LembreteID, 
+        OLD.UsuarioID,
         OLD.Titulo, 
         OLD.Descricao, 
         OLD.DataLembrete, 
