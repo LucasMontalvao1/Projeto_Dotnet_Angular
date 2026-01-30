@@ -73,3 +73,20 @@ npm-debug.log*
 *.pid
 *.seed
 *.pid.lock
+
+# .NET Specific
+[Bb]in/
+[Oo]bj/
+*.user
+*.userosscache
+*.sln.docstates
+*.dll
+*.exe
+*.pdb
+*.nupkg
+.vs/
+.vscode/
+.history/
+TestResults/
+*.log
+.DS_Store
