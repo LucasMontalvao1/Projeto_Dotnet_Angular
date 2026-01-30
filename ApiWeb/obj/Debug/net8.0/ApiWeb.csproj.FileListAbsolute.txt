@@ -186,11 +186,6 @@ C:\dev\Projeto_Dotnet_Angular\ApiWeb\obj\Debug\net8.0\ApiWeb.MvcApplicationParts
 C:\dev\Projeto_Dotnet_Angular\ApiWeb\obj\Debug\net8.0\ApiWeb.sourcelink.json
 C:\dev\Projeto_Dotnet_Angular\ApiWeb\obj\Debug\net8.0\staticwebassets.build.json
 C:\dev\Projeto_Dotnet_Angular\ApiWeb\obj\Debug\net8.0\staticwebassets.development.json
-C:\dev\Projeto_Dotnet_Angular\ApiWeb\obj\Debug\net8.0\staticwebassets\msbuild.ApiWeb.Microsoft.AspNetCore.StaticWebAssets.props
-C:\dev\Projeto_Dotnet_Angular\ApiWeb\obj\Debug\net8.0\staticwebassets\msbuild.build.ApiWeb.props
-C:\dev\Projeto_Dotnet_Angular\ApiWeb\obj\Debug\net8.0\staticwebassets\msbuild.buildMultiTargeting.ApiWeb.props
-C:\dev\Projeto_Dotnet_Angular\ApiWeb\obj\Debug\net8.0\staticwebassets\msbuild.buildTransitive.ApiWeb.props
-C:\dev\Projeto_Dotnet_Angular\ApiWeb\obj\Debug\net8.0\staticwebassets.pack.json
 C:\dev\Projeto_Dotnet_Angular\ApiWeb\obj\Debug\net8.0\scopedcss\bundle\ApiWeb.styles.css
 C:\dev\Projeto_Dotnet_Angular\ApiWeb\obj\Debug\net8.0\ApiWeb.csproj.Up2Date
 C:\dev\Projeto_Dotnet_Angular\ApiWeb\obj\Debug\net8.0\ApiWeb.dll
@@ -198,3 +193,12 @@ C:\dev\Projeto_Dotnet_Angular\ApiWeb\obj\Debug\net8.0\refint\ApiWeb.dll
 C:\dev\Projeto_Dotnet_Angular\ApiWeb\obj\Debug\net8.0\ApiWeb.pdb
 C:\dev\Projeto_Dotnet_Angular\ApiWeb\obj\Debug\net8.0\ApiWeb.genruntimeconfig.cache
 C:\dev\Projeto_Dotnet_Angular\ApiWeb\obj\Debug\net8.0\ref\ApiWeb.dll
+C:\dev\Projeto_Dotnet_Angular\ApiWeb\bin\Debug\net8.0\ApiWeb.staticwebassets.endpoints.json
+C:\dev\Projeto_Dotnet_Angular\ApiWeb\obj\Debug\net8.0\rpswa.dswa.cache.json
+C:\dev\Projeto_Dotnet_Angular\ApiWeb\obj\Debug\net8.0\rjimswa.dswa.cache.json
+C:\dev\Projeto_Dotnet_Angular\ApiWeb\obj\Debug\net8.0\rjsmrazor.dswa.cache.json
+C:\dev\Projeto_Dotnet_Angular\ApiWeb\obj\Debug\net8.0\rjsmcshtml.dswa.cache.json
+C:\dev\Projeto_Dotnet_Angular\ApiWeb\obj\Debug\net8.0\staticwebassets.build.json.cache
+C:\dev\Projeto_Dotnet_Angular\ApiWeb\obj\Debug\net8.0\staticwebassets.build.endpoints.json
+C:\dev\Projeto_Dotnet_Angular\ApiWeb\obj\Debug\net8.0\swae.build.ex.cache
+C:\dev\Projeto_Dotnet_Angular\ApiWeb\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt

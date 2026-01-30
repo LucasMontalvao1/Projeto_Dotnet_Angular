@@ -1,5 +1,7 @@
 DELIMITER //
 
+DROP TRIGGER IF EXISTS trg_after_delete_lembrete;
+
 CREATE TRIGGER trg_after_delete_lembrete
 AFTER DELETE ON lembretes
 FOR EACH ROW

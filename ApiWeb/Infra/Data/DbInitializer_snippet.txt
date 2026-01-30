@@ -1,0 +1,4 @@
+// Inicializar banco de dados antes de qualquer serviço que dependa dele
+var connectionString = builder.Configuration.GetConnectionString("ConfiguracaoPadrao");
+var scriptsPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "Database", "scripts");
+DbInitializer.Initialize(connectionString, scriptsPath);

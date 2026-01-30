@@ -1,4 +1,4 @@
-using ApiWeb.Infra.Data;
+Ôªøusing ApiWeb.Infra.Data;
 using ApiWeb.Hubs;
 using ApiWeb.Services.Hangfire;
 using ApiWeb.Repositorys;
@@ -18,14 +18,15 @@ using Serilog.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ConfiguraÁ„o do Serilog
+// Configura√ß√£o do Serilog
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Debug()
-    .MinimumLevel.Override("Hangfire", Serilog.Events.LogEventLevel.Warning) // Aumentar o nÌvel de log do Hangfire
+    .MinimumLevel.Override("Hangfire", Serilog.Events.LogEventLevel.Warning) // Aumentar o n√≠vel de log do Hangfire
     .MinimumLevel.Information()
-    .Filter.ByExcluding(Matching.FromSource("Microsoft.AspNetCore.Hosting.Diagnostics")) // Filtrar logs do ASP.NET
-    .Filter.ByExcluding(logEvent => logEvent.Properties.ContainsKey("RequestPath") && logEvent.Properties["RequestPath"].ToString().Contains("/hangfire/stats")) // Filtrar requisiÁıes do Hangfire
-    .WriteTo.Console()
+    .MinimumLevel.Override("Microsoft.AspNetCore.StaticFiles", Serilog.Events.LogEventLevel.Warning) // Ignorar logs de arquivos est√°ticos
+    .Filter.ByExcluding(Matching.FromSource("Microsoft.AspNetCore.Hosting.Diagnostics")) // Filtrar logs ruidosos do ASP.NET
+    .Filter.ByExcluding(logEvent => logEvent.Properties.ContainsKey("RequestPath") && logEvent.Properties["RequestPath"].ToString().Contains("/hangfire/stats"))
+    .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}") // Formato mais limpo
     .WriteTo.File("Logs/myapp-.log", rollingInterval: RollingInterval.Day)
     .Enrich.FromLogContext()
     .CreateLogger();
@@ -36,7 +37,7 @@ builder.Host.UseSerilog();
 // Adicionar controladores
 builder.Services.AddControllers();
 
-// Adicionar serviÁos do SignalR
+// Adicionar servi√ßos do SignalR
 builder.Services.AddSignalR();
 
 // Configurar o Swagger para documentar a API
@@ -71,7 +72,7 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.AddHttpContextAccessor();
 
-// ConfiguraÁ„o do banco de dados e repositÛrios
+// Configura√ß√£o do banco de dados e reposit√≥rios
 builder.Services.AddSingleton<MySqlConnectionDB>();
 builder.Services.AddScoped<IRabbitMqService, RabbitMqService>();
 builder.Services.AddScoped<IHangfireService, HangfireService>();
@@ -87,7 +88,7 @@ builder.Services.AddScoped<ITransacaoRepository, TransacaoRepository>();
 builder.Services.AddScoped<ITransacaoService, TransacaoService>();
 
 
-// ConfiguraÁ„o de polÌtica de CORS para permitir todas as origens
+// Configura√ß√£o de pol√≠tica de CORS para permitir todas as origens
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll",
@@ -97,8 +98,12 @@ builder.Services.AddCors(options =>
             .AllowAnyHeader());
 });
 
-// ConfiguraÁ„o do Hangfire
+// Configura√ß√£o do Hangfire
 var connectionString = "server=localhost;userid=root;password=asd123; Allow User Variables=True;database=projeto_producao ";
+
+// Inicializar banco de dados
+var scriptsPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "Database", "scripts");
+DbInitializer.Initialize(connectionString, scriptsPath);
 
 builder.Services.AddHangfire(configuration =>
 {
@@ -118,10 +123,10 @@ builder.Services.AddHangfireServer(options =>
 });
 
 
-// ConfiguraÁ„o da chave JWT a partir do appsettings.json ou Configuration
+// Configura√ß√£o da chave JWT a partir do appsettings.json ou Configuration
 var key = Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]);
 
-// ConfiguraÁ„o da autenticaÁ„o JWT
+// Configura√ß√£o da autentica√ß√£o JWT
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -148,7 +153,7 @@ builder.Logging.AddDebug();
 builder.Logging.AddFilter("Microsoft.AspNetCore.Routing.HttpRoutingMiddleware", LogLevel.Error); // Ignorar logs do Hangfire
 
 
-// Construir a aplicaÁ„o
+// Construir a aplica√ß√£o
 var app = builder.Build();
 
 app.UseHangfireDashboard();
@@ -157,14 +162,14 @@ app.MapHangfireDashboard();
 var recurringJobs = app.Services.GetRequiredService<IRecurringJobManager>();
 recurringJobs.AddOrUpdate<HangfireService>(
     "VerificarLembretesRepetidos",   // Nome do job
-    x => x.ExecuteJob(),              // MÈtodo a ser chamado
+    x => x.ExecuteJob(),              // M√©todo a ser chamado
     Cron.Hourly                        // Executa de hora em hora
 );
 
 // Mapeie o Hub
 app.MapHub<LembreteHub>("/lembreteHub");
 
-// ConfiguraÁ„o para o ambiente de desenvolvimento
+// Configura√ß√£o para o ambiente de desenvolvimento
 if (app.Environment.IsDevelopment())
 {
     Log.Information("Iniciando em modo de desenvolvimento");
@@ -177,7 +182,7 @@ if (app.Environment.IsDevelopment())
 }
 else
 {
-    Log.Information("Iniciando em modo de produÁ„o");
+    Log.Information("Iniciando em modo de produ√ß√£o");
 }
 
 // Habilitar HTTPS redirection
@@ -186,18 +191,18 @@ app.UseHttpsRedirection();
 // Habilitar CORS
 app.UseCors("AllowAll");
 
-// Configurar autenticaÁ„o e autorizaÁ„o
+// Configurar autentica√ß√£o e autoriza√ß√£o
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Permite o acesso a arquivos est·ticos
+// Permite o acesso a arquivos est√°ticos
 app.UseStaticFiles();
 
 // Mapear os controladores
 app.MapControllers();
 
-// Rodar a aplicaÁ„o
-Log.Information("AplicaÁ„o iniciada com sucesso");
+// Rodar a aplica√ß√£o
+Log.Information("Aplica√ß√£o iniciada com sucesso");
 
 try
 {
@@ -205,9 +210,9 @@ try
 }
 catch (Exception ex)
 {
-    Log.Fatal(ex, "A aplicaÁ„o falhou ao iniciar");
+    Log.Fatal(ex, "A aplica√ß√£o falhou ao iniciar");
 }
 finally
 {
-    Log.CloseAndFlush(); // Fecha e descarrega o logger no final da aplicaÁ„o
+    Log.CloseAndFlush(); // Fecha e descarrega o logger no final da aplica√ß√£o
 }

@@ -21,13 +21,11 @@ namespace ApiWeb.Controllers
         [HttpPost("login")]
         public IActionResult Login([FromBody] UserDto userDto)
         {
-            // Verifica se userDto é nulo
             if (userDto == null)
             {
                 return BadRequest("Usuário não pode ser nulo");
             }
 
-            // Verifica se Username ou Password estão vazios
             if (string.IsNullOrEmpty(userDto.Username) || string.IsNullOrEmpty(userDto.Password))
             {
                 return BadRequest("Nome de usuário e senha não podem estar vazios");

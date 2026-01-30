@@ -1,5 +1,7 @@
 DELIMITER //
 
+DROP PROCEDURE IF EXISTS `VerificarLembretesRepetidos`;
+
 CREATE PROCEDURE `VerificarLembretesRepetidos`()
 BEGIN
     DECLARE v_lembreteID INT;
