@@ -1,0 +1,6 @@
+@FinanceReminderHub.API_HostAddress = http://localhost:5178
+
+GET {{FinanceReminderHub.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

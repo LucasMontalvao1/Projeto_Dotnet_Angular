@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="FinanceReminderHub.API/FinanceReminderHub.API.csproj" />
+  <Project Path="FinanceReminderHub.Application/FinanceReminderHub.Application.csproj" />
+  <Project Path="FinanceReminderHub.Domain/FinanceReminderHub.Domain.csproj" />
+  <Project Path="FinanceReminderHub.Infrastructure/FinanceReminderHub.Infrastructure.csproj" />
+</Solution>
